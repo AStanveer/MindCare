@@ -1,0 +1,149 @@
+<div th:fragment="navbar(activePage)">
+
+    <style>
+        .navbar {
+            background: white;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            background: transparent;
+            cursor: pointer;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-btn.active {
+            background: #8c7ae6;
+            color: white;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+        }
+
+        .icon-main {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 600px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-buttons {
+                justify-content: center;
+                row-gap: 10px;
+            }
+
+            .nav-btn {
+                font-size: 13px;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+
+    <div class="navbar">
+        <div class="nav-content">
+
+            <div class="logo">
+                <img src="/icons/logo.png" class="icon-main" alt="">
+                <span style="color:#8C7AE6; font-size: 16px;">MindCare</span>
+            </div>
+
+            <div class="nav-buttons">
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
+                   th:href="@{/mindcare/dashboard}">
+                    <img src="/icons/home.png" class="icon" alt="home">
+                    <span>Dashboard</span>
+                </a>
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'assessment'} ? ' active' : ''"
+                   th:href="@{/mindcare/assessment/dass21}">
+                    <img src="/icons/assessment.png" class="icon" alt="assessment">
+                    <span>Assessment</span>
+                </a>
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'selfcare'} ? ' active' : ''"
+                   th:href="@{/mindcare/selfcare}">
+                    <img src="/icons/selfcare.png" class="icon" alt="self care">
+                    <span>Self Care</span>
+                </a>
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'resources'} ? ' active' : ''"
+                   th:href="@{/mindcare/resources}">
+                    <img src="/icons/resources.png" class="icon" alt="resources">
+                    <span>Resources</span>
+                </a>
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'peersupport'} ? ' active' : ''"
+                   th:href="@{/mindcare/peersupport}">
+                    <img src="/icons/peer.png" class="icon" alt="peer support">
+                    <span>Peer Support</span>
+                </a>
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'counselling'} ? ' active' : ''"
+                   th:href="@{/mindcare/counselling}">
+                    <img src="/icons/counselling.png" class="icon" alt="counselling">
+                    <span>Counselling</span>
+                </a>
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'profile'} ? ' active' : ''"
+                   th:href="@{/mindcare/profile}">
+                    <img src="/icons/profile.png" class="icon" alt="profile">
+                    <span>Profile</span>
+                </a>
+
+                <a class="nav-btn"
+                   th:classappend="${activePage == 'logout'} ? ' active' : ''"
+                   th:href="@{/mindcare/logout}">
+                    <img src="/icons/logout.png" class="icon" alt="logout">
+                    <span>Logout</span>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
