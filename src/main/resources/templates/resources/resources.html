@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Resources - MindCare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f6f7fb;
+            color: #2e2e2e;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, rgba(140, 122, 230, 0.1), rgba(165, 180, 252, 0.1));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #2e2e2e;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 25px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            background: white;
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid rgba(140, 122, 230, 0.2);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 12px 16px;
+            font-size: 14px;
+            outline: none;
+            border-radius: 8px;
+        }
+
+        .search-bar input::placeholder {
+            color: #94a3b8;
+        }
+
+        .search-btn {
+            background: #8c7ae6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #7b6bd6;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            background: #e8e9eb;
+            border-radius: 16px;
+            padding: 4px;
+            margin-bottom: 30px;
+            gap: 4px;
+        }
+
+        .category-tab {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .category-tab:hover {
+            background: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+        }
+
+        .category-tab.active {
+            background: white;
+            color: #8c7ae6;
+            box-shadow: 0 2px 8px rgba(140, 122, 230, 0.2);
+        }
+
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Resource Cards */
+        .resource-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(140, 122, 230, 0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(140, 122, 230, 0.15);
+        }
+
+        .resource-category {
+            display: inline-block;
+            background: rgba(165, 180, 252, 0.2);
+            color: #8c7ae6;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        .resource-category.mental-health {
+            background: rgba(140, 122, 230, 0.2);
+            color: #8c7ae6;
+        }
+
+        .resource-category.self-care {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .resource-category.wellness {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+        }
+
+        .resource-category.personal-growth {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2e2e2e;
+            line-height: 1.3;
+        }
+
+        .card-description {
+            color: #64748b;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        /* Resource Card Meta Layout */
+        .resource-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(140, 122, 230, 0.1);
+        }
+
+        /* Top row: Category and Time side by side */
+        .meta-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resource-category {
+            display: inline-block;
+            background: rgba(165, 180, 252, 0.2);
+            color: #8c7ae6;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 0; /* Remove bottom margin since we're using flex */
+        }
+
+        .read-time {
+            font-size: 12px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Middle row: Author and Date */
+        .meta-middle {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .author {
+            font-weight: 500;
+        }
+
+        .date {
+            color: #94a3b8;
+        }
+
+        /* Bottom row: Read button takes full width */
+        .meta-bottom {
+            width: 100%;
+        }
+
+        .read-btn {
+            width: 100%; /* Make button take full width */
+            background: #8c7ae6;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.3s ease;
+            text-align: center;
+        }
+
+        .read-btn:hover {
+            background: #7b6bd6;
+        }
+
+        /* Empty State */
+        .no-resources {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .no-resources-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(140, 122, 230, 0.2);
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8c7ae6;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar('resources')}"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Educational Resources</h1>
+            <p>Explore curated articles and guides for mental wellness</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" 
+                    id="searchInput" 
+                    placeholder="Search resources"
+                    onkeyup="searchResources()">
+                <button class="search-btn" onclick="searchResources()">
+                    Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div class="category-tabs">
+            <a th:href="@{/mindcare/resources}" 
+               th:classappend="${selectedCategory == 'All'} ? 'category-tab active' : 'category-tab'">
+                All Resources
+            </a>
+            <a th:each="category : ${categories}"
+               th:if="${category != 'All'}"
+               th:href="@{/mindcare/resources(category=${category})}"
+               th:text="${category}"
+               th:classappend="${selectedCategory == category} ? 'category-tab active' : 'category-tab'">
+            </a>
+        </div>
+
+        <!-- Resources Grid  -->
+        <div class="resources-grid">
+
+            <div th:each="resource : ${resources}" class="resource-card">
+                
+                <h3 class="card-title" th:text="${resource.title}"></h3>
+                
+                <p class="card-description" th:text="${resource.description}"></p>
+                
+                <div class="resource-meta">
+                    <div class="meta-top">
+                        <div class="resource-category" th:text="${resource.category}"></div>
+                        <div class="read-time">
+                            <span th:text="${resource.readTime}"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="meta-middle">
+                        <div class="author" th:text="${resource.author}"></div>
+                        <div class="date" th:text="${resource.date}"></div>
+                    </div>
+                    
+                    <div class="meta-bottom">
+                        <button class="read-btn" th:onclick="|readResource("${resource.title}")|">
+                            Read Article
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${#lists.isEmpty(resources)}" class="no-resources">
+                <img src="/icons/book.png" class="no-resources-icon">
+                <h3>No resources found</h3>
+                <p th:text="'No ' + ${selectedCategory == 'All' ? 'resources' : selectedCategory.toLowerCase()} + ' articles available at the moment.'"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        // Search function
+        function searchResources() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.resource-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Hover Effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.resource-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+                    this.style.boxShadow = '0 8px 20px rgba(140, 122, 230, 0.15)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
