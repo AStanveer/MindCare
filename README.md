@@ -6,7 +6,7 @@ A Spring Boot web application for mental health support and resource management.
 
 ```bash
 # Clone and run
-git clone https://github.com/yourteam/mindcare.git
+https://github.com/AStanveer/MindCare.git
 cd mindcare
 mvn spring-boot:run
 
@@ -18,6 +18,8 @@ mvn spring-boot:run
 - Thymeleaf
 - Maven
 - Java 17
+- Hibernate
+- MySQL
 
 ## 📁 Project Structure
 ```
