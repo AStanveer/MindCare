@@ -1,0 +1,267 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    padding: 2rem 15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--color-bg);
+}
+
+.forum-header--container {
+    background: var(--color-purple-light);
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.forum-header--container h2 {
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+}
+
+.forum-header--container p {
+    color: var(--color-gray);
+}
+
+.tabs--container {
+    display: flex;
+    gap: 0.5rem;
+    background-color: #f3f4f6; /* Gray background for the pill container */
+    padding: 0.25rem;
+    border-radius: 2rem;
+    width: fit-content;
+    margin-bottom: 1.5rem;
+}
+
+.tab-item {
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--color-gray);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.tab-item svg {
+    width: 1.25rem;
+    height: auto;
+}
+
+.tab-item.active {
+    background-color: var(--color-white);
+    color: var(--color-text);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card .btn {
+    cursor: pointer;
+    border-radius: .75rem;
+    padding: .5rem .75rem;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: 600;
+} 
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-secondary {
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover, .btn-secondary:focus {
+    color: var(--color-text);
+    border-color: var(--color-primary); 
+    background: #8c7ae60d;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+/* ========================
+   Chat Interface Styles
+   ======================== */
+
+.chat--layout {
+    display: flex;
+    flex-direction: column;
+    /* Ensures the chat card fills the remaining vertical space comfortably */
+    min-height: 600px; 
+}
+
+.chat--interface {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0; 
+    overflow: hidden;
+    background-color: var(--color-white);
+    border-radius: 1rem; 
+}
+
+/* --- Chat Header --- */
+.chat--header {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.bot-avatar {
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--color-light-purple);
+    color: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bot-avatar svg {
+    width: 1.5rem;
+    height: auto;
+}
+
+.header-text h3 {
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+}
+
+.header-text p {
+    font-size: 0.9rem;
+    color: var(--color-gray);
+}
+
+/* --- Messages Area --- */
+.chat--messages {
+    flex: 1; /* Takes up all available space */
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--color-white);
+    overflow-y: auto; /* Scrollable if messages get long */
+}
+
+.message--item {
+    display: flex;
+    width: 100%;
+}
+
+.message--item.bot {
+    justify-content: flex-start;
+}
+
+.message--item.user {
+    justify-content: flex-end;
+}
+
+.message--bubble {
+    max-width: 70%;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Bot Bubble Style (Purple) */
+.message--item.bot .message--bubble {
+    background-color: #d1d0ff; /* Light purple from screenshot */
+    color: var(--color-text);
+    border-top-left-radius: 0; /* Slight visual cue it's from left */
+}
+
+/* User Bubble Style (Gray - Preparing for future) */
+.message--item.user .message--bubble {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    border-top-right-radius: 0;
+}
+
+/* --- Input Area --- */
+.chat--input-area {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-white);
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 1rem 3.5rem 1rem 1.5rem; 
+    border: 1px solid var(--color-border); 
+    border-radius: .75rem;
+    font-size: 0.95rem;
+    outline: none;
+    color: var(--color-text);
+    transition: all .2s;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--color-primary);
+} 
+
+.input-wrapper input::placeholder {
+    color: #9ca3af;
+}
+
+.send-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: .75rem;
+    background-color: var(--color-light-purple); /* The lighter purple from the send button screenshot */
+    color: var(--color-white);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.send-btn:hover {
+    background-color: var(--color-primary);
+}
+
+.disclaimer-text {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #9ca3af; /* Very light gray text */
+}
+
+/* --- Tab Link Reset --- */
+/* Since tabs are now <a> tags, remove default link styles */
+a.tab-item {
+    text-decoration: none;
+}
