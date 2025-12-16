@@ -44,8 +44,6 @@ public class SelfCareActivity {
     @Column(name = "created_at")
     private java.time.LocalDateTime createdAt;
     
-    private boolean featured = false;
-    
     // Constructors
     public SelfCareActivity() {
         this.createdAt = java.time.LocalDateTime.now();
@@ -100,10 +98,7 @@ public class SelfCareActivity {
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
     
     public java.time.LocalDateTime getCreatedAt() { return createdAt; }
-    
-    public boolean isFeatured() { return featured; }
-    public void setFeatured(boolean featured) { this.featured = featured; }
-    
+        
     // Helper methods for Thymeleaf
     public String getFormattedDuration() {
         if (durationMinutes == null) return "Flexible";

@@ -12,9 +12,6 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
     // Find by category
     List<Resource> findByCategory(String category);
     
-    // Find featured resources
-    List<Resource> findByFeaturedTrue();
-    
     // Get all distinct categories
     @Query("SELECT DISTINCT r.category FROM Resource r ORDER BY r.category")
     List<String> findAllDistinctCategories();

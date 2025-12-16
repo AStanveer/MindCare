@@ -27,19 +27,12 @@ public class Resource {
     
     private String author;
     
-    @Column(name = "author_role")
-    private String authorRole;
-    
     @Column(name = "publish_date")
     private LocalDate publishDate;
     
-    @Column(name = "views_count")
-    private int viewsCount = 0;
     
     @Column(name = "created_at")
     private java.time.LocalDateTime createdAt;
-    
-    private boolean featured = false;
     
     // Constructors
     public Resource() {
@@ -47,7 +40,7 @@ public class Resource {
     }
     
     public Resource(String title, String description, String content, String category, 
-                   String readTime, String author, String authorRole, LocalDate publishDate) {
+                   String readTime, String author, LocalDate publishDate) {
         this();
         this.title = title;
         this.description = description;
@@ -55,7 +48,6 @@ public class Resource {
         this.category = category;
         this.readTime = readTime;
         this.author = author;
-        this.authorRole = authorRole;
         this.publishDate = publishDate;
     }
     
@@ -81,19 +73,10 @@ public class Resource {
     public String getAuthor() { return author; }
     public void setAuthor(String author) { this.author = author; }
     
-    public String getAuthorRole() { return authorRole; }
-    public void setAuthorRole(String authorRole) { this.authorRole = authorRole; }
-    
     public LocalDate getPublishDate() { return publishDate; }
     public void setPublishDate(LocalDate publishDate) { this.publishDate = publishDate; }
     
-    public int getViewsCount() { return viewsCount; }
-    public void incrementViews() { this.viewsCount++; }
-    
     public java.time.LocalDateTime getCreatedAt() { return createdAt; }
-    
-    public boolean isFeatured() { return featured; }
-    public void setFeatured(boolean featured) { this.featured = featured; }
     
     // Helper methods for Thymeleaf
     public String getFormattedDate() {

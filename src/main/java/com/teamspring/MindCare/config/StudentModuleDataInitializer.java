@@ -48,7 +48,6 @@ public class StudentModuleDataInitializer {
                     "Anxiety",
                     "5 min read",
                     "Dr. Sarah Johnson",
-                    "Campus Psychologist",
                     LocalDate.now().minusDays(10)
                 ),
                 createResource(
@@ -58,7 +57,6 @@ public class StudentModuleDataInitializer {
                     "Stress",
                     "6 min read",
                     "MindCare Team",
-                    "Student Support",
                     LocalDate.now().minusDays(5)
                 ),
                 createResource(
@@ -68,7 +66,6 @@ public class StudentModuleDataInitializer {
                     "Sleep",
                     "7 min read",
                     "Dr. Michael Chen",
-                    "Sleep Specialist",
                     LocalDate.now().minusDays(3)
                 ),
                 createResource(
@@ -78,7 +75,6 @@ public class StudentModuleDataInitializer {
                     "Anxiety",
                     "8 min read",
                     "Dr. Lisa Wang",
-                    "Clinical Psychologist",
                     LocalDate.now().minusDays(1)
                 )
             );
@@ -144,7 +140,7 @@ public class StudentModuleDataInitializer {
     
     private Resource createResource(String title, String desc, String content, 
                                    String category, String readTime, String author, 
-                                   String role, LocalDate date) {
+                                   LocalDate date) {
         Resource resource = new Resource();
         resource.setTitle(title);
         resource.setDescription(desc);
@@ -152,9 +148,7 @@ public class StudentModuleDataInitializer {
         resource.setCategory(category);
         resource.setReadTime(readTime);
         resource.setAuthor(author);
-        resource.setAuthorRole(role);
         resource.setPublishDate(date);
-        resource.setFeatured(title.contains("Anxiety") || title.contains("Stress")); // Some featured
         return resource;
     }
     
@@ -173,7 +167,6 @@ public class StudentModuleDataInitializer {
         activity.setVideoUrl(videoUrl);
         activity.setInstructions(instructions);
         activity.setBenefits(benefits);
-        activity.setFeatured(title.contains("Breathing") || title.contains("Meditation"));
         return activity;
     }
 }

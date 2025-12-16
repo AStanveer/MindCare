@@ -66,12 +66,4 @@ public class ResourceService {
         }
     }
     
-    public List<Resource> getFeaturedResources() {
-        try {
-            return resourceRepository.findByFeaturedTrue();
-        } catch (Exception e) {
-            System.err.println("Error fetching featured resources: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
 }

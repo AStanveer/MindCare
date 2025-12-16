@@ -12,12 +12,6 @@ public interface SelfCareActivityRepository extends JpaRepository<SelfCareActivi
     // Find by category
     List<SelfCareActivity> findByCategory(String category);
     
-    // Find by content type
-    List<SelfCareActivity> findByContentType(String contentType);
-    
-    // Find featured activities
-    List<SelfCareActivity> findByFeaturedTrue();
-    
     // Get all distinct categories
     @Query("SELECT DISTINCT s.category FROM SelfCareActivity s ORDER BY s.category")
     List<String> findAllDistinctCategories();

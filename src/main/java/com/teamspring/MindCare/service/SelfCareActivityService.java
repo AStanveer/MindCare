@@ -56,24 +56,6 @@ public class SelfCareActivityService {
         }
     }
     
-    public List<SelfCareActivity> getActivitiesByContentType(String contentType) {
-        try {
-            return selfCareActivityRepository.findByContentType(contentType);
-        } catch (Exception e) {
-            System.err.println("Error fetching by content type: " + e.getMessage());
-            return createFallbackActivities();
-        }
-    }
-    
-    public List<SelfCareActivity> getFeaturedActivities() {
-        try {
-            return selfCareActivityRepository.findByFeaturedTrue();
-        } catch (Exception e) {
-            System.err.println("Error fetching featured activities: " + e.getMessage());
-            return createFallbackActivities();
-        }
-    }
-    
     public List<SelfCareActivity> searchActivities(String query) {
         try {
             if (query == null || query.trim().isEmpty()) {
@@ -95,7 +77,6 @@ public class SelfCareActivityService {
         activity1.setTitle("Breathing Exercise");
         activity1.setDescription("Simple breathing technique to reduce stress");
         activity1.setCategory("breathing");
-        activity1.setContentType("VIDEO");
         activity1.setDurationMinutes(5);
         activity1.setDifficulty("Beginner");
         activity1.setInstructions("Inhale for 4 seconds, hold for 4, exhale for 6");
@@ -106,7 +87,6 @@ public class SelfCareActivityService {
         activity2.setTitle("Guided Meditation");
         activity2.setDescription("Short meditation for focus");
         activity2.setCategory("meditation");
-        activity2.setContentType("GUIDED_MEDITATION");
         activity2.setDurationMinutes(10);
         activity2.setDifficulty("Beginner");
         activity2.setInstructions("Find a quiet space and follow the audio");
@@ -124,7 +104,6 @@ public class SelfCareActivityService {
         activity.setTitle("Activity Temporarily Unavailable");
         activity.setDescription("This self-care activity is currently not available. Please try another one.");
         activity.setCategory("general");
-        activity.setContentType("EXERCISE");
         activity.setDurationMinutes(5);
         activity.setDifficulty("Beginner");
         activity.setInstructions("Please select another activity from the list.");

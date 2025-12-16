@@ -16,28 +16,27 @@ public class SelfCareController {
     @Autowired
     private SelfCareActivityService selfCareService;
     
-    // Main self-care page
     @GetMapping
     public String showSelfCare(
-            @RequestParam(value = "category", defaultValue = "breathing") String category,
+            @RequestParam(value = "category", defaultValue = "all") String category, // Change DEFAULT to "all"
             @RequestParam(value = "search", required = false) String search,
             Model model) {
         
         model.addAttribute("activePage", "selfcare");
         model.addAttribute("categories", selfCareService.getAllCategories());
-        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedCategory", category); // This should be "all" when clicked
         
         List<SelfCareActivity> activities;
         if (search != null && !search.trim().isEmpty()) {
             activities = selfCareService.searchActivities(search);
             model.addAttribute("searchQuery", search);
+        } else if ("all".equalsIgnoreCase(category)) { // Make sure this check is correct
+            activities = selfCareService.getAllActivities();
         } else {
             activities = selfCareService.getActivitiesByCategory(category);
         }
         
         model.addAttribute("activities", activities);
-        model.addAttribute("featuredActivities", selfCareService.getFeaturedActivities());
-        
         return "selfcare/self-care";
     }
     
@@ -65,15 +64,6 @@ public class SelfCareController {
             @RequestParam(value = "category", required = false) String category,
             Model model) {
         
-        List<SelfCareActivity> videos = selfCareService.getActivitiesByContentType("VIDEO");
-        
-        if (category != null && !category.isEmpty() && !"all".equalsIgnoreCase(category)) {
-            videos = videos.stream()
-                .filter(v -> v.getCategory().equalsIgnoreCase(category))
-                .toList();
-        }
-        
-        model.addAttribute("videos", videos);
         model.addAttribute("categories", selfCareService.getAllCategories());
         model.addAttribute("selectedCategory", category != null ? category : "all");
         model.addAttribute("activePage", "selfcare");
