@@ -1,25 +1,42 @@
 package com.teamspring.MindCare.service;
 
 import com.teamspring.MindCare.model.AssessmentResult;
+import com.teamspring.MindCare.repository.AssessmentResultRepository;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AssessmentService {
-
-    private static final int[] DEP = {2,4,9,12,15,16,20};
-    private static final int[] ANX = {1,3,6,8,14,18,19};
-    private static final int[] STR = {0,5,7,10,11,13,17};
-
-    public static AssessmentResult evaluate(int[] answers) {
-
-        int dep = score(answers, DEP);
-        int anx = score(answers, ANX);
-        int str = score(answers, STR);
-
-        return new AssessmentResult(dep, anx, str);
+    
+    @Autowired
+    private AssessmentResultRepository assessmentResultRepository;
+    
+    // Submit assessment
+    public AssessmentResult submitAssessment(int[] answers) {
+        AssessmentResult result = new AssessmentResult(answers);
+        return assessmentResultRepository.save(result);
     }
-
-    private static int score(int[] answers, int[] map) {
-        int sum = 0;
-        for (int i : map) sum += answers[i];
-        return sum * 2;
+    
+    // Get all results for a user
+    public List<AssessmentResult> getUserResults(Long userId) {
+        return assessmentResultRepository.findByUserIdOrderByCompletedAtDesc(userId);
+    }
+    
+    // Get specific result
+    public AssessmentResult getResultById(Long resultId) {
+        return assessmentResultRepository.findById(resultId)
+            .orElseThrow(() -> new RuntimeException("Result not found"));
+    }
+    
+    // Get latest result
+    public AssessmentResult getLatestUserResult(Long userId) {
+        List<AssessmentResult> results = getUserResults(userId);
+        return results.isEmpty() ? null : results.get(0);
+    }
+    
+    // Delete result
+    public void deleteResult(Long resultId) {
+        assessmentResultRepository.deleteById(resultId);
     }
 }
