@@ -13,7 +13,7 @@
 }
 
 .forum-header--container {
-    background: var(--color-purple-light);
+    background: var(--color-light-purple-bg);
     padding: 2rem;
     border-radius: 1rem;
     margin-bottom: 1.5rem;
@@ -486,7 +486,7 @@
 }
 
 .guidelines--card {
-    background-color: var(--color-purple-light);
+    background-color: var(--color-tag-bg);
     border: 1px solid var(--color-border);
 }
 
@@ -526,4 +526,98 @@
 
 .topic-link:hover {
     color: var(--color-primary);
+}
+
+/* Responsive Adjustments */
+
+/* -------- Large tablets & small laptops -------- */
+@media (max-width: 1200px) {
+
+    .container {
+        padding: 2rem 6rem;
+    }
+
+    .forum--sidebar {
+        width: 18rem;
+    }
+}
+
+/* -------- Tablets -------- */
+@media (max-width: 992px) {
+
+    .container {
+        padding: 2rem 3rem;
+    }
+
+    /* Stack main feed & sidebar vertically */
+    .forum--layout {
+        flex-direction: column;
+    }
+
+    .forum--sidebar {
+        width: 100%;
+    }
+
+    /* Tabs should be able to center */
+    .tabs--container {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Header content spacing */
+    .post--header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .tag-pill {
+        align-self: flex-start;
+    }
+}
+
+/* -------- Mobile -------- */
+@media (max-width: 576px) {
+
+    .container {
+        padding: 1.5rem 1rem;
+    }
+
+    /* Tabs scroll instead of overflow */
+    .tabs--container {
+        overflow-x: auto;
+        justify-content: flex-start;
+    }
+
+    .tab-item {
+        flex-shrink: 0;
+        font-size: 0.85rem;
+    }
+
+    /* Form footer stacks */
+    .form-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    /* Post actions wrap nicely */
+    .post--actions {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    /* Replies indentation reduced */
+    .replies--list {
+        padding-left: 0.5rem;
+    }
+
+    .reply--item {
+        padding-left: 0.25rem;
+    }
+
+    /* Reply action buttons stack */
+    .reply-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
