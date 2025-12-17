@@ -95,7 +95,7 @@ public class StudentModuleDataInitializer {
                     "breathing",
                     5,
                     "Beginner",
-                    "https://www.youtube.com/embed/example1",
+                    "https://www.youtube.com/embed/8vkYJf8DOsc?si=cD9nTglanIvEvq0H",
                     "1. Sit up straight\n2. Breathe in for 4 seconds\n3. Hold for 4\n4. Exhale for 6",
                     "Reduces stress, improves focus"
                 ),
@@ -106,7 +106,7 @@ public class StudentModuleDataInitializer {
                     "meditation",
                     10,
                     "Beginner",
-                    "https://www.youtube.com/embed/example2",
+                    "https://www.youtube.com/embed/O-6f5wQXSu8?si=ww3OKRsExOMqRNKA",
                     "Find a quiet space and follow the audio guide",
                     "Improves concentration, reduces anxiety"
                 ),

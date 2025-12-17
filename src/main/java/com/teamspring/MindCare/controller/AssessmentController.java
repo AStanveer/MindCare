@@ -95,12 +95,6 @@ public class AssessmentController {
         return "redirect:/mindcare/assessment/history";
     }
     
-    @GetMapping("/moodtracker")
-    public String showMoodTracker(Model model) {
-        model.addAttribute("activePage", "moodtracker");
-        return "assessment/mood-tracker";
-    }
-    
     // DTO for Thymeleaf compatibility
     public static class AssessmentResultDTO {
         private final int depressionScore;

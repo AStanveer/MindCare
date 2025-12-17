@@ -65,7 +65,7 @@
         .meta-badge {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
@@ -92,7 +92,7 @@
             color: #ef4444;
         }
 
-        .type-badge {
+        .category-badge {
             background: rgba(165, 180, 252, 0.2);
             color: #8c7ae6;
         }
@@ -160,29 +160,6 @@
 
         .instructions li, .benefits li {
             margin-bottom: 10px;
-        }
-
-        /* Equipment */
-        .equipment-section {
-            background: rgba(140, 122, 230, 0.05);
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-        }
-
-        .equipment-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .equipment-item {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            border: 1px solid rgba(140, 122, 230, 0.2);
         }
 
         /* Action Buttons */
@@ -312,24 +289,24 @@
             
             <div class="meta-info">
                 <div class="meta-badge duration-badge">
-                    <img src="/icons/clock.png" style="width: 16px; height: 16px;">
                     <span th:text="${activity.formattedDuration}"></span>
                 </div>
-                <!--
-                <div th:class="'meta-badge difficulty-badge ' + 
-                              (${#strings.toLowerCase(activity.difficulty)} == 'intermediate' ? 'difficulty-intermediate' : 
-                               ${#strings.toLowerCase(activity.difficulty)} == 'advanced' ? 'difficulty-advanced' : '')">
-                    <img src="/icons/star.png" style="width: 16px; height: 16px;">
-                    <span th:text="${activity.difficulty}"></span>
-                </div> -->
                 
-                <div class="meta-badge type-badge">
-                    <span th:text="${activity.contentTypeIcon}"></span>
-                    <span th:text="${activity.contentType}"></span>
+                <!-- Difficulty Badge (only show if difficulty exists) -->
+                <div th:if="${activity.difficulty != null and activity.difficulty != ''}"
+                     th:class="${'meta-badge difficulty-badge ' + 
+                               (activity.difficulty.toLowerCase() == 'intermediate' ? 'difficulty-intermediate' : 
+                                activity.difficulty.toLowerCase() == 'advanced' ? 'difficulty-advanced' : '')}">
+                    <span th:text="${activity.difficulty}"></span>
                 </div>
                 
+                <!-- Category Badge -->
+                <div class="meta-badge category-badge">
+                    <span th:text="${#strings.capitalize(activity.category)}"></span>
+                </div>
+                
+                <!-- Created By Badge -->
                 <div class="meta-badge" style="background: rgba(165, 180, 252, 0.2); color: #8c7ae6;">
-                    <img src="/icons/user.png" style="width: 16px; height: 16px;">
                     <span th:text="${activity.createdBy}"></span>
                 </div>
             </div>
@@ -341,11 +318,11 @@
         <!-- Video/Content Section -->
         <div class="content-section">
             <h3 class="section-title">
-                <img src="/icons/play-circle.png" style="width: 24px; height: 24px;">
+                <img src="/icons/activity.png" style="width: 24px; height: 24px;">
                 <span>Activity Guide</span>
             </h3>
             
-            <div th:if="${activity.videoUrl}" class="video-section">
+            <div th:if="${activity.videoUrl != null and activity.videoUrl != ''}" class="video-section">
                 <div class="video-container">
                     <iframe th:src="${activity.videoUrl}" 
                             frameborder="0" 
@@ -355,14 +332,14 @@
                 </div>
             </div>
             
-            <div th:unless="${activity.videoUrl}" class="video-placeholder">
-                <img src="/icons/play-circle-large.png" style="width: 64px; height: 64px; margin-bottom: 20px;">
+            <div th:unless="${activity.videoUrl != null and activity.videoUrl != ''}" class="video-placeholder">
+                <img src="/icons/activity.png" style="width: 64px; height: 64px; margin-bottom: 20px;">
                 <p>No video available for this activity</p>
             </div>
         </div>
 
         <!-- Instructions -->
-        <div th:if="${activity.instructions}" class="content-section">
+        <div th:if="${activity.instructions != null and activity.instructions != ''}" class="content-section">
             <h3 class="section-title">
                 <img src="/icons/list.png" style="width: 24px; height: 24px;">
                 <span>Instructions</span>
@@ -372,25 +349,10 @@
             </div>
         </div>
 
-        <!-- Equipment Needed 
-        <div th:if="${activity.equipmentNeeded}" class="content-section">
-            <h3 class="section-title">
-                <img src="/icons/tool.png" style="width: 24px; height: 24px;">
-                <span>Equipment Needed</span>
-            </h3>
-            <div class="equipment-section">
-                <div class="equipment-list">
-                    <div th:each="item : ${#strings.arraySplit(activity.equipmentNeeded, ',')}" 
-                         class="equipment-item" th:text="${item.trim()}">
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <!-- Benefits -->
-        <div th:if="${activity.benefits}" class="content-section">
+        <div th:if="${activity.benefits != null and activity.benefits != ''}" class="content-section">
             <h3 class="section-title">
-                <img src="/icons/heart.png" style="width: 24px; height: 24px;">
+                <img src="/icons/benefit.png" style="width: 24px; height: 24px;">
                 <span>Benefits</span>
             </h3>
             <div class="benefits" th:utext="${activity.benefits}">
@@ -401,10 +363,7 @@
         <!-- Action Buttons -->
         <div class="action-buttons">
             <a th:href="@{/mindcare/selfcare}" class="action-btn btn-outline">
-                ← Back to Self Care
-            </a>
-            <a th:href="@{/mindcare/selfcare(category=${activity.category})}" class="action-btn btn-primary">
-                More in <span th:text="${#strings.capitalize(activity.category)}"></span>
+                Back to Self Care
             </a>
         </div>
     </div>
@@ -418,9 +377,24 @@
             const instructionsDiv = document.querySelector('.instructions');
             if (instructionsDiv) {
                 const text = instructionsDiv.textContent;
-                if (text && !text.includes('<')) {
+                if (text && !text.includes('<') && text.trim() !== '') {
                     // Convert plain text to HTML with line breaks
                     instructionsDiv.innerHTML = text.split('\n').map(line => {
+                        if (line.trim()) {
+                            return `<p>${line}</p>`;
+                        }
+                        return '';
+                    }).join('');
+                }
+            }
+            
+            // Format benefits if they're plain text
+            const benefitsDiv = document.querySelector('.benefits');
+            if (benefitsDiv) {
+                const text = benefitsDiv.textContent;
+                if (text && !text.includes('<') && text.trim() !== '') {
+                    // Convert plain text to HTML with line breaks
+                    benefitsDiv.innerHTML = text.split('\n').map(line => {
                         if (line.trim()) {
                             return `<p>${line}</p>`;
                         }
