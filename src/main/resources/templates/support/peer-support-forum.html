@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer Support - MindCare</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/support/peer-support-forum.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar('peer')}"></div>
+
+    <div class="container">
+        
+        <header class="forum-header--container">
+            <div class="header-content">
+                <h2>Peer Support & Chat</h2>
+                <p>Connect with others and get instant support</p>
+            </div>
+        </header>
+
+        <div class="tabs--container">
+            <a th:href="@{/mindcare/peer-support}" class="tab-item active">
+                <svg th:replace="~{fragments/icons ::icon-people}"></svg>
+                Peer Forum
+            </a>
+            <a th:href="@{/mindcare/support-chat}" class="tab-item">
+                <svg th:replace="~{fragments/icons ::icon-bot}"></svg>
+                Support Chat
+            </a>
+        </div>
+
+        <div class="forum--layout">
+            
+            <main class="forum--feed">
+                
+                <div class="card create-post--card">
+                    <h3>Share Your Thoughts</h3>
+                    <p class="sub-text">Start a conversation with the community</p>
+                    
+                    <form class="create-post--form">
+                        <textarea placeholder="What's on your mind? Share your experiences, ask questions, or offer support..."></textarea>
+                        <div class="form-footer">
+                            <span class="helper-text">Be kind and respectful to others</span>
+                            <button type="button" class="btn btn-primary btn-sm">Post</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="posts--container">
+                    <div class="card post--card" th:each="post : ${posts}">
+                        <div class="post--header">
+                            <div class="user-info">
+                                <div class="avatar-circle" th:classappend="${post.avatarColorClass}">
+                                    <span th:text="${post.initials}">AM</span>
+                                </div>
+                                <div class="user-meta">
+                                    <span class="user-name" th:text="${post.authorName}">Alex M.</span>
+                                    <span class="post-time" th:text="${post.timeAgo}">2 hours ago</span>
+                                </div>
+                            </div>
+                            <span class="tag-pill" 
+                                  th:classappend="${post.tagClass}" 
+                                  th:text="${post.tagName}">Academic Stress</span>
+                        </div>
+
+                        <div class="post--content">
+                            <h3 th:text="${post.title}">Managing exam stress</h3>
+                            <p th:text="${post.content}">Finals are coming up and I'm feeling overwhelmed...</p>
+                        </div>
+
+                        <div class="post--actions">
+                            <button class="post-action--btn">
+                                <svg th:replace="~{fragments/icons ::icon-like}"></svg>
+                                <span th:text="${post.likes}">12</span>
+                            </button>
+                            <button onclick="toggleReplies(this)" class="post-action--btn">
+                                <svg th:replace="~{fragments/icons ::icon-reply}"></svg>
+                                <span th:text="${post.repliesCount} + ' Replies'">5 Replies</span>
+                            </button>
+                        </div>
+
+                        <div class="replies--section" 
+                            th:style="${post.showReplies} ? 'display:block' : 'display:none'">
+
+                            <div class="replies--header">
+                                <span>Replies (<span th:text="${post.repliesCount}">3</span>)</span>
+                                <button onclick="toggleReplies(this)" class="close--btn">
+                                    <svg th:replace="~{fragments/icons ::icon-close}"></svg>
+                                </button>
+                            </div>
+
+                            <div class="replies--list">
+                                <div class="reply--item" th:each="reply : ${post.replies}">
+                                    <div class="reply-avatar" th:classappend="${reply.avatarColorClass}">
+                                        <span th:text="${reply.initials}">CT</span>
+                                    </div>
+                                    <div class="reply-body">
+                                        <div class="reply-meta">
+                                            <span class="reply-author" th:text="${reply.authorName}">Casey T.</span>
+                                            <span class="reply-time" th:text="${reply.timeAgo}">1 hour ago</span>
+                                        </div>
+                                        <p th:text="${reply.content}">I find breaking study sessions...</p>
+                                        <button class="reply-like-btn">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                                            <span th:text="${reply.likes}">3</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="add-reply--box">
+                                <h4>Add your reply</h4>
+                                <textarea placeholder="Share your thoughts, advice, or support..."></textarea>
+                                
+                                <div class="reply-actions">
+                                    <button class="btn btn-secondary btn-xs">Cancel</button>
+                                    <button class="btn btn-primary btn-xs">Post Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+            </main>
+
+            <aside class="forum--sidebar">
+
+                <div class="card sidebar--card guidelines--card">
+                    <h4>Community Guidelines</h4>
+                    <ul class="guidelines-list">
+                        <li><span class="bullet">•</span> Be respectful and supportive</li>
+                        <li><span class="bullet">•</span> No personal attacks or bullying</li>
+                        <li><span class="bullet">•</span> Protect your privacy</li>
+                        <li><span class="bullet">•</span> Report inappropriate content</li>
+                    </ul>
+                </div>
+
+                <div class="card sidebar--card">
+                    <h4>Popular Topics</h4>
+                    <div class="topics-list">
+                        <a href="#" class="topic-link">#Academic Stress</a>
+                        <a href="#" class="topic-link">#Self-Care</a>
+                        <a href="#" class="topic-link">#Sleep</a>
+                        <a href="#" class="topic-link">#Anxiety</a>
+                        <a href="#" class="topic-link">#Social Life</a>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        function toggleReplies(element) {
+                const card = element.closest('.post--card');
+                
+                const replySection = card.querySelector('.replies--section');
+                
+                if (replySection) {
+                    if (replySection.style.display === 'none') {
+                        replySection.style.display = 'block';
+                    } else {
+                        replySection.style.display = 'none';
+                    }
+                }
+            }
+    </script>
+</body>
+</html>

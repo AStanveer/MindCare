@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Chat - MindCare</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/support/support-chatbot.css}">
+    </head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar('peer')}"></div>
+
+    <div class="container">
+        
+        <header class="forum-header--container">
+            <div class="header-content">
+                <h2>Peer Support & Chat</h2>
+                <p>Connect with others and get instant support</p>
+            </div>
+        </header>
+
+        <div class="tabs--container">
+            <a th:href="@{/mindcare/peer-support}" class="tab-item">
+                <svg th:replace="~{fragments/icons ::icon-people}"></svg>
+                Peer Forum
+            </a>
+            <a th:href="@{/mindcare/support-chat}" class="tab-item active">
+                <svg th:replace="~{fragments/icons ::icon-bot}"></svg>
+                Support Chat
+            </a>
+        </div>
+
+        <main class="chat--layout">
+            
+            <div class="card chat--interface">
+                <div class="chat--header">
+                    <div class="bot-avatar">
+                        <svg th:replace="~{fragments/icons ::icon-bot}"></svg>
+                    </div>
+                    <div class="header-text">
+                        <h3>MindCare Support Bot</h3>
+                        <p>24/7 emotional support assistant</p>
+                    </div>
+                </div>
+
+                <div class="chat--messages">
+                    <div class="message--item bot">
+                        <div class="message--bubble">
+                            Hello! I'm here to support you. How are you feeling today?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat--input-area">
+                    <div class="input-wrapper">
+                        <input type="text" placeholder="Type your message..." />
+                        <button class="send-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                    <p class="disclaimer-text">This is an AI assistant. For emergencies, please contact your local crisis helpline.</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>
