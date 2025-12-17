@@ -23,7 +23,8 @@
 }
 
 .quick-actions--container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
 }
 
@@ -64,20 +65,21 @@
 }
 
 .dashboard--container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     width: 100%;
 }
 
 .dashboard--left {
-    flex: 0 0 70%;
+    grid-column: span 2;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
 .dashboard--right {
-    width: 100%;
+    grid-column: span 1;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -171,7 +173,6 @@
 .summary-items--container {
     display: flex;
     flex-direction: column;
-    padding: 0 1.5rem;
     gap: 1rem;
 }
 
@@ -427,4 +428,95 @@ dialog::backdrop {
 
 .btn-start:hover {
     background-color: var(--color-primary-light);
+}
+
+/* Responsive Adjustments */
+
+/* Large tablets & small laptops */
+@media (max-width: 1200px) {
+    .container {
+        padding: 2rem 6rem;
+    }
+
+    .dashboard--left {
+        flex: 0 0 65%;
+    }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+    .container {
+        padding: 2rem 3rem;
+    }
+
+    .quick-actions--container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .quick-action--card {
+        flex: 1 1 calc(50% - 1.5rem);
+    }
+
+    .dashboard--container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dashboard--left,
+    .dashboard--right {
+        width: 100%;
+        flex: unset;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .container {
+        padding: 1.5rem 1rem;
+    }
+
+    .quick-action--card {
+        flex: 1 1 100%;
+    }
+
+    .schedule-item,
+    .recent--item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .schedule-item--actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .request--actions {
+        flex-direction: column;
+    }
+
+    .request--actions button {
+        width: 100%;
+    }
+
+    /* Modal */
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 400px) {
+    .welcome-message--container h2 {
+        font-size: 1.1rem;
+    }
+
+    .card {
+        padding: 1rem;
+    }
 }

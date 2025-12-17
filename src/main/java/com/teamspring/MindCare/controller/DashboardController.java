@@ -38,7 +38,7 @@ public class DashboardController {
             new QuickAction("Quick Assessment", "icon-assessment", "assessment/dass21"),
             new QuickAction("Self Care", "icon-self-care", "self-care"),
             new QuickAction("Book Session", "icon-book-session", "booking"),
-            new QuickAction("Peer Support", "icon-peer-support", "peer")
+            new QuickAction("Peer Support", "icon-peer-support", "/mindcare/peer-support")
         );
 
         List<CounsellingSession> sessions = List.of(
