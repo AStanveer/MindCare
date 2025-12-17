@@ -95,10 +95,12 @@
             padding: 4px;
             margin-bottom: 30px;
             gap: 4px;
+            flex-wrap: wrap;
         }
 
         .category-tab {
             flex: 1;
+            min-width: 120px;
             padding: 12px 16px;
             border-radius: 12px;
             border: none;
@@ -142,11 +144,15 @@
             flex-direction: column;
             height: 100%;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
         }
 
         .resource-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(140, 122, 230, 0.15);
+            text-decoration: none;
+            color: inherit;
         }
 
         .resource-category {
@@ -160,33 +166,25 @@
             margin-bottom: 15px;
             width: fit-content;
         }
-
-        .resource-category.mental-health {
-            background: rgba(140, 122, 230, 0.2);
-            color: #8c7ae6;
+        
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
-
-        .resource-category.self-care {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4CAF50;
-        }
-
-        .resource-category.wellness {
-            background: rgba(33, 150, 243, 0.2);
-            color: #2196F3;
-        }
-
-        .resource-category.personal-growth {
-            background: rgba(255, 152, 0, 0.2);
-            color: #FF9800;
-        }
-
+        
         .card-title {
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 12px;
             color: #2e2e2e;
             line-height: 1.3;
+            /* Limit title to 2 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.6em; /* 2 lines * 1.3 line-height */
         }
 
         .card-description {
@@ -195,6 +193,13 @@
             line-height: 1.5;
             flex: 1;
             font-size: 14px;
+            /* Limit description to 4 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 6em; /* 4 lines * 1.5 line-height */
         }
 
         /* Resource Card Meta Layout */
@@ -211,17 +216,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .resource-category {
-            display: inline-block;
-            background: rgba(165, 180, 252, 0.2);
-            color: #8c7ae6;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            margin: 0; /* Remove bottom margin since we're using flex */
         }
 
         .read-time {
@@ -265,10 +259,13 @@
             font-size: 14px;
             transition: background 0.3s ease;
             text-align: center;
+            display: block;
+            text-decoration: none;
         }
 
         .read-btn:hover {
             background: #7b6bd6;
+            text-decoration: none;
         }
 
         /* Empty State */
@@ -314,6 +311,21 @@
             font-size: 14px;
             color: #64748b;
         }
+
+        @media (max-width: 768px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+            
+            .category-tab {
+                min-width: 100px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -327,15 +339,15 @@
 
         <!-- Search Bar -->
         <div class="search-container">
-            <div class="search-bar">
+            <form th:action="@{/mindcare/resources}" method="get" class="search-bar">
                 <input type="text" 
-                    id="searchInput" 
-                    placeholder="Search resources"
-                    onkeyup="searchResources()">
-                <button class="search-btn" onclick="searchResources()">
+                    name="search"
+                    th:value="${searchQuery}"
+                    placeholder="Search resources by title or description">
+                <button type="submit" class="search-btn">
                     Search
                 </button>
-            </div>
+            </form>
         </div>
 
         <!-- Category Filter Tabs -->
@@ -352,10 +364,13 @@
             </a>
         </div>
 
-        <!-- Resources Grid  -->
+        <!-- Resources Grid -->
         <div class="resources-grid">
-
-            <div th:each="resource : ${resources}" class="resource-card">
+            <a th:each="resource : ${resources}" 
+               th:href="@{/mindcare/resources/{id}(id=${resource.id})}"
+               class="resource-card">
+                
+                <div class="resource-category" th:text="${resource.category}"></div>
                 
                 <h3 class="card-title" th:text="${resource.title}"></h3>
                 
@@ -363,7 +378,6 @@
                 
                 <div class="resource-meta">
                     <div class="meta-top">
-                        <div class="resource-category" th:text="${resource.category}"></div>
                         <div class="read-time">
                             <span th:text="${resource.readTime}"></span>
                         </div>
@@ -371,16 +385,10 @@
                     
                     <div class="meta-middle">
                         <div class="author" th:text="${resource.author}"></div>
-                        <div class="date" th:text="${resource.date}"></div>
-                    </div>
-                    
-                    <div class="meta-bottom">
-                        <button class="read-btn" th:onclick="|readResource("${resource.title}")|">
-                            Read Article
-                        </button>
+                        <div class="date" th:text="${resource.formattedDate}"></div>
                     </div>
                 </div>
-            </div>
+            </a>
             
             <div th:if="${#lists.isEmpty(resources)}" class="no-resources">
                 <img src="/icons/book.png" class="no-resources-icon">
@@ -388,20 +396,31 @@
                 <p th:text="'No ' + ${selectedCategory == 'All' ? 'resources' : selectedCategory.toLowerCase()} + ' articles available at the moment.'"></p>
             </div>
         </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-item">
+                <div class="stat-value" th:text="${resources.size()}">0</div>
+                <div class="stat-label">Total Articles</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" th:text="${categories.size() - 1}">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+        </div>
     </div>
 
-
     <script>
-
-        // Search function
-        function searchResources() {
+        // Simple search function
+        function filterResources() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const cards = document.querySelectorAll('.resource-card');
             
             cards.forEach(card => {
                 const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
                 
-                if (title.includes(searchTerm)) {
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
                     card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
@@ -409,20 +428,12 @@
             });
         }
         
-        // Hover Effects
+        // Initialize search if there's a search query
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.resource-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                    this.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
-                    this.style.boxShadow = '0 8px 20px rgba(140, 122, 230, 0.15)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-                });
-            });
+            const searchInput = document.querySelector('input[name="search"]');
+            if (searchInput && searchInput.value) {
+                filterResources();
+            }
         });
     </script>
 </body>
