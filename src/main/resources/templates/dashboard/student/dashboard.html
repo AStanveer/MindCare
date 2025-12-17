@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Results - MindCare</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard/student/dashboard.css}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div th:replace="~{fragments/navbar :: navbar('dashboard')}"></div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="welcome-message--container">
+            <h2>Welcome back, <span th:text="${username}">Moaz</span></h2>
+            <p>How are you feeling today? Your well-being matters.</p>
+        </div>
+
+        <div class="quick-actions--container">
+            <a  th:each="action : ${quickActions}"
+                th:href="@{${action.url}}"
+                class="quick-action--card"
+            >
+                <div class="action-icon">
+                    <th:block
+                        th:replace="~{fragments/icons :: __${action.icon}__}">
+                    </th:block>
+                </div>
+                <p th:text="${action.label}">Label</p>
+            </a>
+        </div>
+        
+        <main class="dashboard--container">
+            <div class="dashboard--left">
+                <div class="card progress--container">
+                    <div class="card--header">
+                        <div class="card-title">
+                            <span class="card-icon">
+                                <th:block
+                                    th:replace="~{fragments/icons ::icon-trend}">
+                                </th:block>
+                            </span>
+                            Your Progress
+                        </div>
+                        <p>Track your wellness journey</p>
+                    </div>
+                    <div class="progress-bars--container">
+                        <div class="progress-item">
+                            <div class="progress-info">
+                                Weekly Mood Score
+                                7.2/10
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 72%;"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-info">
+                                Self-Care Streak        
+                                5 days
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 70%;"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-info">
+                                Assessment Completion
+                                3/4
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card activity--container">
+                    <div class="card--header">
+                        <div class="card-title">
+                            <span class="card-icon">
+                                <th:block
+                                    th:replace="~{fragments/icons ::icon-recent-activity}">
+                                </th:block>
+                            </span>
+                            Recent Activity
+                        </div>
+                        <p>Your latest wellness activities</p>
+                    </div>
+                    <div class="activity-items--container">
+                        <div class="activity--item">
+                            <div class="activity-label">
+                                Mood Tracker
+                                <span class="gray-text">Today</span>
+                            </div>
+                            <div class="activity-value">
+                                <span class="number-circle">7</span>
+                            </div>
+                        </div>
+                        <div class="activity--item">
+                            <div class="activity-label">
+                                Self-Assessment
+                                <span class="gray-text">Yesterday</span>
+                            </div>
+                            <div class="activity-value">
+                                <span class="number-circle">65</span>
+                            </div>
+                        </div>
+                        <div class="activity--item">
+                            <div class="activity-label">
+                                Guided Meditation
+                                <span class="gray-text">2 days ago</span>
+                            </div>
+                            <div class="activity-value">
+                                <span class="gray-text">10 mins</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard--right">
+                <div class="card reminders--container">
+                    <div class="card--header">
+                        <div class="card-title">
+                            <span class="card-icon">
+                                <th:block
+                                    th:replace="~{fragments/icons ::icon-bell}">
+                                </th:block>
+                            </span>
+                            Daily Reminders
+                        </div>
+                    </div>
+                    <ul class="reminders--list">
+                        <li>Complete your daily mood check-in</li>
+                        <li>Practice breathing exercise (5 mins)</li>
+                        <li>Review stress management tips</li>
+                    </ul>                            
+                </div>
+                
+                <div class="card sessions--container">
+                    <div class="card--header">
+                        <div class="card-title">
+                            <span class="card-icon">
+                                <th:block
+                                    th:replace="~{fragments/icons ::icon-calendar}">
+                                </th:block>
+                            </span>
+                            Upcoming Sessions
+                        </div>
+                    </div>
+
+                    <div class="sessions-items--container">
+                        <div class="session--item" th:each="counsellingSession : ${counsellingSessions}">
+                            <div class="session--info">
+                                <span th:text="${counsellingSession.doctorName}">Dr. Sarah Johnson</span>
+                                <span class="gray-text" 
+                                    th:text="${#temporals.format(counsellingSession.date, 'MMM d, yyyy ''at'' h:mm a')}">
+                                    Nov 5...
+                                </span>                            
+                            </div>
+                            <div class="session--actions">
+                                <button class="btn btn-secondary"
+                                        th:data-doctor="${counsellingSession.doctorName}"
+                                        th:data-date="${#temporals.format(counsellingSession.date, 'MMM d, yyyy ''at'' h:mm a')}"
+                                        th:data-type="${counsellingSession.type}"
+                                        onclick="openModal(this)">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary">
+                        Book New Session
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <dialog id="sessionModal" class="modal-dialog">
+        <div class="modal-header">
+            <h3>Session Details</h3>
+            <span class="modal-subtitle">Review your upcoming counselling session information</span>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="counselor-card">
+                <div class="counselor-avatar">
+                    <span>
+                        <svg th:replace="~{fragments/icons ::icon-person}"></svg>
+                    </span>
+                </div>
+                <div>
+                    <small class="gray-text">Counselor</small>
+                    <p id="modalDoctorName">Dr. Name</p>
+                </div>
+            </div>
+
+            <div class="details--container">
+                <div class="detail-row">
+                    <span class="label gray-text">Session Type</span>
+                    <span class="badge" id="modalType">Individual Counselling</span>
+                </div>
+                
+                <div class="detail-item">
+                    <span class="icon">
+                        <svg th:replace="~{fragments/icons ::icon-calendar}"></svg>
+                    </span>
+                    <div class="detail-text">
+                        <span class="label">Date & Time</span>
+                        <span class="value" id="modalDateTime">Date</span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <span class="icon">
+                        <svg th:replace="~{fragments/icons ::icon-clock}"></svg>
+                    </span>
+                    <div class="detail-text">
+                        <span class="label">Duration</span>
+                        <span class="value" id="modalDuration">50 minutes</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <span class="icon">
+                        <svg th:replace="~{fragments/icons ::icon-camera}"></svg>
+                    </span>
+                    <div class="detail-text">
+                        <span class="label">Method</span>
+                        <span class="value">Video Call</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notes-box">
+                <strong class="gray-text">Important Notes</strong>
+                <p>Please join 5 minutes early to test your audio and video settings.</p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            <button class="btn btn-primary">Reschedule</button>
+        </div>
+    </dialog>
+    <script>
+        function openModal(button) {
+            const doctorName = button.getAttribute("data-doctor");
+            const date = button.getAttribute("data-date");
+            const type = button.getAttribute("data-type");
+
+            document.getElementById("modalDoctorName").innerText = doctorName;
+            document.getElementById("modalDateTime").innerText = date;
+            document.getElementById("modalType").innerText = type;
+
+            document.getElementById("sessionModal").showModal();
+        }
+
+        function closeModal() {
+            document.getElementById("sessionModal").close();
+        }
+    </script>
+</body>
+</html>
