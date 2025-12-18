@@ -1,16 +1,16 @@
 package com.teamspring.MindCare.controller;
 
+import com.teamspring.MindCare.model.CounsellingSession;
+import com.teamspring.MindCare.model.ScheduleItem;
+import com.teamspring.MindCare.viewmodel.QuickAction;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.teamspring.MindCare.model.CounsellingSession;
-import com.teamspring.MindCare.model.ScheduleItem;
-import com.teamspring.MindCare.viewmodel.QuickAction;
+
 
 @Controller
 @RequestMapping("/mindcare")
@@ -35,7 +35,7 @@ public class DashboardController {
     public String home(Model model) {
 
         List<QuickAction> actions = List.of(
-            new QuickAction("Quick Assessment", "icon-assessment", "assessment/dass21"),
+            new QuickAction("Mood Tracker", "icon-assessment", "assessment/moodtracker"),
             new QuickAction("Self Care", "icon-self-care", "self-care"),
             new QuickAction("Book Session", "icon-book-session", "booking"),
             new QuickAction("Peer Support", "icon-peer-support", "/mindcare/peer-support")
