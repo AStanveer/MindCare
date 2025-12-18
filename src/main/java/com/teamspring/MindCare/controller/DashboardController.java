@@ -38,7 +38,7 @@ public class DashboardController {
 
         List<QuickAction> actions = List.of(
             new QuickAction("Mood Tracker", "icon-mood-2", "/mindcare/mood/tracker"),
-            new QuickAction("Self Care", "icon-self-care", "self-care"),
+            new QuickAction("Self Care", "icon-self-care", "/mindcare/selfcare"),
             new QuickAction("Book Session", "icon-book-session", "booking"),
             new QuickAction("Peer Support", "icon-peer-support", "/mindcare/peer-support")
         );
