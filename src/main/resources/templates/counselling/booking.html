@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Counselling – MindCare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f6f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            background: linear-gradient(90deg, rgba(140, 122, 230, 0.1), rgba(165, 180, 252, 0.1));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #2e2e2e;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* ===== LAYOUT ===== */
+        .layout {
+            display: grid;
+            grid-template-columns: 2.2fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== CATEGORY TABS ===== */
+        .category-tabs {
+            display: flex;
+            width: 12.73506rem;
+            height: 2.24925rem;
+            background: #e8e9eb;
+            border-radius: 1rem;
+            padding: 4px;
+            margin-bottom: 30px;
+            gap: 4px;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+   
+
+        .category-tab {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            height: 1.81069rem;
+            width: auto;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .category-tab a {
+            color: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-tab a:hover {
+            text-decoration: none;
+        }
+
+        .category-tab.active {
+            background: white;
+            color: #8c7ae6;
+            box-shadow: 0 2px 8px rgba(140, 122, 230, 0.2);
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        /* ===== COUNSELOR ===== */
+        .counselor {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .counselor:hover {
+            border-color: #6c5ce7;
+        }
+
+        label input[type="radio"]:checked + .counselor {
+            border-color: #6c5ce7;
+            background: #f5f3ff;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #eae7ff;
+            color: #6c5ce7;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .counselor-info {
+            flex: 1;
+        }
+
+        .counselor-info small {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .rating {
+            font-size: 12px;
+            background: #ede9fe;
+            color: #6c5ce7;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        /* ===== DATE & TIME ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .date-picker {
+            width: 100%;
+        }
+
+        .date-picker input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            display: none;
+        }
+
+        .date-picker input[type="text"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        /* Flatpickr calendar styling */
+        .flatpickr-calendar {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .flatpickr-day.selected {
+            background: #6c5ce7;
+            border-color: #6c5ce7;
+        }
+
+        .flatpickr-day.today {
+            border-color: #6c5ce7;
+        }
+
+        .flatpickr-day:hover {
+            background: #f5f3ff;
+        }
+
+        .times {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .time-slot {
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .time-slot{
+            background: #6c5ce7;
+            color: white;
+            border-color: #6c5ce7;
+        }
+
+        input[type="radio"]:checked + .session-type {
+            border-color: #6c5ce7;
+            background: #f5f3ff;
+        }
+
+        /* ===== SESSION TYPE ===== */
+        .session-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .session-type {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* ===== BUTTON ===== */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: #6c5ce7;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* ===== SUMMARY ===== */
+        .summary {
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary svg {
+            height: 1.5rem;
+            width: auto;
+        }
+
+        .summary p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .summary strong {
+            color: #1f2937;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="~{fragments/navbar :: navbar('counselling')}"></div>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h1>Book Counselling Session</h1>
+        <p>Schedule a session with a mental health professional</p>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+        <div class="category-tab active">
+            <a th:href="@{/mindcare/counselling/booking}">Book Session</a>
+        </div>
+        <div class="category-tab">
+                <a th:href="@{/mindcare/counselling/my-sessions}">My Sessions</a>
+        </div>
+
+    </div>
+
+    <form th:action="@{/mindcare/counselling/confirm}" method="post">
+        <div class="layout">
+
+            <!-- LEFT -->
+            <div>
+
+                <!-- STEP 1 -->
+                <div class="card">
+                    <div class="step-title">Step 1: Choose a Counselor</div>
+
+                    <label th:each="c : ${counselors}">
+                        <input type="radio" name="counselorId" th:value="${c.id}" required>
+                        <div class="counselor">
+                            <div class="avatar" th:text="${#strings.substring(c.name,0,1)}"></div>
+                            <div class="counselor-info">
+                                <strong th:text="${c.name}"></strong><br>
+                                <small th:text="${c.specialty}"></small><br>
+                                <span class="rating">★ <span th:text="${c.rating}"></span></span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="card">
+                    <div class="step-title">Step 2: Choose Date & Time</div>
+
+                    <div class="grid">
+                        <div class="date-picker">
+                        <input type="text" id="datePicker" name="sessionDate">
+                        </div>
+
+                        <div class="times">
+                            <label th:each="t : ${timeSlots}">
+                                <input type="radio" name="time" th:value="${t}" required>
+                                <div class="time-slot" th:text="${t}"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="card">
+                    <div class="step-title">Step 3: Session Type</div>
+
+                    <div class="session-types">
+                        <label>
+                            <input type="radio" name="sessionType" value="Video" required>
+                            <div class="session-type">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21.3264 17.3277L28.2882 21.9689C28.3885 22.0356 28.5051 22.074 28.6255 22.0797C28.746 22.0855 28.8657 22.0585 28.972 22.0016C29.0782 21.9447 29.1671 21.86 29.2291 21.7566C29.291 21.6532 29.3238 21.5349 29.3238 21.4144V10.4899C29.3239 10.3726 29.293 10.2574 29.2342 10.1559C29.1755 10.0544 29.091 9.97022 28.9894 9.91181C28.8877 9.8534 28.7724 9.82285 28.6551 9.82325C28.5379 9.82364 28.4228 9.85498 28.3215 9.91408L21.3264 13.9954" stroke="#8C7AE6" stroke-width="2.66581" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M18.6606 7.99707H5.33158C3.85929 7.99707 2.66577 9.19059 2.66577 10.6629V21.3261C2.66577 22.7984 3.85929 23.9919 5.33158 23.9919H18.6606C20.1329 23.9919 21.3264 22.7984 21.3264 21.3261V10.6629C21.3264 9.19059 20.1329 7.99707 18.6606 7.99707Z" stroke="#8C7AE6" stroke-width="2.66581" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <p> Video Call </p>
+                            </div>
+                        </label>
+
+                        <label>
+                            <input type="radio" name="sessionType" value="InPerson">
+                            
+
+                            <div class="session-type"> 
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M25.3252 27.9906V25.3248C25.3252 23.9107 24.7635 22.5546 23.7636 21.5548C22.7637 20.5549 21.4076 19.9932 19.9936 19.9932H11.9962C10.5821 19.9932 9.22602 20.5549 8.22614 21.5548C7.22627 22.5546 6.66455 23.9107 6.66455 25.3248V27.9906" stroke="#8C7AE6" stroke-width="2.66581" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M15.9949 14.6623C18.9395 14.6623 21.3266 12.2752 21.3266 9.33064C21.3266 6.38607 18.9395 3.99902 15.9949 3.99902C13.0504 3.99902 10.6633 6.38607 10.6633 9.33064C10.6633 12.2752 13.0504 14.6623 15.9949 14.6623Z" stroke="#8C7AE6" stroke-width="2.66581" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+
+                                
+                                <p>In-Person</p>
+
+                            </div>
+                        </label>
+                    </div>
+
+                    <button class="btn">Confirm Booking</button>
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="summary">
+                <div class="card">
+                    <div class="step-title">Booking Summary</div>
+                    
+                    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 16px;">
+                        Your selection will appear here
+                    </p>
+                    
+                    <!-- This section will be populated dynamically with JavaScript or shown on form submission -->
+                    <div id="summary-content" style="display: none;">
+                        <div style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 2px; flex-shrink: 0;">
+                                <path d="M4.16527 7.49753C6.00563 7.49753 7.49753 6.00563 7.49753 4.16527C7.49753 2.32491 6.00563 0.833008 4.16527 0.833008C2.32491 0.833008 0.833008 2.32491 0.833008 4.16527C0.833008 6.00563 2.32491 7.49753 4.16527 7.49753Z" stroke="#8C7AE6" stroke-width="1.66613" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div>
+                                <p style="font-size: 13px; color: #64748b; margin-bottom: 2px;">Counselor:</p>
+                                <p style="font-size: 14px;"><strong id="summary-counselor">-</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 2px; flex-shrink: 0;">
+                                <path d="M6.66455 1.66602V4.99828" stroke="#8C7AE6" stroke-width="1.66613" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13.3291 1.66602V4.99828" stroke="#8C7AE6" stroke-width="1.66613" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15.8283 3.33203H4.1654C3.24522 3.33203 2.49927 4.07798 2.49927 4.99816V16.6611C2.49927 17.5813 3.24522 18.3272 4.1654 18.3272H15.8283C16.7485 18.3272 17.4944 17.5813 17.4944 16.6611V4.99816C17.4944 4.07798 16.7485 3.33203 15.8283 3.33203Z" stroke="#8C7AE6" stroke-width="1.66613" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2.49927 8.33105H17.4944" stroke="#8C7AE6" stroke-width="1.66613" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div>
+                                <p style="font-size: 13px; color: #64748b; margin-bottom: 2px;">Date:</p>
+                                <p style="font-size: 14px;"><strong id="summary-date">-</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 2px; flex-shrink: 0;">
+                                <path d="M9.99683 4.99805V9.99644L13.3291 11.6626" stroke="#8C7AE6" stroke-width="1.66613" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9.99667 18.3273C14.5976 18.3273 18.3273 14.5976 18.3273 9.99667C18.3273 5.39578 14.5976 1.66602 9.99667 1.66602C5.39578 1.66602 1.66602 5.39578 1.66602 9.99667C1.66602 14.5976 5.39578 18.3273 9.99667 18.3273Z" stroke="#8C7AE6" stroke-width="1.66613" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div>
+                                <p style="font-size: 13px; color: #64748b; margin-bottom: 2px;">Time:</p>
+                                <p style="font-size: 14px;"><strong id="summary-time">-</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 2px; flex-shrink: 0;">
+                                <path d="M21.3264 17.3277L28.2882 21.9689C28.3885 22.0356 28.5051 22.074 28.6255 22.0797C28.746 22.0855 28.8657 22.0585 28.972 22.0016C29.0782 21.9447 29.1671 21.86 29.2291 21.7566C29.291 21.6532 29.3238 21.5349 29.3238 21.4144V10.4899C29.3239 10.3726 29.293 10.2574 29.2342 10.1559C29.1755 10.0544 29.091 9.97022 28.9894 9.91181C28.8877 9.8534 28.7724 9.82285 28.6551 9.82325C28.5379 9.82364 28.4228 9.85498 28.3215 9.91408L21.3264 13.9954" stroke="#8C7AE6" stroke-width="2.66581" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18.6606 7.99707H5.33158C3.85929 7.99707 2.66577 9.19059 2.66577 10.6629V21.3261C2.66577 22.7984 3.85929 23.9919 5.33158 23.9919H18.6606C20.1329 23.9919 21.3264 22.7984 21.3264 21.3261V10.6629C21.3264 9.19059 20.1329 7.99707 18.6606 7.99707Z" stroke="#8C7AE6" stroke-width="2.66581" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <div>
+                                <p style="font-size: 13px; color: #64748b; margin-bottom: 2px;">Type:</p>
+                                <p style="font-size: 14px;"><strong id="summary-type">-</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function() {
+
+    const summaryContent = document.getElementById('summary-content');
+    const counselorRadios = document.querySelectorAll('input[name="counselorId"]');
+    const dateInput = document.querySelector('input[name="sessionDate"]');
+    const timeRadios = document.querySelectorAll('input[name="time"]');
+    const typeRadios = document.querySelectorAll('input[name="sessionType"]');
+
+    // Build counselor availability map from backend data
+    const counselorAvailability = {};
+    const availabilityDates = /*[[${availabilityDates}]]*/ {};
+    
+    for (const [counselorId, availability] of Object.entries(availabilityDates)) {
+        counselorAvailability[counselorId] = availability.availableDates || [];
+    }
+
+    function initializeFlatpickr(counselorId) {
+        const allowedDates = counselorAvailability[counselorId] || ['2025-12-15', '2025-12-16', '2025-12-17', '2025-12-18', '2025-12-19'];
+        
+        flatpickr("#datePicker", {
+            inline: true,
+            dateFormat: "Y-m-d",
+            enable: allowedDates.map(d => new Date(d)),
+            onChange: updateSummary
+        });
+    }
+
+    function updateSummary() {
+        let hasSelection = false;
+
+        const selectedCounselor = document.querySelector('input[name="counselorId"]:checked');
+        if (selectedCounselor) {
+            const counselorName = selectedCounselor.nextElementSibling.querySelector('strong').textContent;
+            document.getElementById('summary-counselor').textContent = counselorName;
+            
+            // Reinitialize date picker when counselor changes
+            initializeFlatpickr(selectedCounselor.value);
+            hasSelection = true;
+        }
+
+        if (dateInput && dateInput.value) {
+            document.getElementById('summary-date').textContent = dateInput.value;
+            hasSelection = true;
+        }
+
+        const selectedTime = document.querySelector('input[name="time"]:checked');
+        if (selectedTime) {
+            document.getElementById('summary-time').textContent = selectedTime.value;
+            hasSelection = true;
+        }
+
+        const selectedType = document.querySelector('input[name="sessionType"]:checked');
+        if (selectedType) {
+            document.getElementById('summary-type').textContent = selectedType.value;
+            hasSelection = true;
+        }
+
+        summaryContent.style.display = hasSelection ? 'block' : 'none';
+    }
+
+    // Init Flatpickr with default dates
+    initializeFlatpickr();
+
+    counselorRadios.forEach(r => r.addEventListener('change', updateSummary));
+    timeRadios.forEach(r => r.addEventListener('change', updateSummary));
+    typeRadios.forEach(r => r.addEventListener('change', updateSummary));
+});
+</script>
+

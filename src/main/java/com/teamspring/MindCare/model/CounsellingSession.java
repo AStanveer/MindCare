@@ -3,38 +3,32 @@ package com.teamspring.MindCare.model;
 import java.time.LocalDateTime;
 
 public class CounsellingSession {
-    private String doctorName;
-    private LocalDateTime date;
-    private String type;
 
+    private Long id;
+    private String counselor;
+    private LocalDateTime sessionDateTime;
+    private String sessionType;
+    private String status;
 
-    public CounsellingSession(String doctorName, LocalDateTime date, String type) {
-        this.doctorName = doctorName;
-        this.date = date;
-        this.type = type;
+    public CounsellingSession(Long id, String counselor, LocalDateTime sessionDateTime, String sessionType, String status) {
+        this.id = id;
+        this.counselor = counselor;
+        this.sessionDateTime = sessionDateTime;
+        this.sessionType = sessionType;
+        this.status = status;
     }
 
-    public String getDoctorName() {
-        return doctorName;
+    public LocalDateTime getSessionDateTime() {
+        return sessionDateTime;
     }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
+    public void setSessionDateTime(LocalDateTime sessionDateTime) {
+        this.sessionDateTime = sessionDateTime;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    public Long getId() { return id; }
+    public String getCounselor() { return counselor; }
+    public String getSessionType() { return sessionType; }
+    public String getStatus() { return status; }
 }
+

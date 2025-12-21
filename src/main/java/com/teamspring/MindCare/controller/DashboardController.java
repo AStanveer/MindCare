@@ -44,8 +44,8 @@ public class DashboardController {
         );
 
         List<CounsellingSession> sessions = List.of(
-            new CounsellingSession("Dr. Sarah Johnson", LocalDateTime.of(2025, 11, 5, 14, 0), "Individual Counselling"),
-            new CounsellingSession("Dr. Michael Chen", LocalDateTime.of(2025, 11, 8, 10, 0), "Group Counselling")
+            new CounsellingSession(1L, "Dr. Sarah Johnson", LocalDateTime.of(2025, 11, 5, 14, 0), "Individual Counselling", "Confirmed"),
+            new CounsellingSession(2L, "Dr. Michael Chen", LocalDateTime.of(2025, 11, 8, 10, 0), "Group Counselling", "Confirmed")
         );
 
         model.addAttribute("message", "MindCare Frontend Works!");

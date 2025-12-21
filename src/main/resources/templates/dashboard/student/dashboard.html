@@ -155,17 +155,17 @@
                     <div class="sessions-items--container">
                         <div class="session--item" th:each="counsellingSession : ${counsellingSessions}">
                             <div class="session--info">
-                                <span th:text="${counsellingSession.doctorName}">Dr. Sarah Johnson</span>
+                                <span th:text="${counsellingSession.counselor}">Dr. Sarah Johnson</span>
                                 <span class="gray-text" 
-                                    th:text="${#temporals.format(counsellingSession.date, 'MMM d, yyyy ''at'' h:mm a')}">
+                                    th:text="${#temporals.format(counsellingSession.sessionDateTime, 'MMM d, yyyy ''at'' h:mm a')}">
                                     Nov 5...
                                 </span>                            
                             </div>
                             <div class="session--actions">
                                 <button class="btn btn-secondary"
-                                        th:data-doctor="${counsellingSession.doctorName}"
-                                        th:data-date="${#temporals.format(counsellingSession.date, 'MMM d, yyyy ''at'' h:mm a')}"
-                                        th:data-type="${counsellingSession.type}"
+                                        th:data-doctor="${counsellingSession.counselor}"
+                                        th:data-date="${#temporals.format(counsellingSession.sessionDateTime, 'MMM d, yyyy ''at'' h:mm a')}"
+                                        th:data-type="${counsellingSession.sessionType}"
                                         onclick="openModal(this)">
                                     View Details
                                 </button>

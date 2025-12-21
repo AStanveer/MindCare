@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Counselling Schedule – MindCare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f6f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            background: linear-gradient(90deg, rgba(140, 122, 230, 0.1), rgba(165, 180, 252, 0.1));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #2e2e2e;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* ===== CATEGORY TABS ===== */
+        .category-tabs {
+            display: flex;
+            background: #e8e9eb;
+            border-radius: 16px;
+            padding: 4px;
+            margin-bottom: 30px;
+            gap: 4px;
+        }
+
+        .category-tab {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .category-tab a {
+            color: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-tab a:hover {
+            text-decoration: none;
+        }
+
+        .category-tab:hover {
+            background: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+        }
+
+        .category-tab.active {
+            background: white;
+            color: #8c7ae6;
+            box-shadow: 0 2px 8px rgba(140, 122, 230, 0.2);
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            transition: 0.2s;
+        }
+
+        .tab.active {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        /* ===== LAYOUT ===== */
+        .layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        /* ===== SESSION ITEM ===== */
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: 0.2s;
+        }
+
+        .session-item:hover {
+            border-color: #6c5ce7;
+            background: #f5f3ff;
+        }
+
+        .session-info h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .session-details {
+            display: flex;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .session-details span {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* ===== BADGES ===== */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* ===== BUTTON ===== */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #6c5ce7;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #5b4bc4;
+        }
+
+        /* ===== CALENDAR ===== */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .calendar-nav button {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .calendar-nav button:hover {
+            border-color: #6c5ce7;
+            background: #f5f3ff;
+        }
+
+        .calendar {
+            width: 100%;
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            padding: 8px 0;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .calendar-day:hover {
+            background: #f5f3ff;
+            border-color: #e9e4ff;
+        }
+
+        .calendar-day.other-month {
+            color: #cbd5e1;
+        }
+
+        .calendar-day.today {
+            background: #6c5ce7;
+            color: white;
+            font-weight: 600;
+        }
+
+        .calendar-day.selected {
+            background: #f5f3ff;
+            border-color: #6c5ce7;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="~{fragments/navbar :: navbar('counselling')}"></div>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h1>Your Counselling Schedule</h1>
+        <p>View and manage your scheduled appointments</p>
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <div class="category-tabs">
+        <div class="category-tab active">
+            <a th:href="@{/mindcare/counselling/my-schedule}">My Schedule</a>
+        </div>
+        <div class="category-tab">
+            <a th:href="@{/mindcare/counselling/set-availability}">Set Availability</a>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs" style="display: none;">
+
+    <div class="layout">
+        
+        <!-- LEFT - Upcoming Sessions -->
+        <div class="card">
+            <div class="section-title">Upcoming Sessions</div>
+            <div class="section-subtitle">Your scheduled appointments</div>
+
+            <!-- Session List -->
+            <div th:if="${upcomingSessions != null and !upcomingSessions.isEmpty()}">
+                <div class="session-item" th:each="session : ${upcomingSessions}">
+                    <div class="session-info">
+                        <h3 th:text="${session.clientName}">Alex M.</h3>
+                        <div class="session-details">
+                            <span>
+                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6.66455 1.66602V4.99828" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.3291 1.66602V4.99828" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2.49927 8.33105H17.4944" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M17.5 7.08V14.17C17.5 17.5 16 19.17 12.5 19.17H7.5C4 19.17 2.5 17.5 2.5 14.17V7.08C2.5 3.75 4 2.08 7.5 2.08H12.5C16 2.08 17.5 3.75 17.5 7.08Z" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span th:text="${session.date}">Nov 2, 2025</span>
+                            </span>
+                            <span>
+                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10 18.3273C14.6009 18.3273 18.3306 14.5976 18.3306 9.99667C18.3306 5.39578 14.6009 1.66602 10 1.66602C5.39911 1.66602 1.66935 5.39578 1.66935 9.99667C1.66935 14.5976 5.39911 18.3273 10 18.3273Z" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M10 5V10L13.3333 11.6667" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span th:text="${session.time}">at 10:00 AM</span>
+                            </span>
+                            <span>•</span>
+                            <span th:text="${session.sessionType}">Follow-up</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="badge badge-confirmed" 
+                              th:text="${session.status}"
+                              th:classappend="${session.status == 'Pending' ? 'badge-pending' : 'badge-confirmed'}">
+                            Confirmed
+                        </span>
+                        <button class="btn" style="margin-left: 8px;" 
+                                th:onclick="'viewSession(' + ${session.id} + ')'">
+                            View
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${upcomingSessions == null or upcomingSessions.isEmpty()}" 
+                 style="text-align: center; padding: 40px 20px; color: #94a3b8;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto 16px;">
+                    <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#cbd5e1" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p style="font-size: 15px; margin-bottom: 8px; color: #64748b;">No upcoming sessions</p>
+                <p style="font-size: 13px;">Your scheduled appointments will appear here</p>
+            </div>
+        </div>
+
+        <!-- RIGHT - Calendar -->
+        <div class="card">
+            <div class="calendar-header">
+                <h3 th:text="${currentMonth + ' ' + currentYear}">November 2025</h3>
+                <div class="calendar-nav">
+                    <button onclick="previousMonth()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 18L9 12L15 6" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button onclick="nextMonth()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendar">
+                <div class="calendar-weekdays">
+                    <div class="calendar-weekday">Su</div>
+                    <div class="calendar-weekday">Mo</div>
+                    <div class="calendar-weekday">Tu</div>
+                    <div class="calendar-weekday">We</div>
+                    <div class="calendar-weekday">Th</div>
+                    <div class="calendar-weekday">Fr</div>
+                    <div class="calendar-weekday">Sa</div>
+                </div>
+                <div class="calendar-days" id="calendar-days">
+                    <!-- Calendar days will be rendered here -->
+                    <div class="calendar-day other-month">26</div>
+                    <div class="calendar-day other-month">27</div>
+                    <div class="calendar-day other-month">28</div>
+                    <div class="calendar-day other-month">29</div>
+                    <div class="calendar-day other-month">30</div>
+                    <div class="calendar-day other-month">31</div>
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day">2</div>
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day">5</div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+                    <div class="calendar-day today">8</div>
+                    <div class="calendar-day">9</div>
+                    <div class="calendar-day">10</div>
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day">12</div>
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day">14</div>
+                    <div class="calendar-day">15</div>
+                    <div class="calendar-day">16</div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day">19</div>
+                    <div class="calendar-day">20</div>
+                    <div class="calendar-day">21</div>
+                    <div class="calendar-day">22</div>
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day">26</div>
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day">28</div>
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day other-month">30</div>
+                    <div class="calendar-day other-month">1</div>
+                    <div class="calendar-day other-month">2</div>
+                    <div class="calendar-day other-month">3</div>
+                    <div class="calendar-day other-month">4</div>
+                    <div class="calendar-day other-month">5</div>
+                    <div class="calendar-day other-month">6</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function viewSession(sessionId) {
+    window.location.href = '/mindcare/professional/session/' + sessionId;
+}
+
+function previousMonth() {
+    // Handle month navigation
+    console.log('Previous month');
+}
+
+function nextMonth() {
+    // Handle month navigation
+    console.log('Next month');
+}
+</script>
+
+</body>
+</html>
