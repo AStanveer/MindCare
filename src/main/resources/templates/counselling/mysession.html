@@ -47,16 +47,25 @@
         /* ===== CATEGORY TABS ===== */
         .category-tabs {
             display: flex;
+            width: 12.73506rem;
+            height: 2.24925rem;
             background: #e8e9eb;
-            border-radius: 16px;
+            border-radius: 1rem;
             padding: 4px;
             margin-bottom: 30px;
             gap: 4px;
+            font-size: 0.875rem;
+            text-align: center;
         }
+   
 
         .category-tab {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             flex: 1;
-            padding: 12px 16px;
+            height: 1.81069rem;
+            width: auto;
             border-radius: 12px;
             border: none;
             background: transparent;
@@ -80,11 +89,6 @@
         }
 
         .category-tab a:hover {
-            text-decoration: none;
-        }
-
-        .category-tab:hover {
-            background: rgba(255, 255, 255, 0.5);
             text-decoration: none;
         }
 
@@ -284,29 +288,29 @@
 
         <!-- Session List -->
         <div th:if="${upcomingSessions != null and !upcomingSessions.isEmpty()}">
-            <div class="session-item" th:each="session : ${upcomingSessions}">
+            <div class="session-item" th:each="sessionItem : ${upcomingSessions}">
                 <div class="session-info">
-                    <h3 th:text="${session.counselorName}">Dr. Sarah Johnson</h3>
+                    <h3 th:text="${sessionItem.counselor}">Dr. Sarah Johnson</h3>
                     <div class="session-details">
-                        <span th:text="${session.date}">Nov 3, 2025</span>
+                        <span th:text="${sessionItem.sessionDateTime}">Nov 3, 2025</span>
                         <span>•</span>
-                        <span th:text="${session.time}">at 7:00</span>
+                        <span th:text="${sessionItem.sessionType}">at 7:00</span>
                     </div>
                     <div class="session-badges">
                         <span class="badge" 
-                              th:classappend="${session.sessionType == 'Video' ? 'badge-video' : 'badge-person'}"
-                              th:text="${session.sessionType}">Video Call</span>
+                              th:classappend="${sessionItem.sessionType == 'Video' ? 'badge-video' : 'badge-person'}"
+                              th:text="${sessionItem.sessionType}">Video Call</span>
                         <span class="badge badge-confirmed" 
-                              th:text="${session.status}">Confirmed</span>
+                              th:text="${sessionItem.status}">Confirmed</span>
                     </div>
                 </div>
                 <div class="session-actions">
                     <button class="btn btn-primary" 
-                            th:onclick="'rescheduleSession(' + ${session.id} + ')'">
+                            th:onclick="'rescheduleSession(' + ${sessionItem.id} + ')'">
                         Reschedule
                     </button>
                     <button class="btn btn-secondary" 
-                            th:onclick="'cancelSession(' + ${session.id} + ')'">
+                            th:onclick="'cancelSession(' + ${sessionItem.id} + ')'">
                         Cancel
                     </button>
                 </div>

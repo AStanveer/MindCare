@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reschedule Session – MindCare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f6f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            background: linear-gradient(90deg, rgba(140, 122, 230, 0.1), rgba(165, 180, 252, 0.1));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #2e2e2e;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        /* ===== FORM GROUP ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        /* ===== BUTTON ===== */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5b4bc4;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="~{fragments/navbar :: navbar('counselling')}"></div>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h1>Reschedule Session</h1>
+        <p>Select a new date and time for your counselling session</p>
+    </div>
+
+    <!-- FORM -->
+    <div class="card">
+        <div class="section-title">Session ID</div>
+        <div class="section-subtitle" th:text="'Current Session ID: ' + ${sessionId}"></div>
+
+        <form th:action="@{/mindcare/counselling/reschedule/{id}(id=${sessionId})}" method="post">
+
+            <!-- Select New Date -->
+            <div class="form-group">
+                <label>Select New Date</label>
+                <input type="hidden" name="newDate" id="newDate" required>
+                <div id="datePicker" style="margin-top: 10px;"></div>
+            </div>
+
+            <!-- Select New Time -->
+            <div class="form-group">
+                <label for="newTime">Select New Time</label>
+                <select name="newTime" id="newTime" required>
+                    <option value="">-- Choose a time slot --</option>
+                    <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}">9:00 AM</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Confirm Reschedule</button>
+                <a href="/mindcare/counselling/my-sessions" class="btn btn-secondary" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Flatpickr
+    flatpickr("#datePicker", {
+        inline: true,
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+            document.getElementById('newDate').value = dateStr;
+        }
+    });
+});
+</script>
+
+</body>
+</html>

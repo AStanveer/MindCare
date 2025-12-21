@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Set Availability – MindCare</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <style>
         * {
@@ -47,16 +48,25 @@
         /* ===== CATEGORY TABS ===== */
         .category-tabs {
             display: flex;
+            width: 12.73506rem;
+            height: 2.24925rem;
             background: #e8e9eb;
-            border-radius: 16px;
+            border-radius: 1rem;
             padding: 4px;
             margin-bottom: 30px;
             gap: 4px;
+            font-size: 0.875rem;
+            text-align: center;
         }
+   
 
         .category-tab {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             flex: 1;
-            padding: 12px 16px;
+            height: 1.81069rem;
+            width: auto;
             border-radius: 12px;
             border: none;
             background: transparent;
@@ -80,11 +90,6 @@
         }
 
         .category-tab a:hover {
-            text-decoration: none;
-        }
-
-        .category-tab:hover {
-            background: rgba(255, 255, 255, 0.5);
             text-decoration: none;
         }
 
@@ -326,9 +331,6 @@
         </div>
     </div>
 
-    <!-- TABS -->
-    <div class="tabs" style="display: none;">
-
     <form th:action="@{/mindcare/counselling/set-availability}" method="post">
         <div class="layout">
             
@@ -337,85 +339,8 @@
                 <div class="section-title">Select Date</div>
                 <div class="section-subtitle">Choose the date for setting your availability</div>
 
-                <div class="calendar">
-                    <div class="calendar-header">
-                        <h3 th:text="${currentMonth + ' ' + currentYear}">November 2025</h3>
-                        <div class="calendar-nav">
-                            <button type="button" onclick="previousMonth()">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M15 18L9 12L15 6" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
-                            <button type="button" onclick="nextMonth()">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 18L15 12L9 6" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="calendar-weekdays">
-                        <div class="calendar-weekday">Su</div>
-                        <div class="calendar-weekday">Mo</div>
-                        <div class="calendar-weekday">Tu</div>
-                        <div class="calendar-weekday">We</div>
-                        <div class="calendar-weekday">Th</div>
-                        <div class="calendar-weekday">Fr</div>
-                        <div class="calendar-weekday">Sa</div>
-                    </div>
-
-                    <input type="hidden" name="selectedDate" id="selectedDate" required>
-
-                    <div class="calendar-days" id="calendar-days">
-                        <!-- Previous month days -->
-                        <div class="calendar-day other-month">26</div>
-                        <div class="calendar-day other-month">27</div>
-                        <div class="calendar-day other-month">28</div>
-                        <div class="calendar-day other-month">29</div>
-                        <div class="calendar-day other-month">30</div>
-                        <div class="calendar-day other-month">31</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-01')">1</div>
-                        
-                        <!-- Current month days -->
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-02')">2</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-03')">3</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-04')">4</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-05')">5</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-06')">6</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-07')">7</div>
-                        <div class="calendar-day today" onclick="selectDate(this, '2025-11-08')">8</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-09')">9</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-10')">10</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-11')">11</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-12')">12</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-13')">13</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-14')">14</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-15')">15</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-16')">16</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-17')">17</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-18')">18</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-19')">19</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-20')">20</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-21')">21</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-22')">22</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-23')">23</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-24')">24</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-25')">25</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-26')">26</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-27')">27</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-28')">28</div>
-                        <div class="calendar-day" onclick="selectDate(this, '2025-11-29')">29</div>
-                        
-                        <!-- Next month days -->
-                        <div class="calendar-day other-month">30</div>
-                        <div class="calendar-day other-month">1</div>
-                        <div class="calendar-day other-month">2</div>
-                        <div class="calendar-day other-month">3</div>
-                        <div class="calendar-day other-month">4</div>
-                        <div class="calendar-day other-month">5</div>
-                        <div class="calendar-day other-month">6</div>
-                    </div>
-                </div>
+                <input type="hidden" name="selectedDate" id="selectedDate" required>
+                <div id="datePicker"></div>
             </div>
 
             <!-- RIGHT - Available Time Slots -->
@@ -424,15 +349,6 @@
                 <div class="section-subtitle">Configure when you're available for sessions</div>
 
                 <div class="time-slots">
-                    <label class="time-slot" th:each="slot : ${timeSlots}">
-                        <input type="checkbox" 
-                               name="timeSlots" 
-                               th:value="${slot}"
-                               onchange="toggleTimeSlot(this)">
-                        <span th:text="${slot}">9:00 AM</span>
-                    </label>
-
-                    <!-- Static time slots for demo -->
                     <label class="time-slot">
                         <input type="checkbox" name="timeSlots" value="9:00 AM" onchange="toggleTimeSlot(this)">
                         <span>9:00 AM</span>
@@ -449,8 +365,8 @@
                         <input type="checkbox" name="timeSlots" value="1:00 PM" onchange="toggleTimeSlot(this)">
                         <span>1:00 PM</span>
                     </label>
-                    <label class="time-slot selected">
-                        <input type="checkbox" name="timeSlots" value="2:00 PM" checked onchange="toggleTimeSlot(this)">
+                    <label class="time-slot">
+                        <input type="checkbox" name="timeSlots" value="2:00 PM" onchange="toggleTimeSlot(this)">
                         <span>2:00 PM</span>
                     </label>
                     <label class="time-slot">
@@ -475,22 +391,8 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-function selectDate(element, date) {
-    // Remove selected class from all days
-    document.querySelectorAll('.calendar-day').forEach(day => {
-        if (!day.classList.contains('other-month')) {
-            day.classList.remove('selected');
-        }
-    });
-    
-    // Add selected class to clicked day
-    if (!element.classList.contains('other-month')) {
-        element.classList.add('selected');
-        document.getElementById('selectedDate').value = date;
-    }
-}
-
 function toggleTimeSlot(checkbox) {
     const label = checkbox.closest('.time-slot');
     if (checkbox.checked) {
@@ -500,18 +402,19 @@ function toggleTimeSlot(checkbox) {
     }
 }
 
-function previousMonth() {
-    console.log('Previous month');
-    // Implement month navigation logic
-}
-
-function nextMonth() {
-    console.log('Next month');
-    // Implement month navigation logic
-}
-
-// Initialize selected time slots on page load
+// Initialize Flatpickr and selected time slots on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Flatpickr
+    flatpickr("#datePicker", {
+        inline: true,
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+            document.getElementById('selectedDate').value = dateStr;
+        }
+    });
+    
+    // Initialize selected time slots
     document.querySelectorAll('.time-slot input[type="checkbox"]:checked').forEach(checkbox => {
         checkbox.closest('.time-slot').classList.add('selected');
     });

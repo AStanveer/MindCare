@@ -365,7 +365,7 @@
 
                     <div class="grid">
                         <div class="date-picker">
-                        <input type="text" id="datePicker" name="sessionDate">
+                        <input type="text" id="datePicker" name="date">
                         </div>
 
                         <div class="times">
@@ -486,9 +486,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const summaryContent = document.getElementById('summary-content');
     const counselorRadios = document.querySelectorAll('input[name="counselorId"]');
-    const dateInput = document.querySelector('input[name="sessionDate"]');
+    const dateInput = document.querySelector('input[name="date"]');
     const timeRadios = document.querySelectorAll('input[name="time"]');
     const typeRadios = document.querySelectorAll('input[name="sessionType"]');
+
+    // Build counselor data map from backend
+    const counselorMap = {};
+    const counselors = /*[[${counselors}]]*/ [];
+    
+    counselors.forEach(c => {
+        counselorMap[c.id] = {
+            name: c.name,
+            specialty: c.specialty,
+            rating: c.rating,
+            available: c.available
+        };
+    });
 
     // Build counselor availability map from backend data
     const counselorAvailability = {};
@@ -498,10 +511,17 @@ document.addEventListener('DOMContentLoaded', function() {
         counselorAvailability[counselorId] = availability.availableDates || [];
     }
 
+    let flatpickrInstance = null;
+
     function initializeFlatpickr(counselorId) {
         const allowedDates = counselorAvailability[counselorId] || ['2025-12-15', '2025-12-16', '2025-12-17', '2025-12-18', '2025-12-19'];
         
-        flatpickr("#datePicker", {
+        // Destroy existing instance if it exists
+        if (flatpickrInstance) {
+            flatpickrInstance.destroy();
+        }
+        
+        flatpickrInstance = flatpickr("#datePicker", {
             inline: true,
             dateFormat: "Y-m-d",
             enable: allowedDates.map(d => new Date(d)),
@@ -517,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const counselorName = selectedCounselor.nextElementSibling.querySelector('strong').textContent;
             document.getElementById('summary-counselor').textContent = counselorName;
             
-            // Reinitialize date picker when counselor changes
+            // Reinitialize date picker when counselor changes with their availability
             initializeFlatpickr(selectedCounselor.value);
             hasSelection = true;
         }
@@ -535,19 +555,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const selectedType = document.querySelector('input[name="sessionType"]:checked');
         if (selectedType) {
-            document.getElementById('summary-type').textContent = selectedType.value;
+            const typeText = selectedType.value === 'InPerson' ? 'In-Person' : selectedType.value;
+            document.getElementById('summary-type').textContent = typeText;
             hasSelection = true;
         }
 
         summaryContent.style.display = hasSelection ? 'block' : 'none';
     }
 
-    // Init Flatpickr with default dates
-    initializeFlatpickr();
+    // Init Flatpickr with default dates (first counselor if available)
+    const firstCounselorId = counselorRadios.length > 0 ? counselorRadios[0].value : '1';
+    initializeFlatpickr(firstCounselorId);
 
     counselorRadios.forEach(r => r.addEventListener('change', updateSummary));
     timeRadios.forEach(r => r.addEventListener('change', updateSummary));
     typeRadios.forEach(r => r.addEventListener('change', updateSummary));
+    
+    // Update summary when date changes
+    if (dateInput) {
+        dateInput.addEventListener('change', updateSummary);
+    }
 });
 </script>
 

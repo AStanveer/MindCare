@@ -41,14 +41,16 @@ public class CounsellingController {
     @GetMapping("/set-availability")
     public String setAvailability(Model model) {
         model.addAttribute("counselors", counsellingService.getAllCounselors());
+        model.addAttribute("timeSlots", counsellingService.getTimeSlots());
         return "counselling/HP-setavailability";
     }
 
     // ===== Show HP My Schedule Page =====
     @GetMapping("/my-schedule")
     public String mySchedule(Model model) {
-        model.addAttribute("upcomingSessions", counsellingService.getUpcomingSessions());
-        return "counselling/hp-myschedule";
+        Long counselorId = 1L; // In real app, get from session/auth
+        model.addAttribute("upcomingSessions", counsellingService.getCounselorSessions(counselorId));
+        return "counselling/HP-myschedule";
     }
 
     // ===== Show My Sessions Page =====
@@ -66,5 +68,49 @@ public class CounsellingController {
         counsellingService.bookSession(bookingRequest);
 
         return "redirect:/mindcare/counselling?success";
+    }
+
+    // ===== Handle Set Availability Submission =====
+    @PostMapping("/set-availability")
+    public String saveAvailability(
+            @RequestParam String selectedDate,
+            @RequestParam(required = false) String[] timeSlots) {
+        // TODO: Save availability to database
+        System.out.println("✓ Availability saved for date: " + selectedDate);
+        if (timeSlots != null) {
+            for (String slot : timeSlots) {
+                System.out.println("  - " + slot);
+            }
+        }
+        return "redirect:/mindcare/counselling/set-availability?success";
+    }
+
+    // ===== Reschedule Session =====
+    @GetMapping("/reschedule/{sessionId}")
+    public String rescheduleSession(@PathVariable Long sessionId, Model model) {
+        model.addAttribute("sessionId", sessionId);
+        model.addAttribute("counselors", counsellingService.getAllCounselors());
+        model.addAttribute("timeSlots", counsellingService.getTimeSlots());
+        model.addAttribute("availabilityDates", counsellingService.getAvailabilityDates());
+        return "counselling/reschedule";
+    }
+
+    // ===== Handle Reschedule Submission =====
+    @PostMapping("/reschedule/{sessionId}")
+    public String submitReschedule(
+            @PathVariable Long sessionId,
+            @RequestParam String newDate,
+            @RequestParam String newTime) {
+        System.out.println("✓ Session " + sessionId + " rescheduled to " + newDate + " at " + newTime);
+        // TODO: Update session in database
+        return "redirect:/mindcare/counselling/my-sessions?rescheduled";
+    }
+
+    // ===== Cancel Session =====
+    @GetMapping("/cancel/{sessionId}")
+    public String cancelSession(@PathVariable Long sessionId) {
+        System.out.println("✓ Session " + sessionId + " cancelled");
+        // TODO: Delete session from database
+        return "redirect:/mindcare/counselling/my-sessions?cancelled";
     }
 }
