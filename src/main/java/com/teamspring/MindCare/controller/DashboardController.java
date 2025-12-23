@@ -1,6 +1,8 @@
 package com.teamspring.MindCare.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -43,10 +45,28 @@ public class DashboardController {
             new QuickAction("Peer Support", "icon-peer-support", "/mindcare/peer-support")
         );
 
-        List<CounsellingSession> sessions = List.of(
-            new CounsellingSession(1L, "Dr. Sarah Johnson", LocalDateTime.of(2025, 11, 5, 14, 0), "Individual Counselling", "Confirmed"),
-            new CounsellingSession(2L, "Dr. Michael Chen", LocalDateTime.of(2025, 11, 8, 10, 0), "Group Counselling", "Confirmed")
-        );
+        // Create sample sessions using new structure
+        CounsellingSession session1 = new CounsellingSession();
+        session1.setId(1L);
+        session1.setCounselorId(1L);
+        session1.setCounselorName("Dr. Sarah Johnson");
+        session1.setStudentId(1L);
+        session1.setSessionDate(LocalDate.of(2025, 11, 5));
+        session1.setSessionTime(LocalTime.of(14, 0));
+        session1.setSessionType("Individual Counselling");
+        session1.setStatus("Confirmed");
+        
+        CounsellingSession session2 = new CounsellingSession();
+        session2.setId(2L);
+        session2.setCounselorId(2L);
+        session2.setCounselorName("Dr. Michael Chen");
+        session2.setStudentId(1L);
+        session2.setSessionDate(LocalDate.of(2025, 11, 8));
+        session2.setSessionTime(LocalTime.of(10, 0));
+        session2.setSessionType("Group Counselling");
+        session2.setStatus("Confirmed");
+        
+        List<CounsellingSession> sessions = List.of(session1, session2);
 
         model.addAttribute("message", "MindCare Frontend Works!");
         model.addAttribute("quickActions", actions);

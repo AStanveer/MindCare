@@ -365,14 +365,11 @@
 
                     <div class="grid">
                         <div class="date-picker">
-                        <input type="text" id="datePicker" name="date">
+                            <input type="text" id="datePicker" name="date" required>
                         </div>
 
                         <div class="times">
-                            <label th:each="t : ${timeSlots}">
-                                <input type="radio" name="time" th:value="${t}" required>
-                                <div class="time-slot" th:text="${t}"></div>
-                            </label>
+                            <p style="color: #94a3b8; text-align: center; padding: 20px;">Select a counselor and date to view available time slots</p>
                         </div>
                     </div>
                 </div>
@@ -487,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const summaryContent = document.getElementById('summary-content');
     const counselorRadios = document.querySelectorAll('input[name="counselorId"]');
     const dateInput = document.querySelector('input[name="date"]');
-    const timeRadios = document.querySelectorAll('input[name="time"]');
+    const timeSlotsContainer = document.querySelector('.times');
     const typeRadios = document.querySelectorAll('input[name="sessionType"]');
 
     // Build counselor data map from backend
@@ -512,21 +509,67 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     let flatpickrInstance = null;
+    let selectedCounselorId = null;
 
     function initializeFlatpickr(counselorId) {
-        const allowedDates = counselorAvailability[counselorId] || ['2025-12-15', '2025-12-16', '2025-12-17', '2025-12-18', '2025-12-19'];
+        selectedCounselorId = counselorId;
+        const allowedDates = counselorAvailability[counselorId] || [];
         
         // Destroy existing instance if it exists
         if (flatpickrInstance) {
             flatpickrInstance.destroy();
         }
         
+        // Clear time slots when counselor changes
+        clearTimeSlots();
+        
         flatpickrInstance = flatpickr("#datePicker", {
             inline: true,
             dateFormat: "Y-m-d",
-            enable: allowedDates.map(d => new Date(d)),
-            onChange: updateSummary
+            enable: allowedDates.length > 0 ? allowedDates.map(d => new Date(d)) : [],
+            minDate: "today",
+            onChange: function(selectedDates, dateStr) {
+                if (dateStr && selectedCounselorId) {
+                    fetchAvailableTimeSlots(selectedCounselorId, dateStr);
+                }
+                updateSummary();
+            }
         });
+    }
+
+    function clearTimeSlots() {
+        timeSlotsContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 20px;">Select a counselor and date to view available time slots</p>';
+    }
+
+    function fetchAvailableTimeSlots(counselorId, date) {
+        // Show loading state
+        timeSlotsContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 20px;">Loading available slots...</p>';
+        
+        // Fetch available time slots from backend
+        fetch(`/mindcare/counselling/api/available-slots?counselorId=${counselorId}&date=${date}`)
+            .then(response => response.json())
+            .then(slots => {
+                if (slots && slots.length > 0) {
+                    timeSlotsContainer.innerHTML = '';
+                    slots.forEach(slot => {
+                        const label = document.createElement('label');
+                        label.innerHTML = `
+                            <input type="radio" name="time" value="${slot}" required>
+                            <div class="time-slot">${slot}</div>
+                        `;
+                        timeSlotsContainer.appendChild(label);
+                        
+                        // Add change event listener
+                        label.querySelector('input').addEventListener('change', updateSummary);
+                    });
+                } else {
+                    timeSlotsContainer.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">No available time slots for this date</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching time slots:', error);
+                timeSlotsContainer.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Error loading time slots</p>';
+            });
     }
 
     function updateSummary() {
@@ -536,9 +579,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedCounselor) {
             const counselorName = selectedCounselor.nextElementSibling.querySelector('strong').textContent;
             document.getElementById('summary-counselor').textContent = counselorName;
-            
-            // Reinitialize date picker when counselor changes with their availability
-            initializeFlatpickr(selectedCounselor.value);
             hasSelection = true;
         }
 
@@ -563,17 +603,23 @@ document.addEventListener('DOMContentLoaded', function() {
         summaryContent.style.display = hasSelection ? 'block' : 'none';
     }
 
-    // Init Flatpickr with default dates (first counselor if available)
-    const firstCounselorId = counselorRadios.length > 0 ? counselorRadios[0].value : '1';
-    initializeFlatpickr(firstCounselorId);
+    // Listen for counselor selection changes
+    counselorRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            initializeFlatpickr(this.value);
+            updateSummary();
+        });
+    });
 
-    counselorRadios.forEach(r => r.addEventListener('change', updateSummary));
-    timeRadios.forEach(r => r.addEventListener('change', updateSummary));
+    // Listen for session type changes
     typeRadios.forEach(r => r.addEventListener('change', updateSummary));
-    
-    // Update summary when date changes
-    if (dateInput) {
-        dateInput.addEventListener('change', updateSummary);
+
+    // Initialize with first counselor if available
+    if (counselorRadios.length > 0) {
+        const firstCounselorId = counselorRadios[0].value;
+        initializeFlatpickr(firstCounselorId);
+    } else {
+        clearTimeSlots();
     }
 });
 </script>
