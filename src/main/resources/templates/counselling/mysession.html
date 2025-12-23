@@ -290,11 +290,11 @@
         <div th:if="${upcomingSessions != null and !upcomingSessions.isEmpty()}">
             <div class="session-item" th:each="sessionItem : ${upcomingSessions}">
                 <div class="session-info">
-                    <h3 th:text="${sessionItem.counselor}">Dr. Sarah Johnson</h3>
+                    <h3 th:text="${sessionItem.counselorName}">Dr. Sarah Johnson</h3>
                     <div class="session-details">
-                        <span th:text="${sessionItem.sessionDateTime}">Nov 3, 2025</span>
+                        <span th:text="${sessionItem.sessionDate}">Nov 3, 2025</span>
                         <span>•</span>
-                        <span th:text="${sessionItem.sessionType}">at 7:00</span>
+                        <span th:text="${sessionItem.sessionTime}">10:00</span>
                     </div>
                     <div class="session-badges">
                         <span class="badge" 
@@ -343,7 +343,7 @@ function rescheduleSession(sessionId) {
 
 function cancelSession(sessionId) {
     if (confirm('Are you sure you want to cancel this session? This action cannot be undone.')) {
-        window.location.href = '/mindcare/counselling/cancel/' + sessionId;
+        window.location.href = '/mindcare/counselling/cancel/' + sessionId + '?source=student';
     }
 }
 </script>

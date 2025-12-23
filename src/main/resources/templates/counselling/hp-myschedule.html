@@ -339,16 +339,13 @@
     <!-- CATEGORY TABS -->
     <div class="category-tabs">
         <div class="category-tab ">
-            <a th:href="@{/mindcare/counselling/my-schedule}">Book Session</a>
+            <a th:href="@{/mindcare/counselling/set-availability}">Set Availability</a>
         </div>
         <div class="category-tab active">
-                <a th:href="@{/mindcare/counselling/set-availability}">My Sessions</a>
+                <a th:href="@{/mindcare/counselling/my-schedule}">My Schedule</a>
         </div>
 
     </div>
-
-    <!-- TABS -->
-    <div class="tabs" style="display: none;">
 
     <div class="layout">
         
@@ -358,10 +355,10 @@
             <div class="section-subtitle">Your scheduled appointments</div>
 
             <!-- Session List -->
-            <div th:if="${upcomingSessions != null and !upcomingSessions.isEmpty()}">
-                <div class="session-item" th:each="sessionItem : ${upcomingSessions}">
+            <div th:if="${sessions != null and !sessions.isEmpty()}" id="session-list">
+                <div class="session-item" th:each="sessionItem : ${sessions}" th:attr="data-date=${sessionItem.sessionDate}">
                     <div class="session-info">
-                        <h3 th:text="${sessionItem.clientName}">Alex M.</h3>
+                        <h3 th:text="'Student #' + ${sessionItem.studentId}">Alex M.</h3>
                         <div class="session-details">
                             <span>
                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -370,35 +367,37 @@
                                     <path d="M2.49927 8.33105H17.4944" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M17.5 7.08V14.17C17.5 17.5 16 19.17 12.5 19.17H7.5C4 19.17 2.5 17.5 2.5 14.17V7.08C2.5 3.75 4 2.08 7.5 2.08H12.5C16 2.08 17.5 3.75 17.5 7.08Z" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
-                                <span th:text="${sessionItem.date}">Nov 2, 2025</span>
+                                <span th:text="${sessionItem.sessionDate}">Nov 2, 2025</span>
                             </span>
+                            at
                             <span>
                                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 18.3273C14.6009 18.3273 18.3306 14.5976 18.3306 9.99667C18.3306 5.39578 14.6009 1.66602 10 1.66602C5.39911 1.66602 1.66935 5.39578 1.66935 9.99667C1.66935 14.5976 5.39911 18.3273 10 18.3273Z" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M10 5V10L13.3333 11.6667" stroke="#8C7AE6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
-                                <span th:text="${sessionItem.time}">at 10:00 AM</span>
+                                <span th:text="${sessionItem.sessionTime}">10:00 AM</span>
                             </span>
                             <span>•</span>
-                            <span th:text="${sessionItem.sessionType}">Follow-up</span>
+                            <span th:text="${sessionItem.sessionType}">Individual</span>
                         </div>
                     </div>
-                    <div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="badge badge-confirmed" 
                               th:text="${sessionItem.status}"
                               th:classappend="${sessionItem.status == 'Pending' ? 'badge-pending' : 'badge-confirmed'}">
                             Confirmed
                         </span>
-                        <button class="btn" style="margin-left: 8px;" 
-                                th:onclick="'viewSession(' + ${sessionItem.id} + ')'">
-                            View
+                        <button class="btn" 
+                                th:onclick="'cancelSession(' + ${sessionItem.id} + ')'"
+                                style="background: #ef4444; color: white; border-color: #ef4444;">
+                            Cancel
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Empty State -->
-            <div th:if="${upcomingSessions == null or upcomingSessions.isEmpty()}" 
+            <div th:if="${sessions == null or sessions.isEmpty()}" 
                  style="text-align: center; padding: 40px 20px; color: #94a3b8;">
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto 16px;">
                     <path d="M8 2V5M16 2V5M3.5 9.09H20.5M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#cbd5e1" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -420,22 +419,76 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-function viewSession(sessionId) {
-    window.location.href = '/mindcare/counselling/session/' + sessionId;
+<script th:inline="javascript">
+/*<![CDATA[*/
+function cancelSession(sessionId) {
+    if (confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
+        window.location.href = '/mindcare/counselling/cancel/' + sessionId + '?source=counselor';
+    }
 }
 
-// Initialize Flatpickr on page load
+function filterSessionsByDate(dateStr) {
+    const sessionItems = document.querySelectorAll('.session-item');
+    const emptyState = document.querySelector('.card .section-subtitle').parentElement.querySelector('[style*="text-align: center"]');
+    let visibleCount = 0;
+    
+    sessionItems.forEach(item => {
+        const itemDate = item.getAttribute('data-date');
+        if (!dateStr || itemDate === dateStr) {
+            item.style.display = 'flex';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Show/hide empty state
+    if (emptyState) {
+        emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+}
+
+// Initialize Flatpickr with sessions data
 document.addEventListener('DOMContentLoaded', function() {
+    const sessions = /*[[${sessions}]]*/ [];
+    
+    // Create a map of dates that have sessions
+    const sessionDates = {};
+    sessions.forEach(session => {
+        const dateStr = session.sessionDate;
+        if (!sessionDates[dateStr]) {
+            sessionDates[dateStr] = [];
+        }
+        sessionDates[dateStr].push(session);
+    });
+    
+    // Initialize calendar
+    let selectedDate = null;
     flatpickr("#calendar-display", {
         inline: true,
         dateFormat: "Y-m-d",
         minDate: "today",
-        disable: [
-            // You can add disabled dates here if needed
-        ]
+        onChange: function(selectedDates, dateStr) {
+            // Toggle filter: if same date clicked, show all; otherwise filter
+            if (selectedDate === dateStr) {
+                selectedDate = null;
+                filterSessionsByDate(null); // Show all sessions
+            } else {
+                selectedDate = dateStr;
+                filterSessionsByDate(dateStr); // Filter by date
+            }
+        },
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+            if (sessionDates[dateStr]) {
+                // Add indicator for dates with sessions
+                dayElem.innerHTML += '<div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #6c5ce7; border-radius: 50%;"></div>';
+                dayElem.style.position = 'relative';
+            }
+        }
     });
 });
+/*]]>*/
 </script>
 
 </body>

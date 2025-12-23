@@ -349,37 +349,9 @@
                 <div class="section-subtitle">Configure when you're available for sessions</div>
 
                 <div class="time-slots">
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="9:00 AM" onchange="toggleTimeSlot(this)">
-                        <span>9:00 AM</span>
-                    </label>
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="10:00 AM" onchange="toggleTimeSlot(this)">
-                        <span>10:00 AM</span>
-                    </label>
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="11:00 AM" onchange="toggleTimeSlot(this)">
-                        <span>11:00 AM</span>
-                    </label>
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="1:00 PM" onchange="toggleTimeSlot(this)">
-                        <span>1:00 PM</span>
-                    </label>
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="2:00 PM" onchange="toggleTimeSlot(this)">
-                        <span>2:00 PM</span>
-                    </label>
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="3:00 PM" onchange="toggleTimeSlot(this)">
-                        <span>3:00 PM</span>
-                    </label>
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="4:00 PM" onchange="toggleTimeSlot(this)">
-                        <span>4:00 PM</span>
-                    </label>
-                    <label class="time-slot">
-                        <input type="checkbox" name="timeSlots" value="5:00 PM" onchange="toggleTimeSlot(this)">
-                        <span>5:00 PM</span>
+                    <label class="time-slot" th:each="slot : ${timeSlots}">
+                        <input type="checkbox" name="timeSlots" th:value="${slot}" onchange="toggleTimeSlot(this)">
+                        <span th:text="${slot}">09:00</span>
                     </label>
                 </div>
 

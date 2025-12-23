@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface AvailabilityDatesRepository extends JpaRepository<AvailabilityDates, Long> {
     Optional<AvailabilityDates> findByCounselorId(Long counselorId);
     List<AvailabilityDates> findAll();
+    
 }
