@@ -6,6 +6,7 @@
 
 body {
     background-color: var(--color-bg);
+    font-family: var(--font-family);
 }
 
 .container {
@@ -36,7 +37,7 @@ body {
 .tabs--container {
     display: flex;
     gap: 0.5rem;
-    background-color: #f3f4f6; /* Gray background for the pill container */
+    background-color: var(--color-purple-soft);
     padding: 0.25rem;
     border-radius: 2rem;
     width: fit-content;
@@ -93,7 +94,7 @@ body {
 .btn-secondary:hover, .btn-secondary:focus {
     color: var(--color-text);
     border-color: var(--color-primary); 
-    background: #8c7ae60d;
+    background: var(--color-purple-soft);
 }
 
 .btn-primary:hover, .btn-primary:focus {
@@ -191,7 +192,7 @@ body {
 }
 
 .message--item.bot .message--bubble {
-    background-color: #d1d0ff; /* Light purple from screenshot */
+    background-color: var(--color-light-purple);
     color: var(--color-text);
     border-top-left-radius: 0; /* Slight visual cue it's from left */
 }
@@ -232,7 +233,7 @@ body {
 } 
 
 .input-wrapper input::placeholder {
-    color: #9ca3af;
+    color: var(--color-light-gray);
 }
 
 .send-btn {
