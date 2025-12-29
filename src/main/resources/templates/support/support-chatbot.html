@@ -64,5 +64,84 @@
 
         </main>
     </div>
+
+    <script>
+        const chatMessages = document.querySelector('.chat--messages');
+        const inputField = document.querySelector('.input-wrapper input');
+        const sendButton = document.querySelector('.send-btn');
+
+        // 1. Function to add a message to the screen
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message--item', sender);
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('message--bubble');
+            bubbleDiv.textContent = text;
+            
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+            
+            // Auto-scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 2. Function to show/hide loading indicator
+        let loadingDiv = null;
+        function toggleLoading(show) {
+            if (show) {
+                loadingDiv = document.createElement('div');
+                loadingDiv.classList.add('message--item', 'bot', 'loading');
+                loadingDiv.innerHTML = `<div class="message--bubble"><div class="typing-dots"><span>.</span><span>.</span><span>.</span></div></div>`;
+                chatMessages.appendChild(loadingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } else if (loadingDiv) {
+                loadingDiv.remove();
+                loadingDiv = null;
+            }
+        }
+
+        // 3. Main function to handle sending
+        async function sendMessage() {
+            const message = inputField.value.trim();
+            if (!message) return;
+
+            // A. Show User Message
+            addMessage(message, 'user');
+            inputField.value = ''; // Clear input
+            toggleLoading(true);   // Show bot is thinking
+
+            try {
+                // B. Send to Backend
+                const response = await fetch('/mindcare/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+
+                // C. Show Bot Response
+                toggleLoading(false); // Remove loading
+                addMessage(data.content, 'bot'); // "content" matches your ChatResponse DTO
+
+            } catch (error) {
+                console.error('Error:', error);
+                toggleLoading(false);
+                addMessage("I'm having trouble connecting right now. Please try again.", 'bot');
+            }
+        }
+
+        // 4. Event Listeners
+        sendButton.addEventListener('click', sendMessage);
+
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
 </body>
 </html>

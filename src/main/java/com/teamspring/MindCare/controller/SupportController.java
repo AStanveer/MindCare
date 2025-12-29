@@ -8,12 +8,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.teamspring.MindCare.dto.ChatRequest;
+import com.teamspring.MindCare.dto.ChatResponse;
 import com.teamspring.MindCare.dto.PostDTO;
+import com.teamspring.MindCare.service.ChatbotService;
 import com.teamspring.MindCare.service.SupportService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/mindcare/")
@@ -21,6 +27,9 @@ public class SupportController {
 
     @Autowired
     private SupportService supportService;
+
+    @Autowired
+    private ChatbotService chatbotService;
 
     @GetMapping("/peer-support")
     public String peerSupport(Model model, @RequestParam(required = false) String tag) {
@@ -70,4 +79,14 @@ public class SupportController {
         model.addAttribute("username", "Moaz");
         return "support/support-chatbot";
     }
+
+    @PostMapping("api/chat")
+    @ResponseBody
+    public ChatResponse chatWithBot(@RequestBody ChatRequest request, HttpSession session) {
+        String botReply = chatbotService.getResponse(request.getMessage(), session);
+        
+        // JSON
+        return new ChatResponse(botReply);
+    }
+
 }
