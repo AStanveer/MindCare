@@ -38,11 +38,17 @@
                     <h3>Share Your Thoughts</h3>
                     <p class="sub-text">Start a conversation with the community</p>
                     
-                    <form class="create-post--form">
-                        <textarea placeholder="What's on your mind? Share your experiences, ask questions, or offer support..."></textarea>
+                    <form class="create-post--form" th:action="@{/mindcare/post/create}" method="post">
+
+                        <input type="text" name="title" class="input" placeholder="Give your post a title..." required>
+
+                        <textarea name="content" class="input" placeholder="What's on your mind? Share your experiences, ask questions, or offer support..." required></textarea>
+
+                        <input type="hidden" name="tagName" value="General">
+
                         <div class="form-footer">
                             <span class="helper-text">Be kind and respectful to others</span>
-                            <button type="button" class="btn btn-primary btn-sm">Post</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Post</button>
                         </div>
                     </form>
                 </div>
@@ -66,13 +72,18 @@
 
                         <div class="post--content">
                             <h3 th:text="${post.title}">Managing exam stress</h3>
-                            <p th:text="${post.content}">Finals are coming up and I'm feeling overwhelmed...</p>
+                            <p th:text="${post.content}">Finals are coming up...</p>
                         </div>
 
                         <div class="post--actions">
-                            <button class="post-action--btn">
+                            <button class="post-action--btn" 
+                                    th:classappend="${post.isLikedByCurrentUser} ? 'liked' : ''"
+                                    th:id="'like-btn-' + ${post.id}"
+                                    th:onclick="'togglePostLike(' + ${post.id} + ')'"
+                            >        
                                 <svg th:replace="~{fragments/icons ::icon-like}"></svg>
-                                <span th:text="${post.likes}">12</span>
+                                
+                                <span th:id="'like-count-' + ${post.id}" th:text="${post.likesCount}">12</span>
                             </button>
                             <button onclick="toggleReplies(this)" class="post-action--btn">
                                 <svg th:replace="~{fragments/icons ::icon-reply}"></svg>
@@ -101,22 +112,28 @@
                                             <span class="reply-time" th:text="${reply.timeAgo}">1 hour ago</span>
                                         </div>
                                         <p th:text="${reply.content}">I find breaking study sessions...</p>
-                                        <button class="reply-like-btn">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-                                            <span th:text="${reply.likes}">3</span>
-                                        </button>
+                                            <button class="reply-like-btn"
+                                                    th:classappend="${reply.isLikedByCurrentUser} ? 'liked' : ''"
+                                                    th:id="'reply-like-btn-' + ${reply.id}"
+                                                    th:onclick="'toggleReplyLike(' + ${reply.id} + ')'">
+                                                    <svg th:replace="~{fragments/icons ::icon-like}"></svg>
+                                                    <span th:id="'reply-like-count-' + ${reply.id}" th:text="${reply.likesCount}">3</span>
+                                            </button>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="add-reply--box">
                                 <h4>Add your reply</h4>
-                                <textarea placeholder="Share your thoughts, advice, or support..."></textarea>
-                                
-                                <div class="reply-actions">
-                                    <button class="btn btn-secondary btn-xs">Cancel</button>
-                                    <button class="btn btn-primary btn-xs">Post Reply</button>
-                                </div>
+                                <form th:action="@{/mindcare/reply/create}" method="post">
+                                    
+                                    <input type="hidden" name="postId" th:value="${post.id}"> <textarea name="content" placeholder="Share your thoughts, advice, or support..." required></textarea>
+                                    
+                                    <div class="reply-actions">
+                                        <button type="button" class="btn btn-secondary btn-xs">Cancel</button>
+                                        <button type="submit" class="btn btn-primary btn-xs">Post Reply</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -124,7 +141,6 @@
             </main>
 
             <aside class="forum--sidebar">
-
                 <div class="card sidebar--card guidelines--card">
                     <h4>Community Guidelines</h4>
                     <ul class="guidelines-list">
@@ -137,15 +153,44 @@
 
                 <div class="card sidebar--card">
                     <h4>Popular Topics</h4>
-                    <div class="topics-list">
-                        <a href="#" class="topic-link">#Academic Stress</a>
-                        <a href="#" class="topic-link">#Self-Care</a>
-                        <a href="#" class="topic-link">#Sleep</a>
-                        <a href="#" class="topic-link">#Anxiety</a>
-                        <a href="#" class="topic-link">#Social Life</a>
-                    </div>
-                </div>
+                        <div class="topics-list">
+                            <a  th:href="@{/mindcare/peer-support}" 
+                                class="topic-link"
+                                th:classappend="${activeTag == null} ? 'active' : ''">
+                                All Topics
+                            </a>
 
+                            <a  th:href="@{/mindcare/peer-support(tag='Academic Stress')}" 
+                                class="topic-link"
+                                th:classappend="${activeTag == 'Academic Stress'} ? 'active' : ''">
+                                #Academic Stress
+                            </a>
+
+                            <a th:href="@{/mindcare/peer-support(tag='Self-Care')}" 
+                                class="topic-link"
+                                th:classappend="${activeTag == 'Self-Care'} ? 'active' : ''">
+                                #Self-Care
+                            </a>
+
+                            <a  th:href="@{/mindcare/peer-support(tag='Sleep')}" 
+                                class="topic-link"
+                                th:classappend="${activeTag == 'Sleep'} ? 'active' : ''">
+                                #Sleep
+                            </a>
+
+                            <a th:href="@{/mindcare/peer-support(tag='Anxiety')}" 
+                                class="topic-link"
+                                th:classappend="${activeTag == 'Anxiety'} ? 'active' : ''">
+                                #Anxiety
+                            </a>
+                                    
+                            <a th:href="@{/mindcare/peer-support(tag='Social Life')}" 
+                                class="topic-link"
+                                th:classappend="${activeTag == 'Social Life'} ? 'active' : ''">
+                                #Social Life
+                            </a>
+                        </div>
+                </div>
             </aside>
         </div>
     </div>
@@ -153,9 +198,7 @@
     <script>
         function toggleReplies(element) {
                 const card = element.closest('.post--card');
-                
                 const replySection = card.querySelector('.replies--section');
-                
                 if (replySection) {
                     if (replySection.style.display === 'none') {
                         replySection.style.display = 'block';
@@ -164,6 +207,50 @@
                     }
                 }
             }
+
+        function togglePostLike(postId) {
+                const button = document.getElementById('like-btn-' + postId);
+                const countSpan = document.getElementById('like-count-' + postId);
+
+                fetch('/mindcare/post/' + postId + '/like', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // data contains { newCount: 15, isLiked: true }
+                    
+                    countSpan.innerText = data.newCount;
+                    
+                    if (data.isLiked) {
+                        button.classList.add('liked');
+                    } else {
+                        button.classList.remove('liked');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+        function toggleReplyLike(replyId) {
+            const button = document.getElementById('reply-like-btn-' + replyId);
+            const countSpan = document.getElementById('reply-like-count-' + replyId);
+
+            fetch('/mindcare/reply/' + replyId + '/like', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                countSpan.innerText = data.newCount;
+                
+                if (data.isLiked) {
+                    button.classList.add('liked');
+                } else {
+                    button.classList.remove('liked');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
     </script>
 </body>
 </html>
