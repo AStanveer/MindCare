@@ -50,10 +50,12 @@
                         <div class="progress-item">
                             <div class="progress-info">
                                 Weekly Mood Score
-                                7.2/10
+                                <span th:text="${weeklyMoodAvg} + '/5'">0.0/5</span>
                             </div>
                             <div class="progress-track">
-                                <div class="progress-fill" style="width: 72%;"></div>
+                                <div class="progress-fill" 
+                                    th:style="'width: ' + (${weeklyMoodAvg} * 20) + '%;'">
+                                </div>
                             </div>
                         </div>
                         <div class="progress-item">
@@ -96,7 +98,15 @@
                                 <span class="gray-text">Today</span>
                             </div>
                             <div class="activity-value">
-                                <span class="number-circle">7</span>
+                                <span class="number-circle" 
+                                    th:if="${todayMood != null}" 
+                                    th:text="${todayMood.moodLevel}">
+                                    5
+                                </span>
+                                
+                                <span class="gray-text" th:if="${todayMood == null}">
+                                    <a th:href="@{/mindcare/mood/tracker}">Log now</a>
+                                </span>
                             </div>
                         </div>
                         <div class="activity--item">
@@ -155,7 +165,8 @@
                     <div class="sessions-items--container">
                         <div class="session--item" th:each="counsellingSession : ${counsellingSessions}">
                             <div class="session--info">
-                                <span th:text="${counsellingSession.counselor}">Dr. Sarah Johnson</span>
+                                <span th:text="${counsellingSession.counselorName}">Dr. Sarah Johnson</span>
+                                
                                 <span class="gray-text" 
                                     th:text="${#temporals.format(counsellingSession.sessionDateTime, 'MMM d, yyyy ''at'' h:mm a')}">
                                     Nov 5...
@@ -163,7 +174,7 @@
                             </div>
                             <div class="session--actions">
                                 <button class="btn btn-secondary"
-                                        th:data-doctor="${counsellingSession.counselor}"
+                                        th:data-id="${counsellingSession.id}"  th:data-doctor="${counsellingSession.counselorName}"
                                         th:data-date="${#temporals.format(counsellingSession.sessionDateTime, 'MMM d, yyyy ''at'' h:mm a')}"
                                         th:data-type="${counsellingSession.sessionType}"
                                         onclick="openModal(this)">
@@ -172,9 +183,9 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary">
+                    <a class="btn btn-primary" href="/mindcare/counselling/booking">
                         Book New Session
-                    </button>
+                    </a>
                 </div>
             </div>
         </main>
@@ -244,15 +255,17 @@
 
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="closeModal()">Close</button>
-            <button class="btn btn-primary">Reschedule</button>
+            <a id="modalRescheduleBtn" href="#" class="btn btn-primary">Reschedule</a>
         </div>
     </dialog>
     <script>
         function openModal(button) {
+            const sessionId = button.getAttribute("data-id");
             const doctorName = button.getAttribute("data-doctor");
             const date = button.getAttribute("data-date");
             const type = button.getAttribute("data-type");
 
+            document.getElementById("modalRescheduleBtn").href = "/mindcare/counselling/reschedule/" + sessionId;
             document.getElementById("modalDoctorName").innerText = doctorName;
             document.getElementById("modalDateTime").innerText = date;
             document.getElementById("modalType").innerText = type;

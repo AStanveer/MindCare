@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "users")
@@ -23,6 +26,11 @@ public class UserTemp {
     @Column(unique = true, nullable = false)
     private String email;
 
+    // Added Role Column
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     // TEMPORARY — only for testing.
     // Later this will be replaced with a hashed password
     private String password;
@@ -31,10 +39,11 @@ public class UserTemp {
 
     public UserTemp() {}
 
-    public UserTemp(String fullName, String email, String password) {
+    public UserTemp(String fullName, String email, String password, Role role) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     // ---------- Getters & Setters ----------
@@ -51,4 +60,10 @@ public class UserTemp {
     public void setPassword(String password) { this.password = password; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    
 }
+

@@ -7,4 +7,5 @@ import com.teamspring.MindCare.model.UserTemp;
 
 @Repository
 public interface UserTempRepository extends JpaRepository<UserTemp, Long> {
+    UserTemp findByEmail(String email);
 }

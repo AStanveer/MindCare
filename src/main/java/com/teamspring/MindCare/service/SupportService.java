@@ -17,6 +17,7 @@ import com.teamspring.MindCare.model.Post;
 import com.teamspring.MindCare.model.PostLike;
 import com.teamspring.MindCare.model.Reply;
 import com.teamspring.MindCare.model.ReplyLike;
+import com.teamspring.MindCare.model.Role;
 import com.teamspring.MindCare.model.UserTemp;
 import com.teamspring.MindCare.repository.PostLikeRepository;
 import com.teamspring.MindCare.repository.PostRepository;
@@ -240,7 +241,7 @@ public class SupportService {
             .filter(u -> u.getFullName().equals("Moaz"))
             .findFirst()
             .orElseGet(() -> {
-                UserTemp moaz = new UserTemp("Moaz", "moaz@mindcare.com", "pass");
+                UserTemp moaz = new UserTemp("Moaz", "moaz@mindcare.com", "pass", Role.ADMIN);
                 return userTempRepository.save(moaz);
             });
     }
