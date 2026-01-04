@@ -33,9 +33,9 @@ public class DashboardService {
     }
 
     public MoodEntry getTodayMood(Long userId) {
-        List<MoodEntry> entires = moodRepo.findTodayEntriesByUserId(userId);
-
-        return entires.isEmpty()? null: entires.get(0);
+        List<MoodEntry> entries = moodRepo.findByUserIdAndEntryDate(userId, LocalDate.now());
+        
+        return entries.isEmpty() ? null : entries.get(0);
     }
 
     public Double getWeeklyMoodAverage(Long userId) {
