@@ -12,6 +12,7 @@ import com.teamspring.MindCare.model.CounsellingSession;
 import com.teamspring.MindCare.model.Counselor;
 import com.teamspring.MindCare.model.MoodEntry;
 import com.teamspring.MindCare.model.UserTemp;
+import com.teamspring.MindCare.repository.AssessmentResultRepository;
 import com.teamspring.MindCare.repository.CounsellingSessionRepository;
 import com.teamspring.MindCare.repository.CounselorRepository;
 import com.teamspring.MindCare.repository.MoodEntryRepository;
@@ -23,6 +24,7 @@ public class DashboardService {
     @Autowired private UserTempRepository userRepo;
     @Autowired private MoodEntryRepository moodRepo;
     @Autowired private CounselorRepository counselorRepo;
+    @Autowired private AssessmentResultRepository assessmentRepo;
 
     public List<CounsellingSession> getStudentSessions(Long studentId) {
         return sessionRepo.findByStudentIdAndSessionDateGreaterThanEqualOrderBySessionDateAscSessionTimeAsc(
@@ -73,6 +75,10 @@ public class DashboardService {
             ));
         }
         return displayList;
+    }
+
+    public long getAssessmentCount(Long userId) {
+        return assessmentRepo.countByUserId(userId);
     }
 
     public UserTemp getUser(Long id) {

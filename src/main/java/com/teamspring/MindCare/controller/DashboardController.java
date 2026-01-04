@@ -59,28 +59,8 @@ public class DashboardController {
             new QuickAction("Peer Support", "icon-peer-support", "/mindcare/peer-support")
         );
 
-        // // Create sample sessions using new structure
-        // CounsellingSession session1 = new CounsellingSession();
-        // session1.setId(1L);
-        // session1.setCounselorId(1L);
-        // session1.setCounselorName("Dr. Sarah Johnson");
-        // session1.setStudentId(1L);
-        // session1.setSessionDate(LocalDate.of(2025, 11, 5));
-        // session1.setSessionTime(LocalTime.of(14, 0));
-        // session1.setSessionType("Individual Counselling");
-        // session1.setStatus("Confirmed");
-        
-        // CounsellingSession session2 = new CounsellingSession();
-        // session2.setId(2L);
-        // session2.setCounselorId(2L);
-        // session2.setCounselorName("Dr. Michael Chen");
-        // session2.setStudentId(1L);
-        // session2.setSessionDate(LocalDate.of(2025, 11, 8));
-        // session2.setSessionTime(LocalTime.of(10, 0));
-        // session2.setSessionType("Group Counselling");
-        // session2.setStatus("Confirmed");
-        
-        // List<CounsellingSession> sessions = List.of(session1, session2);
+        long assessmentCount = dashboardService.getAssessmentCount(currentUserId);
+        int assessmentGoal = 5; // Static goal: "Take 5 assessments this semester"
 
         model.addAttribute("username", user != null ? user.getFullName() : "Student");
         model.addAttribute("quickActions", actions);
@@ -88,6 +68,8 @@ public class DashboardController {
 
         model.addAttribute("todayMood", todayMood);
         model.addAttribute("weeklyMoodAvg", String.format("%.1f", weeklyAvg));
+        model.addAttribute("assessmentCount", assessmentCount);
+        model.addAttribute("assessmentGoal", assessmentGoal);
         
         return "dashboard/student/dashboard";
     }

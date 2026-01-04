@@ -60,20 +60,17 @@
                         </div>
                         <div class="progress-item">
                             <div class="progress-info">
-                                Self-Care Streak        
-                                5 days
-                            </div>
-                            <div class="progress-track">
-                                <div class="progress-fill" style="width: 70%;"></div>
-                            </div>
-                        </div>
-                        <div class="progress-item">
-                            <div class="progress-info">
                                 Assessment Completion
-                                3/4
+                                <div>
+                                    <span th:text="${assessmentCount}">0</span>
+                                    <span>/</span>
+                                    <span th:text="${assessmentGoal}">5</span>
+                                </div>
                             </div>
                             <div class="progress-track">
-                                <div class="progress-fill" style="width: 75%;"></div>
+                                <div class="progress-fill" 
+                                    th:style="'width: ' + (${assessmentCount} * 100 / ${assessmentGoal}) + '%;'">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -105,7 +102,7 @@
                                 </span>
                                 
                                 <span class="gray-text" th:if="${todayMood == null}">
-                                    <a th:href="@{/mindcare/mood/tracker}">Log now</a>
+                                    <a class="btn btn-secondary" th:href="@{/mindcare/mood/tracker}">Log now</a>
                                 </span>
                             </div>
                         </div>
@@ -116,15 +113,6 @@
                             </div>
                             <div class="activity-value">
                                 <span class="number-circle">65</span>
-                            </div>
-                        </div>
-                        <div class="activity--item">
-                            <div class="activity-label">
-                                Guided Meditation
-                                <span class="gray-text">2 days ago</span>
-                            </div>
-                            <div class="activity-value">
-                                <span class="gray-text">10 mins</span>
                             </div>
                         </div>
                     </div>
