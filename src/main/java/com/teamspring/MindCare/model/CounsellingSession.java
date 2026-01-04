@@ -1,8 +1,14 @@
 package com.teamspring.MindCare.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "counselling_sessions")
@@ -110,6 +116,11 @@ public class CounsellingSession {
     
     public void setNotes(String notes) { 
         this.notes = notes; 
+    }
+
+    public java.time.LocalDateTime getSessionDateTime() {
+        if (sessionDate == null || sessionTime == null) return null;
+        return java.time.LocalDateTime.of(sessionDate, sessionTime);
     }
 }
 

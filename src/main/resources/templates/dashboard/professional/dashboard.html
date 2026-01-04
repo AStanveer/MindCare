@@ -52,22 +52,16 @@
                                 <span th:text="${scheduledSession.studentName}">Student Name</span>
 
                                 <span class="gray-text">
-                                    <span th:text="${#temporals.format(scheduledSession.date, 'h:mm a')}">10:00 AM</span> • 
+                                    <span th:text="${#temporals.format(scheduledSession.time, 'h:mm a')}">10:00 AM</span> • 
                                     <span th:text="${scheduledSession.type}">Individual</span>
                                 </span>
                             </div>
 
                             <div class="schedule-item--actions">
-                                <span class="status-pill" 
-                                    th:classappend="${#strings.toLowerCase(scheduledSession.status)}" 
-                                    th:text="${scheduledSession.status}">
-                                    Confirmed
-                                </span>
-
                                 <button class="btn btn-secondary view--btn"
                                         onclick="openModal(this)"
                                         th:data-student="${scheduledSession.studentName}"
-                                        th:data-time="${#temporals.format(scheduledSession.date, 'h:mm a')}"
+                                        th:data-time="${#temporals.format(scheduledSession.time, 'h:mm a')}"
                                         th:data-email="${scheduledSession.studentEmail}"
                                         th:data-phone="${scheduledSession.studentPhone}"
                                         th:data-type="${scheduledSession.type}"

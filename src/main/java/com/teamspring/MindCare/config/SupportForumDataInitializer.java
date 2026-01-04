@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.teamspring.MindCare.model.Post;
 import com.teamspring.MindCare.model.Reply;
+import com.teamspring.MindCare.model.Role;
 import com.teamspring.MindCare.model.UserTemp;
 import com.teamspring.MindCare.repository.PostRepository;
 import com.teamspring.MindCare.repository.ReplyRepository;
@@ -37,16 +38,17 @@ public class SupportForumDataInitializer implements CommandLineRunner {
         System.out.println("Seeding database with sample data...");
 
         // 1. Create Users
-        UserTemp alex = new UserTemp("Alex M.", "alex@example.com", "password");
-        UserTemp jordan = new UserTemp("Jordan P.", "jordan@example.com", "password");
-        UserTemp sam = new UserTemp("Sam K.", "sam@example.com", "password");
+        UserTemp alex = new UserTemp("Alex M.", "alex@example.com", "password", Role.STUDENT);
+        UserTemp jordan = new UserTemp("Jordan P.", "jordan@example.com", "password", Role.STUDENT);
+        UserTemp sam = new UserTemp("Sam K.", "sam@example.com", "password", Role.STUDENT);
+        UserTemp proffesional = new UserTemp("Lous J.", "louis@example.com", "password", Role.PROFESSIONAL);
         
         // Reply Authors
-        UserTemp casey = new UserTemp("Casey T.", "casey@example.com", "password");
-        UserTemp morgan = new UserTemp("Morgan L.", "morgan@example.com", "password");
-        UserTemp taylor = new UserTemp("Taylor R.", "taylor@example.com", "password");
+        UserTemp casey = new UserTemp("Casey T.", "casey@example.com", "password", Role.STUDENT);
+        UserTemp morgan = new UserTemp("Morgan L.", "morgan@example.com", "password", Role.STUDENT);
+        UserTemp taylor = new UserTemp("Taylor R.", "taylor@example.com", "password", Role.STUDENT);
 
-        tempUserRepository.saveAll(Arrays.asList(alex, jordan, sam, casey, morgan, taylor));
+        tempUserRepository.saveAll(Arrays.asList(alex, jordan, sam, casey, morgan, taylor, proffesional));
 
         // 2. Create Post 1: Academic Stress (With Replies)
         Post p1 = new Post();
