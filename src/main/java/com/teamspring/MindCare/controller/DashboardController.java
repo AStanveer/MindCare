@@ -43,7 +43,7 @@ public class DashboardController {
 
     @GetMapping("/student/dashboard")
     public String home(Model model) {
-        Long currentUserId = 8L;
+        Long currentUserId = 1L;
 
         UserTemp user = dashboardService.getUser(currentUserId);
         
