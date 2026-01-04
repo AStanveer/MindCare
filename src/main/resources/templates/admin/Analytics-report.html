@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics & Reports - MindCare</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/analytics.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar('analytics')}"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Analytics & Reports</h1>
+            <p class="subtitle">System-wide insights and analytics</p>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value" th:text="${totalStudents}">1,248</div>
+                    <div class="stat-change positive">+2%</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="/icons/assessment.png" alt="students">
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Active Professionals</div>
+                    <div class="stat-value" th:text="${activeProfessionals}">32</div>
+                    <div class="stat-change positive">+3</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="/icons/assessment.png" alt="professionals">
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Sessions This Month</div>
+                    <div class="stat-value" th:text="${sessionsThisMonth}">456</div>
+                    <div class="stat-change positive">+18%</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="/icons/assessment.png" alt="sessions">
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Avg. Well-being Score</div>
+                    <div class="stat-value" th:text="${avgWellbeing}">7.2</div>
+                    <div class="stat-change positive">+0.5</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="/icons/assessment.png" alt="wellbeing">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Row 1 -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3>Student Well-being Trends</h3>
+                        <p class="chart-subtitle">Average well-being scores over time</p>
+                    </div>
+                </div>
+                <canvas id="wellbeingChart"></canvas>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3>Current Mood Distribution</h3>
+                        <p class="chart-subtitle">Student mood levels this week</p>
+                    </div>
+                </div>
+                <canvas id="moodChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Charts Row 2 -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3>Sessions by Type</h3>
+                        <p class="chart-subtitle">Counselling sessions this month</p>
+                    </div>
+                </div>
+                <canvas id="sessionsChart"></canvas>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3>Feature Usage</h3>
+                        <p class="chart-subtitle">Platform engagement by feature</p>
+                    </div>
+                </div>
+                <canvas id="featureUsageChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Get data from Thymeleaf model
+        const wellbeingLabels = /*[[${wellbeingLabels}]]*/ [];
+        const wellbeingData = /*[[${wellbeingData}]]*/ [];
+        
+        const moodLabels = /*[[${moodLabels}]]*/ [];
+        const moodData = /*[[${moodData}]]*/ [];
+        
+        const sessionLabels = /*[[${sessionLabels}]]*/ [];
+        const sessionData = /*[[${sessionData}]]*/ [];
+        
+        const featureLabels = /*[[${featureLabels}]]*/ [];
+        const featureData = /*[[${featureData}]]*/ [];
+        
+        // Well-being Trends Line Chart
+        const wellbeingCtx = document.getElementById('wellbeingChart').getContext('2d');
+        new Chart(wellbeingCtx, {
+            type: 'line',
+            data: {
+                labels: wellbeingLabels,
+                datasets: [{
+                    label: 'Average Score',
+                    data: wellbeingData,
+                    borderColor: '#8C7AE6',
+                    backgroundColor: 'rgba(140, 122, 230, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 6,
+                        max: 8
+                    }
+                }
+            }
+        });
+        
+        // Mood Distribution Pie Chart
+        const moodCtx = document.getElementById('moodChart').getContext('2d');
+        new Chart(moodCtx, {
+            type: 'doughnut',
+            data: {
+                labels: moodLabels,
+                datasets: [{
+                    data: moodData,
+                    backgroundColor: ['#10B981', '#60A5FA', '#A78BFA', '#F59E0B']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+        
+        // Sessions by Type Bar Chart
+        const sessionsCtx = document.getElementById('sessionsChart').getContext('2d');
+        new Chart(sessionsCtx, {
+            type: 'bar',
+            data: {
+                labels: sessionLabels,
+                datasets: [{
+                    label: 'Sessions',
+                    data: sessionData,
+                    backgroundColor: '#6EE7B7'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Feature Usage Horizontal Bar Chart
+        const featureCtx = document.getElementById('featureUsageChart').getContext('2d');
+        new Chart(featureCtx, {
+            type: 'bar',
+            data: {
+                labels: featureLabels,
+                datasets: [{
+                    label: 'Usage %',
+                    data: featureData,
+                    backgroundColor: '#8C7AE6'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

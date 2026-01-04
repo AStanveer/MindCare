@@ -2,6 +2,7 @@ package com.teamspring.MindCare.controller;
 
 import com.teamspring.MindCare.model.AssessmentResult;
 import com.teamspring.MindCare.service.AssessmentService;
+import com.teamspring.MindCare.service.FeatureUsageService;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class AssessmentController {
     
     @Autowired
     private AssessmentService assessmentService;
+    
+    @Autowired
+    private FeatureUsageService featureUsageService;
     
     // Dummy user ID (until authentication is added)
     private static final Long DUMMY_USER_ID = 1L;
@@ -46,6 +50,9 @@ public class AssessmentController {
     
     @GetMapping("/dass21")
     public String showForm(Model model) {
+        // Track feature usage when user accesses assessment
+        featureUsageService.incrementAssessmentsUsage(DUMMY_USER_ID);
+        
         model.addAttribute("questions", DASS21_QUESTIONS);
         return "assessment/dass21";
     }
@@ -76,6 +83,9 @@ public class AssessmentController {
     
     @GetMapping("/history")
     public String showHistory(Model model) {
+        // Track feature usage when user accesses assessment history
+        featureUsageService.incrementAssessmentsUsage(DUMMY_USER_ID);
+        
         List<AssessmentResult> results = assessmentService.getUserResults(DUMMY_USER_ID);
         model.addAttribute("results", results);
         model.addAttribute("activePage", "assessment");

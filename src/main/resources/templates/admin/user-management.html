@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - MindCare</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/user-management.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar('usermanagement')}"></div>
+
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>User Management</h1>
+                <p class="subtitle">Manage users across all roles</p>
+            </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value" th:text="${totalUsers}">8</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Students</div>
+                <div class="stat-value" th:text="${studentsCount}">4</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Professionals</div>
+                <div class="stat-value" th:text="${professionalsCount}">3</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Admins</div>
+                <div class="stat-value" th:text="${adminsCount}">1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active</div>
+                <div class="stat-value" th:text="${activeCount}">7</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Inactive</div>
+                <div class="stat-value" th:text="${inactiveCount}">1</div>
+            </div>
+        </div>
+
+        <!-- Directory -->
+        <div class="directory-card">
+            <div class="directory-header">
+                <div>
+                    <div class="dir-title">User Directory</div>
+                    <div class="dir-subtitle">View and manage all platform users</div>
+                </div>
+                <div class="filters">
+                    <select>
+                        <option>All Status</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-filter">
+                <div class="search-box">
+                    <input type="text" placeholder="Search by name or email...">
+                </div>
+                <div class="tabs">
+                    <button class="tab active" data-role="ALL">All Users</button>
+                    <button class="tab" data-role="STUDENT">Students</button>
+                    <button class="tab" data-role="PROFESSIONAL">Professionals</button>
+                    <button class="tab" data-role="ADMIN">Admins</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Contact</th>
+                            <th>Join Date</th>
+                            <th>Last Active</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}" th:data-role="${user.role}" class="user-row">
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar" th:text="${#strings.substring(user.fullName,0,1)}">S</div>
+                                    <div>
+                                        <div class="user-name" th:text="${user.fullName}">Sarah Johnson</div>
+                                        <div class="user-email" th:text="${user.email}">sarah.j@university.edu</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="tag" th:text="${user.role}">Student</span></td>
+                            <td>
+                                <div class="contact-row">
+                                    <span class="phone" th:text="${user.phone}">+1 234 567 8901</span>
+                                </div>
+                            </td>
+                            <td th:text="${#temporals.format(user.joinDate, 'dd/MM/yyyy')}">15/09/2024</td>
+                            <td th:text="${#temporals.format(user.lastActive, 'dd/MM/yyyy HH:mm')}">2 hours ago</td>
+                            <td>
+                                <span class="status active" th:if="${user.status.name() == 'ACTIVE'}">Active</span>
+                                <span class="status inactive" th:if="${user.status.name() == 'INACTIVE'}">Inactive</span>
+                            </td>
+                            <td>
+                                <button class="action-btn" th:attr="data-id=${user.id}" onclick="openModal(this)">
+                                    <span>⋮</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div class="user-summary">
+                        <div class="avatar large" id="modalAvatar">SJ</div>
+                        <div>
+                            <div class="user-name" id="modalName">Sarah Johnson</div>
+                            <div class="user-email" id="modalEmail">sarah.j@university.edu</div>
+                            <div class="badges">
+                                <span class="tag">Student</span>
+                                <span class="status active">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="info">User Information</button>
+                <button class="tab-btn" data-tab="history">Assessment History</button>
+            </div>
+
+            <div class="tab-panel" id="infoTab">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">Email</div>
+                        <div class="value" id="infoEmail">sarah.j@university.edu</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Phone</div>
+                        <div class="value" id="infoPhone">+1 234 567 8901</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Join Date</div>
+                        <div class="value" id="infoJoinDate">15/09/2024</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Last Active</div>
+                        <div class="value" id="infoLastActive">2 hours ago</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Student ID</div>
+                        <div class="value" id="infoStudentId">STU2024001</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Department</div>
+                        <div class="value" id="infoDepartment">Computer Science</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel hidden" id="historyTab">
+                <div id="assessmentsContainer"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="danger-btn" id="deactivateBtn" onclick="toggleUserStatus()">Deactivate Account</button>
+                <button class="ghost-btn">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('userModal');
+        const infoTab = document.getElementById('infoTab');
+        const historyTab = document.getElementById('historyTab');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        let currentUserId = null;
+        let currentUserStatus = null;
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                if (btn.dataset.tab === 'info') {
+                    infoTab.classList.remove('hidden');
+                    historyTab.classList.add('hidden');
+                } else {
+                    infoTab.classList.add('hidden');
+                    historyTab.classList.remove('hidden');
+                }
+            });
+        });
+
+        function openModal(el) {
+            const userId = el.getAttribute('data-id');
+            currentUserId = userId;
+            fetch(`/mindcare/admin/api/user/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const user = data.user;
+                    if (!user) return;
+                    currentUserStatus = user.status;
+                    document.getElementById('modalAvatar').textContent = user.fullName.substring(0,1);
+                    document.getElementById('modalName').textContent = user.fullName;
+                    document.getElementById('modalEmail').textContent = user.email;
+                    document.getElementById('infoEmail').textContent = user.email;
+                    document.getElementById('infoPhone').textContent = user.phone;
+                    document.getElementById('infoJoinDate').textContent = user.joinDate ? user.joinDate.substring(0,10) : '';
+                    document.getElementById('infoLastActive').textContent = user.lastActive ? user.lastActive.replace('T',' ').substring(0,16) : '';
+                    document.getElementById('infoStudentId').textContent = user.studentId;
+                    document.getElementById('infoDepartment').textContent = user.department;
+
+                    // badges
+                    document.querySelector('.badges .tag').textContent = user.role;
+                    const statusSpan = document.querySelector('.badges .status');
+                    statusSpan.textContent = user.status;
+                    statusSpan.classList.toggle('active', user.status === 'ACTIVE');
+                    statusSpan.classList.toggle('inactive', user.status === 'INACTIVE');
+                    
+                    // Update deactivate button text based on status
+                    const deactivateBtn = document.getElementById('deactivateBtn');
+                    if (user.status === 'ACTIVE') {
+                        deactivateBtn.textContent = 'Deactivate Account';
+                        deactivateBtn.className = 'danger-btn';
+                    } else {
+                        deactivateBtn.textContent = 'Activate Account';
+                        deactivateBtn.className = 'primary-btn';
+                    }
+
+                    // assessments
+                    const assessments = data.assessments || [];
+                    const container = document.getElementById('assessmentsContainer');
+                    container.innerHTML = '';
+                    assessments.forEach(a => {
+                        const level = a.depressionLevel || 'Mild';
+                        const card = document.createElement('div');
+                        card.className = 'assessment-card';
+                        card.innerHTML = `
+                            <div class="assessment-header">
+                                <div>
+                                    <div class="title">DASS-21 Assessment</div>
+                                    <div class="date">Completed on ${a.completedAt ? a.completedAt.substring(0,10) : ''}</div>
+                                </div>
+                                <span class="pill">${level}</span>
+                            </div>
+                            <div class="assessment-body">
+                                <div class="score-box">
+                                    <div class="label">Depression</div>
+                                    <div class="score">${a.depressionScore}</div>
+                                </div>
+                                <div class="score-box">
+                                    <div class="label">Anxiety</div>
+                                    <div class="score">${a.anxietyScore}</div>
+                                </div>
+                                <div class="score-box">
+                                    <div class="label">Stress</div>
+                                    <div class="score">${a.stressScore}</div>
+                                </div>
+                                <div class="score-box">
+                                    <div class="label">Total Score</div>
+                                    <div class="score">${a.depressionScore + a.anxietyScore + a.stressScore}</div>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                });
+            modal.classList.add('open');
+        }
+
+        function closeModal() {
+            modal.classList.remove('open');
+            currentUserId = null;
+            currentUserStatus = null;
+        }
+        
+        function toggleUserStatus() {
+            if (!currentUserId) return;
+            
+            const action = currentUserStatus === 'ACTIVE' ? 'deactivate' : 'activate';
+            const confirmMsg = currentUserStatus === 'ACTIVE' 
+                ? 'Are you sure you want to deactivate this user account?' 
+                : 'Are you sure you want to activate this user account?';
+            
+            if (!confirm(confirmMsg)) return;
+            
+            fetch(`/mindcare/admin/api/user/${currentUserId}/${action}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        closeModal();
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(err => {
+                    alert('Failed to ' + action + ' user. Please try again.');
+                    console.error(err);
+                });
+        }
+
+        // Filter tabs
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const role = tab.dataset.role;
+                document.querySelectorAll('.user-row').forEach(row => {
+                    if (role === 'ALL' || row.getAttribute('data-role') === role) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Close modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

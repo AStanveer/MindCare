@@ -2,6 +2,7 @@ package com.teamspring.MindCare.controller;
 
 import com.teamspring.MindCare.model.Resource;
 import com.teamspring.MindCare.service.ResourceService;
+import com.teamspring.MindCare.service.FeatureUsageService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,12 +17,20 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
     
+    @Autowired
+    private FeatureUsageService featureUsageService;
+    
+    private static final Long DUMMY_USER_ID = 1L;
+    
     // Main resources page with filtering
     @GetMapping
     public String showResources(
             @RequestParam(value = "category", defaultValue = "All") String category,
             @RequestParam(value = "search", required = false) String search,
             Model model) {
+        
+        // Track feature usage when user accesses resources
+        featureUsageService.incrementResourcesUsage(DUMMY_USER_ID);
         
         model.addAttribute("activePage", "resources");
         model.addAttribute("categories", resourceService.getAllCategories());
@@ -46,6 +55,9 @@ public class ResourceController {
     // View single resource
     @GetMapping("/{id}")
     public String viewResource(@PathVariable Long id, Model model) {
+        // Track feature usage when user views a resource
+        featureUsageService.incrementResourcesUsage(DUMMY_USER_ID);
+        
         Resource resource = resourceService.getResourceById(id);
         model.addAttribute("resource", resource);
         model.addAttribute("activePage", "resources");

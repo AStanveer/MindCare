@@ -2,6 +2,7 @@ package com.teamspring.MindCare.controller;
 
 import com.teamspring.MindCare.model.BookingRequest;
 import com.teamspring.MindCare.service.CounsellingService;
+import com.teamspring.MindCare.service.FeatureUsageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,12 @@ import java.util.List;
 public class CounsellingController {
 
     private final CounsellingService counsellingService;
+    private final FeatureUsageService featureUsageService;
+    private static final Long DUMMY_USER_ID = 1L;
 
-    public CounsellingController(CounsellingService counsellingService) {
+    public CounsellingController(CounsellingService counsellingService, FeatureUsageService featureUsageService) {
         this.counsellingService = counsellingService;
+        this.featureUsageService = featureUsageService;
     }
 
     // ===== Show Counselling Home Page =====
@@ -27,6 +31,9 @@ public class CounsellingController {
     // ===== Show Booking Page =====
     @GetMapping("/booking")
     public String counsellingPage(Model model) {
+        // Track feature usage when user accesses counselling booking
+        featureUsageService.incrementCounsellingUsage(DUMMY_USER_ID);
+        
         model.addAttribute("userRole", "student");
         model.addAttribute("counselors", counsellingService.getAllCounselors());
         model.addAttribute("timeSlots", counsellingService.getTimeSlots());
@@ -66,6 +73,9 @@ public class CounsellingController {
     // ===== Show My Sessions Page =====
     @GetMapping("/my-sessions")
     public String mySessions(Model model) {
+        // Track feature usage when user accesses their sessions
+        featureUsageService.incrementCounsellingUsage(DUMMY_USER_ID);
+        
         model.addAttribute("upcomingSessions", counsellingService.getUpcomingSessions());
         return "counselling/mysession";
     }

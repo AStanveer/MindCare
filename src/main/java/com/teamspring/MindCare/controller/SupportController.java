@@ -18,6 +18,7 @@ import com.teamspring.MindCare.dto.ChatResponse;
 import com.teamspring.MindCare.dto.PostDTO;
 import com.teamspring.MindCare.service.ChatbotService;
 import com.teamspring.MindCare.service.SupportService;
+import com.teamspring.MindCare.service.FeatureUsageService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -30,9 +31,17 @@ public class SupportController {
 
     @Autowired
     private ChatbotService chatbotService;
+    
+    @Autowired
+    private FeatureUsageService featureUsageService;
+    
+    private static final Long DUMMY_USER_ID = 1L;
 
     @GetMapping("/peer-support")
     public String peerSupport(Model model, @RequestParam(required = false) String tag) {
+        
+        // Track feature usage when user accesses peer support
+        featureUsageService.incrementPeerSupportUsage(DUMMY_USER_ID);
 
         List<PostDTO> posts = supportService.getAllPosts(tag);
 
@@ -76,6 +85,9 @@ public class SupportController {
 
     @GetMapping("/support-chat")
     public String supportChat(Model model) {
+        // Track feature usage when user accesses support chat
+        featureUsageService.incrementPeerSupportUsage(DUMMY_USER_ID);
+        
         model.addAttribute("username", "Moaz");
         return "support/support-chatbot";
     }
