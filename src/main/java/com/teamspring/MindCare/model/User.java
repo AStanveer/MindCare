@@ -68,10 +68,6 @@ public class User {
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
 
-    // New fields for profile management
-    @Column(name = "photo_url")
-    private String photoUrl;
-
     @Column(name = "location")
     private String location;
 
