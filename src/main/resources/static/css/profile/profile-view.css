@@ -1,0 +1,463 @@
+/* ===================================================================
+   MindCare Profile View CSS
+   File: /static/css/profile/profile-view.css
+   =================================================================== */
+
+/* ===== CSS Variables ===== */
+:root {
+    --mc-purple: #8C7AE6;
+    --mc-purple-light: #F3F1FF;
+    --mc-purple-border: #E2DBFF;
+    --mc-purple-hover: #E8E5F5;
+    --mc-header-bg: #EFEEFC;
+    --mc-border: #E5E7EB;
+    --mc-bg: #F9FAFB;
+    --mc-text-dark: #111827;
+    --mc-text-gray: #6B7280;
+    --mc-text-medium: #9CA3AF;
+    --mc-text-light: #A0AEC0;
+    --mc-white: #ffffff;
+    --mc-hover: #F8F9FD;
+    --mc-button-gray: #F3F4F6;
+    --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ===== Reset & Base ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--mc-bg);
+    font-family: var(--font-inter);
+    color: var(--mc-text-dark);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+    background: var(--mc-white);
+    border-bottom: 1px solid var(--mc-border);
+    padding: 12px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    position: relative;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-heart {
+    width: 24px;
+    height: 24px;
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--mc-purple);
+    letter-spacing: 0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-item {
+    text-decoration: none;
+    color: var(--mc-text-dark);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-item:hover {
+    background-color: var(--mc-purple-hover);
+}
+
+.nav-item img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-nav-btn {
+    background: var(--mc-purple);
+    color: var(--mc-white);
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.profile-nav-btn:hover {
+    background: #7B6DD4;
+}
+
+.profile-nav-btn img {
+    width: 18px;
+    height: 18px;
+    filter: brightness(0) invert(1);
+}
+
+.logout-btn {
+    text-decoration: none;
+    color: var(--mc-text-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background-color: var(--mc-purple-hover);
+}
+
+.logout-btn img {
+    width: 18px;
+    height: 18px;
+}
+
+/* ===== Container ===== */
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 24px;
+}
+
+/* ===== Header Banner ===== */
+.header-banner {
+    background-color: var(--mc-header-bg);
+    border-radius: 16px;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--mc-text-dark);
+}
+
+.header-content p {
+    margin: 6px 0 0;
+    color: var(--mc-text-gray);
+    font-size: 14px;
+}
+
+.pill-edit-btn {
+    background: var(--mc-white);
+    color: var(--mc-text-dark);
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--mc-border);
+    transition: all 0.2s ease;
+    position: absolute;
+    top: 24px;
+    right: 32px;
+}
+
+.pill-edit-btn:hover {
+    background-color: var(--mc-purple-hover);
+    border-color: #D1CBF0;
+}
+
+.pen-icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== Profile Cards ===== */
+.profile-card {
+    background: var(--mc-white);
+    border-radius: 16px;
+    padding: 28px 32px;
+    border: 1px solid var(--mc-border);
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.main-info {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.avatar-circle {
+    width: 100px;
+    height: 100px;
+    background-color: var(--mc-purple-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--mc-purple-border);
+    flex-shrink: 0;
+}
+
+.avatar-circle img {
+    width: 45px;
+    height: 45px;
+}
+
+.user-meta h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--mc-text-dark);
+}
+
+.role-text {
+    margin: 6px 0 0;
+    color: var(--mc-text-gray);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+/* ===== Section Cards ===== */
+.section-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--mc-text-dark);
+}
+
+.section-subtitle {
+    font-size: 13px;
+    color: var(--mc-text-gray);
+    margin: 4px 0 24px;
+}
+
+/* ===== Info Grid ===== */
+.info-grid-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 32px;
+}
+
+.info-item label {
+    display: block;
+    color: var(--mc-text-dark);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.info-item span {
+    color: var(--mc-text-medium);
+    font-size: 15px;
+    font-weight: 400;
+    display: block;
+}
+
+.value-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--mc-text-medium);
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.field-icon {
+    flex-shrink: 0;
+}
+
+.mt-20 {
+    margin-top: 24px;
+}
+
+.bio-text {
+    color: var(--mc-text-medium);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* ===== Security Buttons ===== */
+.button-row {
+    display: flex;
+    gap: 0;
+    margin-top: 20px;
+}
+
+.security-btn {
+    background: var(--mc-button-gray);
+    color: var(--mc-text-dark);
+    text-decoration: none;
+    padding: 11px 20px;
+    border: none;
+    border-right: 1px solid var(--mc-border);
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-block;
+    cursor: pointer;
+    font-family: var(--font-inter);
+}
+
+.security-btn:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.security-btn:last-child {
+    border-radius: 0 10px 10px 0;
+    border-right: none;
+}
+
+.security-btn:hover {
+    background: #E5E7EB;
+}
+
+/* ===== Alert Messages ===== */
+.alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #6EE7B7;
+}
+
+.alert-error {
+    background-color: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FCA5A5;
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 1200px) {
+    .nav-links {
+        position: static;
+        transform: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 16px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .container {
+        padding: 0 16px;
+        margin: 24px auto;
+    }
+
+    .header-banner {
+        padding: 20px;
+        padding-top: 60px;
+    }
+
+    .pill-edit-btn {
+        top: 20px;
+        right: 20px;
+    }
+
+    .info-grid-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .main-info {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .user-meta h2 {
+        font-size: 20px;
+    }
+
+    .button-row {
+        flex-direction: column;
+    }
+
+    .security-btn {
+        border-right: none;
+        border-bottom: 1px solid var(--mc-border);
+    }
+
+    .security-btn:first-child {
+        border-radius: 14px 14px 14px 14px;
+    }
+
+    .security-btn:last-child {
+        border-radius: 14px 14px 14px 14px;
+        border-bottom: none;
+    }
+}
+
+.nav-links a.active {
+    background-color: #8B7CF6;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+}

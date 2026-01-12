@@ -42,7 +42,7 @@ public class SupportService {
     @Autowired
     private ReplyLikeRepository replyLikeRepository;
 
-
+    @Transactional(readOnly = true)
     public List<PostDTO> getAllPosts(String tag) {
         List<Post> rawPosts;
 

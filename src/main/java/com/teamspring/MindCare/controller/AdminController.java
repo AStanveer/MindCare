@@ -105,22 +105,27 @@ public class AdminController {
     }
     
     @GetMapping("/api/user/{id}")
-    @ResponseBody
-    public Map<String, Object> getUserDetails(@PathVariable Long id) {
-        Map<String, Object> response = new HashMap<>();
-        
-        User user = userService.getUserById(id).orElse(null);
-        if (user != null) {
-            response.put("user", user);
-            
-            // Get assessment history
-            List<AssessmentResult> assessments = assessmentResultRepository
-                .findByUserIdOrderByCompletedAtDesc(user.getId());
-            response.put("assessments", assessments);
-        }
-        
-        return response;
+@ResponseBody
+public Map<String, Object> getUserDetails(@PathVariable Long id) {
+    Map<String, Object> response = new HashMap<>();
+    
+    try {
+        User user = userService.getUserById(id); // ✅ NO orElse
+        response.put("user", user);
+
+        List<AssessmentResult> assessments =
+                assessmentResultRepository.findByUserIdOrderByCompletedAtDesc(user.getId());
+        response.put("assessments", assessments);
+
+        response.put("success", true);
+    } catch (RuntimeException e) {
+        response.put("success", false);
+        response.put("message", e.getMessage());
     }
+    
+    return response;
+}
+
     
     @GetMapping("/api/user/{id}/deactivate")
     @ResponseBody

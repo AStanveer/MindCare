@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - MindCare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/profile/profile-view.css}">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <img th:src="@{/icons/logo.png}" class="logo-heart" alt="MindCare">
+                <span class="logo-text">MindCare</span>
+            </div>
+            
+            <div class="nav-links">
+                <!-- Student Navigation -->
+                <th:block th:if="${user.role.toString() == 'STUDENT'}">
+                    <a th:href="@{/mindcare/student/dashboard}" class="nav-item">
+                        <img th:src="@{/icons/home.png}" alt="Dashboard">
+                        Dashboard
+                    </a>
+                    <a th:href="@{/mindcare/assessment/dass21}" class="nav-item">
+                        <img th:src="@{/icons/assessment.png}" alt="Assessment">
+                        Assessment
+                    </a>
+                    <a th:href="@{/mindcare/selfcare}" class="nav-item">
+                        <img th:src="@{/icons/selfcare.png}" alt="Self-Care">
+                        Self-Care
+                    </a>
+                    <a th:href="@{/mindcare/resources}" class="nav-item">
+                        <img th:src="@{/icons/resources.png}" alt="Resources">
+                        Resources
+                    </a>
+                    <a th:href="@{/mindcare/peer-support}" class="nav-item">
+                        <img th:src="@{/icons/peer.png}" alt="Peer Support">
+                        Peer Support
+                    </a>
+                    <a th:href="@{/mindcare/counselling/booking}" class="nav-item">
+                        <img th:src="@{/icons/counselling.png}" alt="Counselling">
+                        Counselling
+                    </a>
+                    <a th:href="@{/profile/view}" class="nav-item active">
+                        <img th:src="@{/icons/profile.png}" alt="Profile">
+                        Profile
+                    </a>
+                </th:block>
+
+<!-- Professional Navigation -->
+<th:block th:if="${user.role.toString() == 'PROFESSIONAL'}">
+
+    <a th:href="@{/mindcare/dashboard/professional}"
+       class="nav-item"
+       th:classappend="${activePage == 'DASHBOARD'} ? ' active'">
+        <img th:src="@{/icons/home.png}" alt="Dashboard">
+        Dashboard
+    </a>
+
+    <a th:href="@{/mindcare/counselling}"
+       class="nav-item"
+       th:classappend="${activePage == 'SCHEDULE'} ? ' active'">
+        <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="nav-svg"
+        >
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <line x1="3" y1="8" x2="21" y2="8"></line>
+            <line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round"></line>
+            <line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"></line>
+        </svg>
+        Schedule
+    </a>
+
+    <a th:href="@{/mindcare/resources}"
+       class="nav-item"
+       th:classappend="${activePage == 'CONTENT'} ? ' active'">
+        <img th:src="@{/icons/resources.png}" alt="Content">
+        Content
+    </a>
+
+    <a th:href="@{/profile/view}"
+       class="nav-item"
+       th:classappend="${activePage == 'PROFILE'} ? ' active'">
+        <img th:src="@{/icons/profile.png}" alt="Profile">
+        Profile
+    </a>
+
+</th:block>
+
+
+                <!-- Admin Navigation -->
+                <th:block th:if="${user.role.toString() == 'ADMIN'}">
+                    <a th:href="@{/mindcare/admin/dashboard}" class="nav-item">
+                        <img th:src="@{/icons/activity.png}" alt="Analytics">
+                        Analytics & Reports
+                    </a>
+                    <a th:href="@{/mindcare/admin/users}" class="nav-item">
+                        <img th:src="@{/icons/people.png}" alt="Users">
+                        User Management
+                    </a>
+                    <a th:href="@{/profile/view}" class="nav-item active">
+                        <img th:src="@{/icons/profile.png}" alt="Profile">
+                        Profile
+                    </a>
+                </th:block>
+            </div>
+            
+            <div class="nav-right">
+                <a th:href="@{/auth/logout}" class="logout-btn">
+                    <img th:src="@{/icons/logout.png}" alt="Logout">
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Header Banner -->
+        <div class="header-banner">
+            <div class="header-content">
+                <h1>My Profile</h1>
+                <p>Manage your account information</p>
+            </div>
+            <a th:href="@{/profile/edit}" class="pill-edit-btn">
+                <div class="pen-icon-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </div>
+                <span>Edit Profile</span>
+            </a>
+        </div>
+
+        <!-- Main Profile Info -->
+        <div class="profile-card main-info">
+            <div class="avatar-circle">
+        <img th:src="${user.profilePicture != null} 
+             ? @{${user.profilePicture}} 
+             : @{/images/default-avatar.png}"
+        alt="Profile Picture"
+        class="profile-img">
+
+
+
+    <svg
+        th:unless="${user.getProfilePicture() != null}"
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#8C7AE6"
+        stroke-width="2"
+    >
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+</div>
+
+            <div class="user-meta">
+                <h2 th:text="${user.fullName}">User</h2>
+                <p class="role-text" th:text="${user.role.toString() == 'PROFESSIONAL' ? 'Mental Health Professional' : user.role}">Student</p>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="profile-card section-card">
+            <h3>Contact Information</h3>
+            <p class="section-subtitle">Your primary contact details</p>
+            <div class="info-grid-row">
+                <div class="info-item">
+                    <label>Email</label>
+                    <div class="value-with-icon">
+                        <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0AEC0" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <span th:text="${user.email}">email@example.com</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <div class="value-with-icon">
+                        <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0AEC0" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span th:text="${user.phone != null and user.phone != '' ? user.phone : 'Not provided'}">+1 (555) 123-4567</span>
+                    </div>
+                </div>
+            </div>
+            <div class="info-item mt-20">
+    <label>Location</label>
+    <div class="value-with-icon">
+        <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0AEC0" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span th:text="${user.location != null and user.location != '' ? user.location : 'Not provided'}">
+            Not provided
+        </span>
+    </div>
+</div>
+
+        </div>
+
+        <!-- Academic Information (Student Only) -->
+        <th:block th:if="${user.role.toString() == 'STUDENT'}">
+            <div class="profile-card section-card">
+                <h3>Academic Information</h3>
+                <p class="section-subtitle">Your academic details</p>
+                <div class="info-grid-row">
+                    <div class="info-item">
+                        <label>Student ID</label>
+                        <span th:text="${user.studentId != null and user.studentId != '' ? user.studentId : 'STU-' + user.id}">STU-2024-001</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Year</label>
+                        <span>Junior</span>
+                    </div>
+                </div>
+                <div class="info-item mt-20">
+                    <label>Major</label>
+                    <span th:text="${user.department != null and user.department != '' ? user.department : 'Not specified'}">Computer Science</span>
+                </div>
+            </div>
+        </th:block>
+
+        <!-- Professional Information (Professional Only) -->
+        <th:block th:if="${user.role.toString() == 'PROFESSIONAL'}">
+            <div class="profile-card section-card">
+                <h3>Professional Information</h3>
+                <p class="section-subtitle">Your credentials and expertise</p>
+                <div class="info-grid-row">
+                    <div class="info-item">
+                        <label>License Number</label>
+                        <span>LIC-12345</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Experience</label>
+                        <span>8 years</span>
+                    </div>
+                </div>
+                <div class="info-item mt-20">
+                    <label>Specialty</label>
+                    <span th:text="${user.department != null and user.department != '' ? user.department : 'Not specified'}">Anxiety & Stress Management</span>
+                </div>
+                <div class="info-item mt-20">
+                    <label>Bio</label>
+                    <p class="bio-text" th:text="${user.bio != null and user.bio != '' ? user.bio : 'Tell students about yourself...'}">Tell students about yourself...</p>
+                </div>
+            </div>
+        </th:block>
+
+        <!-- Role Information (Admin Only) -->
+        <th:block th:if="${user.role.toString() == 'ADMIN'}">
+            <div class="profile-card section-card">
+                <h3>Role Information</h3>
+                <p class="section-subtitle">Your administrative details</p>
+                <div class="info-grid-row">
+                    <div class="info-item">
+                        <label>Role</label>
+                        <span>System Administrator</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Department</label>
+                        <span th:text="${user.department != null and user.department != '' ? user.department : 'IT & Operations'}">IT & Operations</span>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+
+        <!-- Security Section -->
+        <div class="profile-card section-card">
+            <h3>Security</h3>
+            <p class="section-subtitle">Manage your password and security preferences</p>
+            <div class="button-row">
+                <button type="button" class="security-btn" disabled>
+                Change Password
+                </button>
+
+                <button class="security-btn" onclick="alert('Two-Factor Authentication feature coming soon!')">Enable Two-Factor Authentication</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
