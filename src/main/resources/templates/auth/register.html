@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - MindCare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/auth/auth.css}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card register-card">
+            <div class="auth-icon">
+                <svg width="80" height="80" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.99996 32.77V30C9.99996 29.1159 10.3511 28.2681 10.9763 27.643C11.6014 27.0178 12.4492 26.6667 13.3333 26.6667H23.3333C24.2173 26.6667 25.0652 27.0178 25.6903 27.643C26.3154 28.2681 26.6666 29.1159 26.6666 30V32.77M35 18.3333C35 27.5381 27.538 35 18.3333 35C9.12855 35 1.66663 27.5381 1.66663 18.3333C1.66663 9.12858 9.12855 1.66666 18.3333 1.66666C27.538 1.66666 35 9.12858 35 18.3333ZM23.3333 15C23.3333 17.7614 21.0947 20 18.3333 20C15.5719 20 13.3333 17.7614 13.3333 15C13.3333 12.2386 15.5719 9.99999 18.3333 9.99999C21.0947 9.99999 23.3333 12.2386 23.3333 15Z" stroke="#8C7AE6" stroke-width="3.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Join MindCare to get support</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/auth/register}" method="post" th:object="${user}" class="auth-form">
+                
+                <div class="role-selector-section">
+                    <label class="role-label">I am a</label>
+                    <div class="role-selector">
+                        <div class="role-option">
+                            <input type="radio" id="student" th:field="*{role}" value="STUDENT" checked="checked">
+                            <label for="student">
+                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M25.6654 7.33366V14.667M6.66536 10.4337V14.667C6.66536 15.662 7.41979 16.6054 8.77312 17.2963C10.1265 17.9871 12.0118 18.3337 13.9987 18.3337C15.9856 18.3337 17.8709 17.9871 19.2242 17.2963C20.5776 16.6054 21.332 15.662 21.332 14.667V10.4337M24.9454 8.5563C25.1597 8.46172 25.3441 8.30951 25.4777 8.11688C25.6114 7.92424 25.6889 7.69849 25.7018 7.46406C25.7148 7.22962 25.6627 6.99627 25.5517 6.78992C25.4407 6.58357 25.2751 6.41209 25.0734 6.29366L15.3054 1.54699C14.9811 1.38868 14.6243 1.30566 14.262 1.30566C13.8998 1.30566 13.543 1.38868 13.2187 1.54699L3.45203 6.28699C3.25358 6.40805 3.09166 6.58218 2.98399 6.79022C2.87632 6.99827 2.82695 7.23243 2.84082 7.46696C2.85469 7.7015 2.93127 7.92756 3.06257 8.12152C3.19388 8.31549 3.37488 8.46984 3.58536 8.56966L13.2187 13.227C13.543 13.3853 13.8998 13.4684 14.262 13.4684C14.6243 13.4684 14.9811 13.3853 15.3054 13.227L24.9454 8.5563Z" stroke="currentColor" stroke-width="2.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span>Student</span>
+                            </label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="professional" th:field="*{role}" value="PROFESSIONAL">
+                            <label for="professional">
+                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18.6667 25.6667V3.66667C18.6667 2.95942 18.3857 2.28115 17.8856 1.78105C17.3855 1.28095 16.7072 1 16 1H12C11.2928 1 10.6145 1.28095 10.1144 1.78105C9.61429 2.28115 9.33334 2.95942 9.33334 3.66667V25.6667M4 6.33333H24C25.4728 6.33333 26.6667 7.52724 26.6667 9V23C26.6667 24.4728 25.4728 25.6667 24 25.6667H4C2.52724 25.6667 1.33334 24.4728 1.33334 23V9C1.33334 7.52724 2.52724 6.33333 4 6.33333Z" stroke="currentColor" stroke-width="2.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span>Professional</span>
+                            </label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="admin" th:field="*{role}" value="ADMIN">
+                            <label for="admin">
+                                <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22.3333 15.3337C22.3333 21.6003 17.6667 24.667 12.8 26.4537C12.5295 26.5461 12.2341 26.5409 11.9667 26.4403C7.10001 24.667 2.33334 21.6003 2.33334 15.3337V6.33366C2.33334 5.99214 2.46905 5.66452 2.71076 5.42281C2.95248 5.1811 3.2801 5.04533 3.62168 5.04533C6.16668 5.04533 9.28001 3.56699 11.48 1.62699C11.7424 1.39926 12.0845 1.27466 12.4383 1.27466C12.7922 1.27466 13.1343 1.39926 13.3967 1.62699C15.6067 3.587 18.7133 5.04533 21.2583 5.04533C21.5999 5.04533 21.9275 5.1811 22.1692 5.42281C22.411 5.66452 22.5467 5.99214 22.5467 6.33366L22.3333 15.3337Z" stroke="currentColor" stroke-width="2.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span>Admin</span>
+                            </label>
+                        </div>
+                    </div>
+                    <p class="role-description" id="roleDescription">Access assessments, self-care tools, and support</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <div class="input-with-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="8" r="4" stroke="#A0AEC0" stroke-width="2"/>
+                            <path d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <input type="text" 
+                               id="fullName" 
+                               th:field="*{fullName}"
+                               placeholder="John Doe"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <div class="input-with-icon">
+                        <svg width="22" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 5L9.8906 10.2604C10.5624 10.7083 11.4376 10.7083 12.1094 10.2604L21 5M3 17H19C20.1046 17 21 16.1046 21 15V3C21 1.89543 20.1046 1 19 1H3C1.89543 1 1 1.89543 1 3V15C1 16.1046 1.89543 17 3 17Z" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input type="email" 
+                               id="email" 
+                               th:field="*{email}"
+                               placeholder="you@example.com"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <div class="input-with-icon">
+                        <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 9V7C15 5.67392 14.4732 4.40215 13.5355 3.46447C12.5979 2.52678 11.3261 2 10 2C8.67392 2 7.40215 2.52678 6.46447 3.46447C5.52678 4.40215 5 5.67392 5 7V9M7 21H13C14.6569 21 16 19.6569 16 18V12C16 10.3431 14.6569 9 13 9H7C5.34315 9 4 10.3431 4 12V18C4 19.6569 5.34315 21 7 21Z" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input type="password" 
+                               id="password" 
+                               th:field="*{password}"
+                               placeholder="••••••••"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-row role-fields" id="studentFields">
+                    <div class="form-group">
+                        <label for="studentId">Student ID</label>
+                        <div class="input-with-icon">
+                            <input type="text" 
+                                   id="studentId" 
+                                   th:field="*{studentId}"
+                                   placeholder="STU2024001"
+                                   style="padding-left: 20px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <div class="input-with-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="2" width="16" height="20" rx="2" ry="2" stroke="#A0AEC0" stroke-width="2"/>
+                                <rect x="7" y="5" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="11" y="5" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="15" y="5" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="7" y="9" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="11" y="9" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="15" y="9" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="7" y="13" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="11" y="13" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="15" y="13" width="2" height="2" fill="#A0AEC0"/>
+                                <rect x="10" y="17" width="4" height="5" rx="1" fill="#A0AEC0"/>
+                            </svg>
+                            <input type="text" 
+                                   id="department" 
+                                   th:field="*{department}"
+                                   placeholder="CS">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group role-fields" id="professionalFields" style="display: none;">
+                    <label for="specialization">Specialization</label>
+                    <div class="input-with-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 6.042C10.3516 4.56336 8.2144 3.74694 6 3.75C4.948 3.75 3.938 3.93 3 4.262V18.512C3.96362 18.172 4.97816 17.9989 6 18C8.305 18 10.408 18.867 12 20.292M12 6.042C13.6483 4.56328 15.7856 3.74685 18 3.75C19.052 3.75 20.062 3.93 21 4.262V18.512C20.0364 18.172 19.0218 17.9989 18 18C15.7856 17.9969 13.6484 18.8134 12 20.292M12 6.042V20.292" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input type="text" 
+                               id="specialization" 
+                               name="specialization"
+                               placeholder="e.g., Clinical Psychology">
+                    </div>
+                </div>
+
+                <div class="form-group role-fields" id="phoneField">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-with-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 5C3 3.89543 3.89543 3 5 3H8.27924C8.70967 3 9.09181 3.27543 9.22792 3.68377L10.7257 8.17721C10.8831 8.64932 10.6694 9.16531 10.2243 9.38787L7.96701 10.5165C9.06925 12.9612 11.0388 14.9308 13.4835 16.033L14.6121 13.7757C14.8347 13.3306 15.3507 13.1169 15.8228 13.2743L20.3162 14.7721C20.7246 14.9082 21 15.2903 21 15.7208V19C21 20.1046 20.1046 21 19 21H18C9.71573 21 3 14.2843 3 6V5Z" stroke="#A0AEC0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input type="tel" 
+                               id="phone" 
+                               th:field="*{phone}"
+                               placeholder="+1 234 567 8900">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <a th:href="@{/auth/login}" style="text-decoration: none;">
+                    <p>Already have an account? Sign in</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleInputs = document.querySelectorAll('input[name="role"]');
+            const studentFields = document.getElementById('studentFields');
+            const phoneField = document.getElementById('phoneField');
+            
+            function updateRoleDescription(role) {
+                const descriptions = {
+                    'STUDENT': 'Access assessments, self-care tools, and support',
+                    'PROFESSIONAL': 'Manage counselling sessions and create resources',
+                    'ADMIN': 'Manage users and view platform analytics'
+                };
+                document.getElementById('roleDescription').textContent = descriptions[role] || descriptions['STUDENT'];
+            }
+            
+            function updateFields(role) {
+                if (role === 'STUDENT') {
+                    studentFields.style.display = 'grid';
+                    document.getElementById('professionalFields').style.display = 'none';
+                    phoneField.style.display = 'block';
+                } else if (role === 'PROFESSIONAL') {
+                    studentFields.style.display = 'none';
+                    document.getElementById('professionalFields').style.display = 'block';
+                    phoneField.style.display = 'block';
+                } else if (role === 'ADMIN') {
+                    studentFields.style.display = 'none';
+                    document.getElementById('professionalFields').style.display = 'none';
+                    phoneField.style.display = 'none';
+                }
+            }
+            
+            roleInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    updateRoleDescription(this.value);
+                    updateFields(this.value);
+                });
+            });
+            
+            // Set Student as default
+            document.getElementById('student').checked = true;
+            updateFields('STUDENT');
+            updateRoleDescription('STUDENT');
+        });
+    </script>
+</body>
+</html>
