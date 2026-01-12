@@ -1,8 +1,12 @@
 package com.teamspring.MindCare.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,89 +15,220 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.teamspring.MindCare.dto.SessionDTO;
 import com.teamspring.MindCare.model.CounsellingSession;
 import com.teamspring.MindCare.model.MoodEntry;
-import com.teamspring.MindCare.model.Role;
-import com.teamspring.MindCare.model.UserTemp;
+import com.teamspring.MindCare.model.User;
 import com.teamspring.MindCare.service.DashboardService;
+import com.teamspring.MindCare.service.UserService;
 import com.teamspring.MindCare.viewmodel.QuickAction;
 
+import jakarta.servlet.http.HttpSession;
 
-
+/**
+ * Dashboard Controller
+ * Handles role-specific dashboard access with Spring Security integration
+ */
 @Controller
 @RequestMapping("/mindcare")
 public class DashboardController {
 
-    @Autowired DashboardService dashboardService;
+    @Autowired
+    private DashboardService dashboardService;
+    
+    @Autowired
+    private UserService userService;
 
+    /**
+     * Route to appropriate dashboard based on user role
+     */
     @GetMapping("/dashboard")
-    public String routeDashboard() {
-        Long currentUserId = 1L;
-
-        UserTemp user = dashboardService.getUser(currentUserId);
-
-        if (user.getRole() == Role.ADMIN) {
-            return "redirect:/mindcare/admin/dashboard";
-        } else if (user.getRole() == Role.STUDENT) {
-            return "redirect:/mindcare/student/dashboard";
-        } else if (user.getRole() == Role.PROFESSIONAL) {
-            return "redirect:/mindcare/professional/dashboard";
-        } else {
-            return "redirect:/mindcare/error";
+    public String routeDashboard(Principal principal, HttpSession session) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        
+        // Get authenticated user's email
+        String email = principal.getName();
+        User user = userService.getUserByEmail(email);
+        
+        // Store user in session for quick access
+        session.setAttribute("user", user);
+        session.setAttribute("userId", user.getId());
+        session.setAttribute("userName", user.getFullName());
+        session.setAttribute("userRole", user.getRole());
+        
+        // Route based on role
+        switch (user.getRole()) {
+            case STUDENT:
+                return "redirect:/mindcare/dashboard/student";
+            case PROFESSIONAL:
+                return "redirect:/mindcare/dashboard/professional";
+            case ADMIN:
+                return "redirect:/mindcare/admin/dashboard";
+            default:
+                return "redirect:/auth/login";
         }
     }
 
-    @GetMapping("/student/dashboard")
-    public String home(Model model) {
-        Long currentUserId = 1L;
-
-        UserTemp user = dashboardService.getUser(currentUserId);
+    /**
+     * Student Dashboard
+     */
+    @GetMapping("/dashboard/student")
+    @PreAuthorize("hasRole('STUDENT')")
+    public String studentDashboard(Principal principal, HttpSession session, Model model) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
         
+        // Get current authenticated user
+        User user = getCurrentUser(principal, session);
+        Long currentUserId = user.getId();
+        
+        // Fetch student-specific data
         List<CounsellingSession> sessions = dashboardService.getStudentSessions(currentUserId);
-
         MoodEntry todayMood = dashboardService.getTodayMood(currentUserId);
         Double weeklyAvg = dashboardService.getWeeklyMoodAverage(currentUserId);
-
+        long assessmentCount = dashboardService.getAssessmentCount(currentUserId);
+        
+        // Quick actions for students
         List<QuickAction> actions = List.of(
             new QuickAction("Mood Tracker", "icon-mood-2", "/mindcare/mood/tracker"),
             new QuickAction("Self Care", "icon-self-care", "/mindcare/selfcare"),
-            new QuickAction("Book Session", "icon-book-session", "booking"),
+            new QuickAction("Book Session", "icon-book-session", "/mindcare/booking"),
             new QuickAction("Peer Support", "icon-peer-support", "/mindcare/peer-support")
         );
-
-        long assessmentCount = dashboardService.getAssessmentCount(currentUserId);
+        
         int assessmentGoal = 5; // Static goal: "Take 5 assessments this semester"
-
-        model.addAttribute("username", user != null ? user.getFullName() : "Student");
+        
+        // Add attributes to model
+        model.addAttribute("user", user);
+        model.addAttribute("username", user.getFullName());
         model.addAttribute("quickActions", actions);
         model.addAttribute("counsellingSessions", sessions);
-
         model.addAttribute("todayMood", todayMood);
-        model.addAttribute("weeklyMoodAvg", String.format("%.1f", weeklyAvg));
+        model.addAttribute("weeklyMoodAvg", weeklyAvg != null ? String.format("%.1f", weeklyAvg) : "N/A");
         model.addAttribute("assessmentCount", assessmentCount);
         model.addAttribute("assessmentGoal", assessmentGoal);
         
         return "dashboard/student/dashboard";
     }
     
-    @GetMapping("/professional/dashboard")
-    public String professionalDashboard(Model model) {
-        Long currentUserId = 2L;
-
+    /**
+     * Professional Dashboard
+     */
+    @GetMapping("/dashboard/professional")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
+    public String professionalDashboard(Principal principal, HttpSession session, Model model) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        
+        // Get current authenticated user
+        User user = getCurrentUser(principal, session);
+        Long currentUserId = user.getId();
+        
+        // Quick actions for professionals
         List<QuickAction> actions = List.of(
-            new QuickAction("Add Availability", "icon-calendar", "assessment/dass21"),
-            new QuickAction("Create Resource", "icon-book", "self-care"),
-            new QuickAction("Manage Schedule", "icon-clock", "booking")
+            new QuickAction("Add Availability", "icon-calendar", "/mindcare/professional/availability"),
+            new QuickAction("Create Resource", "icon-book", "/mindcare/professional/resources/create"),
+            new QuickAction("Manage Schedule", "icon-clock", "/mindcare/professional/schedule")
         );
-
+        
+        // Fetch professional-specific data
         List<SessionDTO> todaysSchedule = dashboardService.getProfessionalSessions(currentUserId);
-
+        
+        // Add attributes to model
+        model.addAttribute("user", user);
+        model.addAttribute("username", user.getFullName());
         model.addAttribute("quickActions", actions);
         model.addAttribute("todaysSchedule", todaysSchedule);
-        model.addAttribute("username", "Emily Carter");
+        
         return "dashboard/professional/dashboard";
     }
 
+    /**
+     * Admin Dashboard
+     */
     @GetMapping("/admin/dashboard")
-    public String adminDashboard(Model model) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminDashboard(Principal principal, HttpSession session, Model model) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        
+        // Get current authenticated user
+        User user = getCurrentUser(principal, session);
+        
+        // Fetch admin statistics
+        long totalUsers = userService.getTotalUsers();
+        long totalStudents = (long) userService.getStudentsCount();
+        long totalProfessionals = (long) userService.getProfessionalsCount();
+        long activeUsers = userService.getActiveUsersCount();
+        
+        // Quick actions for admins
+        List<QuickAction> actions = List.of(
+            new QuickAction("User Management", "icon-users", "/mindcare/admin/users"),
+            new QuickAction("Analytics", "icon-chart", "/mindcare/admin/analytics"),
+            new QuickAction("System Settings", "icon-settings", "/mindcare/admin/settings")
+        );
+        
+        // Add attributes to model
+        model.addAttribute("user", user);
+        model.addAttribute("username", user.getFullName());
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalStudents", totalStudents);
+        model.addAttribute("totalProfessionals", totalProfessionals);
+        model.addAttribute("activeUsers", activeUsers);
+        model.addAttribute("quickActions", actions);
+        
         return "dashboard/admin/dashboard";
+    }
+    
+    /**
+     * Helper method to get current authenticated user
+     * Checks session first, then loads from database if needed
+     */
+    private User getCurrentUser(Principal principal, HttpSession session) {
+        // Try to get from session first
+        User user = (User) session.getAttribute("user");
+        
+        if (user == null) {
+            // Load from database using authenticated email
+            String email = principal.getName();
+            user = userService.getUserByEmail(email);
+            
+            // Store in session for future requests
+            session.setAttribute("user", user);
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userName", user.getFullName());
+            session.setAttribute("userRole", user.getRole());
+        }
+        
+        return user;
+    }
+    
+    /**
+     * Alternative method to get current user using SecurityContextHolder
+     * Useful when Principal is not available
+     */
+    private User getCurrentUserFromContext(HttpSession session) {
+        // Try session first
+        User user = (User) session.getAttribute("user");
+        
+        if (user == null) {
+            // Get from SecurityContext
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            
+            if (authentication != null && authentication.isAuthenticated()) {
+                String email = authentication.getName();
+                user = userService.getUserByEmail(email);
+                
+                // Store in session
+                session.setAttribute("user", user);
+                session.setAttribute("userId", user.getId());
+                session.setAttribute("userName", user.getFullName());
+                session.setAttribute("userRole", user.getRole());
+            }
+        }
+        
+        return user;
     }
 }
