@@ -16,7 +16,7 @@ import java.security.Principal;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/profile")
+@RequestMapping("/mindcare/profile")
 public class ProfileController {
 
     @Autowired
@@ -84,7 +84,7 @@ public class ProfileController {
             /* ===== Upload Profile Picture ===== */
             if (photo != null && !photo.isEmpty()) {
                 String imagePath = fileStorageService.storeFile(photo, "profile-photos");
-                currentUser.setProfilePicture(imagePath); // ✅ FIXED
+                currentUser.setProfilePicture(imagePath);
             }
 
             /* ===== Common Fields ===== */

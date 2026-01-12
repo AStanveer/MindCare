@@ -106,7 +106,7 @@
 
                 <a class="nav-btn"
                     th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
-                    th:href="@{/mindcare/student/dashboard}">
+                    th:href="@{/mindcare/dashboard}">
                     <span class="link-icon">
                         <th:block
                             th:replace="~{fragments/icons ::icon-home}">
@@ -173,7 +173,7 @@
                 
                 <a class="nav-btn"
                     th:classappend="${activePage == 'profile'} ? ' active' : ''"
-                    th:href="@{/mindcare/profile}">
+                    th:href="@{/mindcare/profile/view}">
                     <span class="link-icon">
                         <th:block
                             th:replace="~{fragments/icons ::icon-person}">
@@ -182,13 +182,15 @@
                     <span>Profile</span>
                 </a>
                 
+                <form id="logoutForm" method="post" th:action="@{/auth/logout}">
+                    </form>
+
                 <a class="nav-btn"
-                    th:classappend="${activePage == 'logout'} ? ' active' : ''"
-                    th:href="@{/mindcare/logout}">
+                th:classappend="${activePage == 'logout'} ? ' active' : ''"
+                href="#" 
+                onclick="document.getElementById('logoutForm').submit(); return false;">
                     <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-logout}">
-                        </th:block>
+                        <th:block th:replace="~{fragments/icons ::icon-logout}"></th:block>
                     </span>
                     <span>Logout</span>
                 </a>
