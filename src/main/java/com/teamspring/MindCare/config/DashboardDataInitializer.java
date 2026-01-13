@@ -8,35 +8,37 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder; // Import PasswordEncoder
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamspring.MindCare.model.CounsellingSession;
 import com.teamspring.MindCare.model.Counselor;
 import com.teamspring.MindCare.model.MoodEntry;
 import com.teamspring.MindCare.model.Role;
-import com.teamspring.MindCare.model.UserTemp;
+import com.teamspring.MindCare.model.User;
 import com.teamspring.MindCare.repository.CounsellingSessionRepository;
 import com.teamspring.MindCare.repository.CounselorRepository;
 import com.teamspring.MindCare.repository.MoodEntryRepository;
-import com.teamspring.MindCare.repository.UserTempRepository;
+import com.teamspring.MindCare.repository.UserRepository;
 
-@Configuration
+// @Configuration
 @Order(3) // Run this AFTER StudentModule (1) and SupportForum (2) initializers
 public class DashboardDataInitializer {
 
     @Bean
     @Transactional
     public CommandLineRunner initDashboardData(
-            UserTempRepository userRepository,
+            UserRepository userRepository,
             CounselorRepository counselorRepository,
             MoodEntryRepository moodRepository,
-            CounsellingSessionRepository sessionRepository) {
+            CounsellingSessionRepository sessionRepository,
+            PasswordEncoder passwordEncoder) {
 
         return args -> {
             System.out.println("=== Initializing Dashboard Demo Data ===");
 
-            // 1. Ensure our specific Demo Users exist (Moaz & Dr. Emily)
-            UserTemp student = initDemoUsers(userRepository);
+            // 1. Ensure our specific Demo Student (Moaz) exists
+            User student = initDemoUsers(userRepository, passwordEncoder);
             
             // 2. Ensure Counselors exist
             Counselor doctor = initCounselors(counselorRepository);
@@ -51,16 +53,25 @@ public class DashboardDataInitializer {
         };
     }
 
-    private UserTemp initDemoUsers(UserTempRepository userRepo) {
-        // Check if our specific student exists, if not create him
-        UserTemp existingStudent = userRepo.findByEmail("moaz@uni.edu");
-        if (existingStudent != null) {
-            return existingStudent;
-        }
-        
-        System.out.println("Creating demo student: Moaz...");
-        UserTemp student = new UserTemp("Moaz Student", "moaz@uni.edu", "password123", Role.STUDENT);
-        return userRepo.save(student);
+    private User initDemoUsers(UserRepository userRepo, PasswordEncoder encoder) {
+        // Check if Moaz exists, if not create him
+        return userRepo.findByEmail("moaz@mindcare.com")
+            .orElseGet(() -> {
+                System.out.println("Creating demo student: Moaz...");
+                User student = new User(
+                    "Moaz Student", 
+                    "moaz@mindcare.com", 
+                    encoder.encode("password"),
+                    Role.STUDENT
+                );
+                // Fill mandatory fields to avoid DataIntegrityViolation
+                student.setPhone("0000000000"); 
+                student.setDepartment("Software Engineering");
+                student.setYear("4");
+                student.setBio("Final year student working on MindCare.");
+                
+                return userRepo.save(student);
+            });
     }
 
     private Counselor initCounselors(CounselorRepository counselorRepo) {
@@ -123,9 +134,9 @@ public class DashboardDataInitializer {
 
         // 2. TODAY'S Session (Crucial for Professional Dashboard "Today's Schedule")
         CounsellingSession today = new CounsellingSession();
-        today.setCounselorId(counselorId); // Assigned to Dr. Emily
+        today.setCounselorId(counselorId); 
         today.setCounselorName("Dr. Emily Carter");
-        today.setStudentId(studentId); // Assigned to Moaz
+        today.setStudentId(studentId); 
         today.setSessionDate(LocalDate.now()); // TODAY
         today.setSessionTime(LocalTime.of(14, 0)); // 2:00 PM
         today.setSessionType("Individual");

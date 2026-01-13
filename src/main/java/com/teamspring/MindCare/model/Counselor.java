@@ -18,8 +18,8 @@ public class Counselor {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserTemp user;
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
+    private User user;
     
     @Column(nullable = false)
     private String name;
@@ -47,8 +47,8 @@ public class Counselor {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public UserTemp getUser() { return user; }
-    public void setUser(UserTemp user) { this.user = user; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

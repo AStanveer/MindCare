@@ -26,7 +26,7 @@
                 <h1>My Profile</h1>
                 <p>Manage your account information</p>
             </div>
-            <a th:href="@{/profile/edit}" class="pill-edit-btn">
+            <a th:href="@{/mindcare/profile/edit}" class="pill-edit-btn">
                 <div class="pen-icon-box">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -40,13 +40,6 @@
         <!-- Main Profile Info -->
         <div class="profile-card main-info">
             <div class="avatar-circle">
-        <img th:src="${user.profilePicture != null} 
-             ? @{${user.profilePicture}} 
-             : @{/images/default-avatar.png}"
-        alt="Profile Picture"
-        class="profile-img">
-
-
 
     <svg
         th:unless="${user.getProfilePicture() != null}"
@@ -179,11 +172,9 @@
             <h3>Security</h3>
             <p class="section-subtitle">Manage your password and security preferences</p>
             <div class="button-row">
-                <button type="button" class="security-btn" disabled>
-                Change Password
-                </button>
-
-                <button class="security-btn" onclick="alert('Two-Factor Authentication feature coming soon!')">Enable Two-Factor Authentication</button>
+                <a th:href="@{/mindcare/profile/change-password}" class="security-btn">
+                    Change Password
+                </a>
             </div>
         </div>
     </div>

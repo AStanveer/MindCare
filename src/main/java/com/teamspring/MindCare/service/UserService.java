@@ -3,15 +3,15 @@ package com.teamspring.MindCare.service;
 import com.teamspring.MindCare.model.Role;
 import com.teamspring.MindCare.model.User;
 import com.teamspring.MindCare.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -141,17 +141,15 @@ public class UserService {
     }
 
     /* =========================
-       PASSWORD
-       ========================= */
-
+    PASSWORD
+    ========================= */
     public void changePassword(Long userId, String oldPassword, String newPassword) {
-
         User user = getUserById(userId);
-
+    
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
         }
-
+    
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }

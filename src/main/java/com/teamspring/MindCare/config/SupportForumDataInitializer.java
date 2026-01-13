@@ -4,27 +4,36 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.teamspring.MindCare.model.Post;
 import com.teamspring.MindCare.model.Reply;
 import com.teamspring.MindCare.model.Role;
-import com.teamspring.MindCare.model.UserTemp;
+import com.teamspring.MindCare.model.User; // ✅ Using Real User
 import com.teamspring.MindCare.repository.PostRepository;
 import com.teamspring.MindCare.repository.ReplyRepository;
-import com.teamspring.MindCare.repository.UserTempRepository;
+import com.teamspring.MindCare.repository.UserRepository; // ✅ Using Real Repo
 
-@Component
+// @Configuration
+@Order(2) // Runs AFTER the main DataSeeder to ensure DB is ready
 public class SupportForumDataInitializer implements CommandLineRunner {
 
     private final PostRepository postRepository;
-    private final UserTempRepository tempUserRepository;
+    private final UserRepository userRepository;
     private final ReplyRepository replyRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public SupportForumDataInitializer(PostRepository postRepository, UserTempRepository tempUserRepository, ReplyRepository replyRepository) {
+    public SupportForumDataInitializer(
+            PostRepository postRepository, 
+            UserRepository userRepository, 
+            ReplyRepository replyRepository,
+            PasswordEncoder passwordEncoder) {
         this.postRepository = postRepository;
-        this.tempUserRepository = tempUserRepository;
+        this.userRepository = userRepository;
         this.replyRepository = replyRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -35,29 +44,27 @@ public class SupportForumDataInitializer implements CommandLineRunner {
             return;
         }
 
-        System.out.println("Seeding database with sample data...");
+        System.out.println("🌱 Seeding Support Forum with Real Users...");
 
-        // 1. Create Users
-        UserTemp alex = new UserTemp("Alex M.", "alex@example.com", "password", Role.STUDENT);
-        UserTemp jordan = new UserTemp("Jordan P.", "jordan@example.com", "password", Role.STUDENT);
-        UserTemp sam = new UserTemp("Sam K.", "sam@example.com", "password", Role.STUDENT);
-        UserTemp proffesional = new UserTemp("Lous J.", "louis@example.com", "password", Role.PROFESSIONAL);
+        // 1. Create Real Users (checking if they exist first)
+        User alex = createUserIfNotFound("Alex M.", "alex@mindcare.com", Role.STUDENT);
+        User jordan = createUserIfNotFound("Jordan P.", "jordan@mindcare.com", Role.STUDENT);
+        User sam = createUserIfNotFound("Sam K.", "sam@mindcare.com", Role.STUDENT);
+        User louis = createUserIfNotFound("Louis J.", "louis@mindcare.com", Role.PROFESSIONAL);
         
         // Reply Authors
-        UserTemp casey = new UserTemp("Casey T.", "casey@example.com", "password", Role.STUDENT);
-        UserTemp morgan = new UserTemp("Morgan L.", "morgan@example.com", "password", Role.STUDENT);
-        UserTemp taylor = new UserTemp("Taylor R.", "taylor@example.com", "password", Role.STUDENT);
-
-        tempUserRepository.saveAll(Arrays.asList(alex, jordan, sam, casey, morgan, taylor, proffesional));
+        User casey = createUserIfNotFound("Casey T.", "casey@mindcare.com", Role.STUDENT);
+        User morgan = createUserIfNotFound("Morgan L.", "morgan@mindcare.com", Role.STUDENT);
+        User taylor = createUserIfNotFound("Taylor R.", "taylor@mindcare.com", Role.STUDENT);
 
         // 2. Create Post 1: Academic Stress (With Replies)
         Post p1 = new Post();
-        p1.setAuthor(alex);
+        p1.setAuthor(alex); // ✅ Sets Real User
         p1.setTitle("Managing exam stress");
         p1.setContent("Finals are coming up and I'm feeling overwhelmed. Any tips on staying calm during this time?");
-        p1.setTag("Academic Stress"); // Match your CSS logic
+        p1.setTag("Anxiety"); 
         p1.setLikesCount(12);
-        p1.setCreatedAt(LocalDateTime.now().minusHours(2)); // "2 hours ago"
+        p1.setCreatedAt(LocalDateTime.now().minusHours(2)); 
         
         postRepository.save(p1);
 
@@ -73,7 +80,7 @@ public class SupportForumDataInitializer implements CommandLineRunner {
         p2.setContent("Just wanted to share that starting a daily meditation practice has really improved my mood. Highly recommend!");
         p2.setTag("Self-Care");
         p2.setLikesCount(24);
-        p2.setCreatedAt(LocalDateTime.now().minusHours(5)); // "5 hours ago"
+        p2.setCreatedAt(LocalDateTime.now().minusHours(5)); 
         postRepository.save(p2);
 
         // 4. Create Post 3: Sleep
@@ -81,19 +88,32 @@ public class SupportForumDataInitializer implements CommandLineRunner {
         p3.setAuthor(sam);
         p3.setTitle("Sleep schedule tips?");
         p3.setContent("I've been having trouble maintaining a consistent sleep schedule. What works for you?");
-        p3.setTag("Sleep"); // CSS class logic handles this
+        p3.setTag("Sleep"); 
         p3.setLikesCount(8);
-        p3.setCreatedAt(LocalDateTime.now().minusDays(1)); // "1 day ago"
+        p3.setCreatedAt(LocalDateTime.now().minusDays(1)); 
         postRepository.save(p3);
 
-        System.out.println("Database seeded successfully!");
+        System.out.println("✅ Forum seeded successfully with Real Users!");
     }
 
-    // Helper to create replies cleanly
-    private void createReply(Post post, UserTemp author, String content, int likes, int minsAgo) {
+    // --- Helper Methods ---
+
+    // Creates a User if they don't exist, handling password encoding and defaults
+    private User createUserIfNotFound(String name, String email, Role role) {
+        return userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = new User(name, email, passwordEncoder.encode("password"), role);
+            // Fill dummy data to satisfy validation constraints
+            newUser.setPhone("0000000000"); 
+            newUser.setDepartment("General");
+            newUser.setBio("Community member");
+            return userRepository.save(newUser);
+        });
+    }
+
+    private void createReply(Post post, User author, String content, int likes, int minsAgo) {
         Reply r = new Reply();
         r.setPost(post);
-        r.setAuthor(author);
+        r.setAuthor(author); // ✅ Expects Real User
         r.setContent(content);
         r.setLikesCount(likes);
         r.setCreatedAt(LocalDateTime.now().minusMinutes(minsAgo));

@@ -4,6 +4,8 @@ import com.teamspring.MindCare.model.User;
 import com.teamspring.MindCare.service.FileStorageService;
 import com.teamspring.MindCare.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import java.security.Principal;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/mindcare/profile")
@@ -81,12 +81,6 @@ public class ProfileController {
         User currentUser = userOpt.get();
 
         try {
-            /* ===== Upload Profile Picture ===== */
-            if (photo != null && !photo.isEmpty()) {
-                String imagePath = fileStorageService.storeFile(photo, "profile-photos");
-                currentUser.setProfilePicture(imagePath);
-            }
-
             /* ===== Common Fields ===== */
             currentUser.setFullName(updatedUser.getFullName());
             currentUser.setPhone(updatedUser.getPhone());
@@ -116,7 +110,7 @@ public class ProfileController {
             refreshSession(session, savedUser);
 
             redirectAttributes.addFlashAttribute("success", "Profile updated successfully!");
-            return "redirect:/profile/view";
+            return "redirect:/mindcare/profile/view";
 
         } catch (Exception e) {
             model.addAttribute("user", currentUser);
@@ -127,45 +121,50 @@ public class ProfileController {
     }
 
     /* =========================
-       CHANGE PASSWORD
-       ========================= */
+    CHANGE PASSWORD
+    ========================= */
     @GetMapping("/change-password")
-    public String showChangePasswordPage(Principal principal) {
-        return principal == null ? "redirect:/auth/login" : "profile/change-password";
+    public String showChangePasswordPage(Principal principal, Model model) {
+        if (principal == null) {
+            return "redirect:/auth/login";
+        }
+        model.addAttribute("activePage", "PROFILE");
+        return "profile/change-password";
     }
 
     @PostMapping("/change-password")
     public String changePassword(
-            @RequestParam String currentPassword,
-            @RequestParam String newPassword,
-            @RequestParam String confirmPassword,
+            @RequestParam("currentPassword") String currentPassword,
+            @RequestParam("newPassword") String newPassword,
+            @RequestParam("confirmPassword") String confirmPassword,
             Principal principal,
             HttpSession session,
             RedirectAttributes redirectAttributes,
             Model model) {
 
-        Optional<User> userOpt = getCurrentUser(principal, session);
-        if (userOpt.isEmpty()) {
-            return "redirect:/auth/login";
-        }
-
+        User user = userService.getUserByEmail(principal.getName());
+        
+        // Validation
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "Passwords do not match");
+            model.addAttribute("activePage", "PROFILE");
             return "profile/change-password";
         }
 
         if (newPassword.length() < 6) {
             model.addAttribute("error", "Password must be at least 6 characters");
+            model.addAttribute("activePage", "PROFILE");
             return "profile/change-password";
         }
 
         try {
-            userService.changePassword(userOpt.get().getId(), currentPassword, newPassword);
+            userService.changePassword(user.getId(), currentPassword, newPassword);
             redirectAttributes.addFlashAttribute("success", "Password changed successfully!");
-            return "redirect:/profile/view";
+            return "redirect:/mindcare/profile/view";
 
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("activePage", "PROFILE");
             return "profile/change-password";
         }
     }

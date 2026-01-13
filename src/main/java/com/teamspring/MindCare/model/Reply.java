@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -23,7 +24,8 @@ public class Reply {
     private Long id;
 
     @ManyToOne(optional = false)
-    private UserTemp author;
+    @JoinColumn(name = "author_id")
+    private User author;
 
     @ManyToOne(optional = false)
     private Post post;
@@ -48,8 +50,8 @@ public class Reply {
 
     public Long getId() { return id; }
 
-    public UserTemp getAuthor() { return author; }
-    public void setAuthor(UserTemp author) { this.author = author; }
+    public User getAuthor() { return author; }
+    public void setAuthor(User author) { this.author = author; }
 
     public Post getPost() { return post; }
     public void setPost(Post post) { this.post = post; }

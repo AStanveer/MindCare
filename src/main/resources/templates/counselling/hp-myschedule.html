@@ -210,6 +210,11 @@
             color: #92400e;
         }
 
+        .badge-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         /* ===== BUTTON ===== */
         .btn {
             padding: 8px 16px;
@@ -326,7 +331,7 @@
 <body>
 
 <!-- NAVBAR -->
-<div th:replace="~{fragments/navbar :: navbar('counselling')}"></div>
+<div th:replace="~{fragments/navbar :: navbar('schedule')}"></div>
 
 <div class="container">
 
@@ -382,15 +387,32 @@
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span class="badge badge-confirmed" 
+                        <span class="badge" 
                               th:text="${sessionItem.status}"
-                              th:classappend="${sessionItem.status == 'Pending' ? 'badge-pending' : 'badge-confirmed'}">
+                              th:classappend="${
+                                sessionItem.status == 'Confirmed' ? 'badge-confirmed' : 
+                                sessionItem.status == 'Cancelled' ? 'badge-cancelled' : 
+                                sessionItem.status == 'Awaiting Confirmation' ? 'badge-pending' : 'badge-confirmed'
+                              }">
                             Confirmed
                         </span>
-                        <button class="btn" 
+                        <button th:if="${sessionItem.status == 'Awaiting Confirmation'}" 
+                                class="btn" 
+                                th:onclick="'confirmSession(' + ${sessionItem.id} + ')'"
+                                style="background: #10b981; color: white; border-color: #10b981;">
+                            Confirm
+                        </button>
+                        <button th:if="${sessionItem.status != 'Cancelled'}" 
+                                class="btn" 
                                 th:onclick="'cancelSession(' + ${sessionItem.id} + ')'"
                                 style="background: #ef4444; color: white; border-color: #ef4444;">
                             Cancel
+                        </button>
+                        <button th:if="${sessionItem.status == 'Cancelled'}" 
+                                class="btn" 
+                                th:onclick="'deleteSession(' + ${sessionItem.id} + ')'"
+                                style="background: #dc2626; color: white; border-color: #dc2626;">
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -422,8 +444,20 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 function cancelSession(sessionId) {
-    if (confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')) {
+    if (confirm('Are you sure you want to cancel this appointment? The status will be changed to Cancelled.')) {
         window.location.href = '/mindcare/counselling/cancel/' + sessionId + '?source=counselor';
+    }
+}
+
+function confirmSession(sessionId) {
+    if (confirm('Confirm this session? This will update the status to Confirmed.')) {
+        window.location.href = '/mindcare/counselling/confirm-session/' + sessionId;
+    }
+}
+
+function deleteSession(sessionId) {
+    if (confirm('Are you sure you want to permanently delete this cancelled session? This action cannot be undone.')) {
+        window.location.href = '/mindcare/counselling/delete/' + sessionId + '?source=counselor';
     }
 }
 

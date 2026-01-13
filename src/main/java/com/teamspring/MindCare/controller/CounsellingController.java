@@ -1,8 +1,12 @@
 package com.teamspring.MindCare.controller;
 
 import com.teamspring.MindCare.model.BookingRequest;
+import com.teamspring.MindCare.model.User;
+import com.teamspring.MindCare.repository.UserRepository;
 import com.teamspring.MindCare.service.CounsellingService;
 import com.teamspring.MindCare.service.FeatureUsageService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +19,33 @@ public class CounsellingController {
 
     private final CounsellingService counsellingService;
     private final FeatureUsageService featureUsageService;
+    private final UserRepository userRepository;
     private static final Long DUMMY_USER_ID = 1L;
 
-    public CounsellingController(CounsellingService counsellingService, FeatureUsageService featureUsageService) {
+    public CounsellingController(CounsellingService counsellingService, FeatureUsageService featureUsageService, UserRepository userRepository) {
         this.counsellingService = counsellingService;
         this.featureUsageService = featureUsageService;
+        this.userRepository = userRepository;
+    }
+
+    /**
+     * Get the current authenticated user's ID
+     * Falls back to DUMMY_USER_ID if not authenticated
+     */
+    private Long getCurrentUserId() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String email = authentication.getName();
+                User user = userRepository.findByEmail(email).orElse(null);
+                if (user != null) {
+                    return user.getId();
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ Error getting current user ID: " + e.getMessage());
+        }
+        return DUMMY_USER_ID;
     }
 
     // ===== Show Counselling Home Page =====
@@ -31,8 +57,9 @@ public class CounsellingController {
     // ===== Show Booking Page =====
     @GetMapping("/booking")
     public String counsellingPage(Model model) {
+        Long userId = getCurrentUserId();
         // Track feature usage when user accesses counselling booking
-        featureUsageService.incrementCounsellingUsage(DUMMY_USER_ID);
+        featureUsageService.incrementCounsellingUsage(userId);
         
         model.addAttribute("userRole", "student");
         model.addAttribute("counselors", counsellingService.getAllCounselors());
@@ -73,10 +100,12 @@ public class CounsellingController {
     // ===== Show My Sessions Page =====
     @GetMapping("/my-sessions")
     public String mySessions(Model model) {
+        Long userId = getCurrentUserId();
         // Track feature usage when user accesses their sessions
-        featureUsageService.incrementCounsellingUsage(DUMMY_USER_ID);
+        featureUsageService.incrementCounsellingUsage(userId);
         
-        model.addAttribute("upcomingSessions", counsellingService.getUpcomingSessions());
+        // Get only sessions for the current student (filtered by student ID)
+        model.addAttribute("upcomingSessions", counsellingService.getUpcomingSessionsForStudent(userId));
         return "counselling/mysession";
     }
 
@@ -84,13 +113,19 @@ public class CounsellingController {
     @PostMapping("/confirm")
     public String confirmBooking(@ModelAttribute BookingRequest bookingRequest) {
         try {
-            // TODO: Get student ID from authenticated user session
-            bookingRequest.setStudentId(1L); // Default for now
+            Long studentId = getCurrentUserId();
+            bookingRequest.setStudentId(studentId);
+            System.out.println("📝 Booking session for student ID: " + studentId);
+            System.out.println("📝 Counselor ID: " + bookingRequest.getCounselorId());
+            System.out.println("📝 Date: " + bookingRequest.getDate());
+            System.out.println("📝 Time: " + bookingRequest.getTime());
+            System.out.println("📝 Session Type: " + bookingRequest.getSessionType());
             
             counsellingService.bookSession(bookingRequest);
             return "redirect:/mindcare/counselling/my-sessions?success";
         } catch (Exception e) {
             System.err.println("✗ Booking failed: " + e.getMessage());
+            e.printStackTrace();
             return "redirect:/mindcare/counselling/booking?error=" + e.getMessage();
         }
     }
@@ -115,9 +150,15 @@ public class CounsellingController {
     // ===== Reschedule Session =====
     @GetMapping("/reschedule/{sessionId}")
     public String rescheduleSession(@PathVariable Long sessionId, Model model) {
+        // Get session to retrieve counselor information
+        var session = counsellingService.getSessionById(sessionId);
+        if (session == null) {
+            return "redirect:/mindcare/counselling/my-sessions?error=session_not_found";
+        }
+        
         model.addAttribute("sessionId", sessionId);
+        model.addAttribute("counselorId", session.getCounselorId());
         model.addAttribute("counselors", counsellingService.getAllCounselors());
-        model.addAttribute("timeSlots", counsellingService.getTimeSlots());
         model.addAttribute("availabilityDates", counsellingService.getAvailabilityDates());
         return "counselling/reschedule";
     }
@@ -157,6 +198,36 @@ public class CounsellingController {
             } else {
                 return "redirect:/mindcare/counselling/my-sessions?error";
             }
+        }
+    }
+
+    // ===== Confirm Session =====
+    @GetMapping("/confirm-session/{sessionId}")
+    public String confirmSession(@PathVariable Long sessionId) {
+        try {
+            counsellingService.confirmSession(sessionId);
+            return "redirect:/mindcare/counselling/my-schedule?confirmed";
+        } catch (Exception e) {
+            System.err.println("✗ Confirmation failed: " + e.getMessage());
+            return "redirect:/mindcare/counselling/my-schedule?error";
+        }
+    }
+
+    // ===== Delete Session =====
+    @GetMapping("/delete/{sessionId}")
+    public String deleteSession(@PathVariable Long sessionId, @RequestParam(required = false, defaultValue = "student") String source) {
+        try {
+            counsellingService.deleteSession(sessionId);
+            
+            // Redirect based on source
+            if ("counselor".equalsIgnoreCase(source)) {
+                return "redirect:/mindcare/counselling/my-schedule?deleted";
+            } else {
+                return "redirect:/mindcare/counselling/my-sessions?deleted";
+            }
+        } catch (Exception e) {
+            System.err.println("✗ Delete failed: " + e.getMessage());
+            return "redirect:/mindcare/counselling/my-sessions?error";
         }
     }
     

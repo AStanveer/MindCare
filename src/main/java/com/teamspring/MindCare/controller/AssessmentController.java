@@ -1,6 +1,7 @@
 package com.teamspring.MindCare.controller;
 
 import com.teamspring.MindCare.model.AssessmentResult;
+import com.teamspring.MindCare.security.CurrentUserService;
 import com.teamspring.MindCare.service.AssessmentService;
 import com.teamspring.MindCare.service.FeatureUsageService;
 import java.util.Arrays;
@@ -20,8 +21,8 @@ public class AssessmentController {
     @Autowired
     private FeatureUsageService featureUsageService;
     
-    // Dummy user ID (until authentication is added)
-    private static final Long DUMMY_USER_ID = 1L;
+    @Autowired
+    private CurrentUserService currentUserService;
     
     // Static DASS-21 questions
     private static final List<String> DASS21_QUESTIONS = Arrays.asList(
@@ -51,7 +52,8 @@ public class AssessmentController {
     @GetMapping("/dass21")
     public String showForm(Model model) {
         // Track feature usage when user accesses assessment
-        featureUsageService.incrementAssessmentsUsage(DUMMY_USER_ID);
+        Long userId = currentUserService.getUserId();
+        featureUsageService.incrementAssessmentsUsage(userId);
         
         model.addAttribute("questions", DASS21_QUESTIONS);
         return "assessment/dass21";
@@ -83,10 +85,10 @@ public class AssessmentController {
     
     @GetMapping("/history")
     public String showHistory(Model model) {
-        // Track feature usage when user accesses assessment history
-        featureUsageService.incrementAssessmentsUsage(DUMMY_USER_ID);
-        
-        List<AssessmentResult> results = assessmentService.getUserResults(DUMMY_USER_ID);
+        Long userId = currentUserService.getUserId();
+        featureUsageService.incrementAssessmentsUsage(userId);
+    
+        List<AssessmentResult> results = assessmentService.getUserResults();
         model.addAttribute("results", results);
         model.addAttribute("activePage", "assessment");
         return "assessment/history";
