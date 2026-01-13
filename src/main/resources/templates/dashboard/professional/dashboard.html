@@ -77,7 +77,10 @@
                             <p class="gray-text">No sessions scheduled for today.</p>
                         </div>
 
-                        <button class="btn btn-primary" style="margin-top: 1rem;">Manage Schedule</button>
+                       <a th:href="@{/mindcare/counselling/my-schedule}" 
+                            class="btn btn-primary" 
+                            style="margin-top: 1rem; text-decoration: none; text-align: center;"> Manage Schedule
+                        </a>
                     </div>
                 </div>
 
@@ -193,30 +196,6 @@
                     </div>                            
                 </div>
                 
-                <div class="card requests--container">
-                    <div class="card--header">
-                        <div class="card-title">
-                            <span class="card-icon">
-                                <th:block
-                                    th:replace="~{fragments/icons ::icon-clock}">
-                                </th:block>
-                            </span>
-                            <span class="title-text">Pending Requests</span>
-                        </div>
-                    </div>
-
-                    <div class="requests-items--container">
-                        <div class="request--item">
-                            <div class="request--info">
-                                Jamie L.
-                                <span class="gray-text">Dec 25, 3:00 PM</span>
-                            </div>
-                            <div class="request--actions">
-                                <button class="btn btn-primary">Accept</button>
-                                <button class="btn btn-secondary">Decline</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>

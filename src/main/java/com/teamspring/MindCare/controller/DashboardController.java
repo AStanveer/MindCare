@@ -127,9 +127,9 @@ public class DashboardController {
         
         // Quick actions for professionals
         List<QuickAction> actions = List.of(
-            new QuickAction("Add Availability", "icon-calendar", "/mindcare/professional/availability"),
+            new QuickAction("Add Availability", "icon-calendar", "/mindcare/counselling/set-availability"),
             new QuickAction("Create Resource", "icon-book", "/mindcare/professional/resources/create"),
-            new QuickAction("Manage Schedule", "icon-clock", "/mindcare/professional/schedule")
+            new QuickAction("Manage Schedule", "icon-clock", "/mindcare/counselling/my-schedule")
         );
         
         // Fetch professional-specific data
