@@ -18,6 +18,7 @@ import com.teamspring.MindCare.model.PostLike;
 import com.teamspring.MindCare.model.Reply;
 import com.teamspring.MindCare.model.ReplyLike;
 import com.teamspring.MindCare.model.Role;
+import com.teamspring.MindCare.model.User;
 import com.teamspring.MindCare.model.UserTemp;
 import com.teamspring.MindCare.repository.PostLikeRepository;
 import com.teamspring.MindCare.repository.PostRepository;
@@ -31,9 +32,6 @@ public class SupportService {
     private PostRepository postRepository;
 
     @Autowired
-    private UserTempRepository userTempRepository;
-
-    @Autowired
     private ReplyRepository replyRepository;
 
     @Autowired
@@ -43,7 +41,7 @@ public class SupportService {
     private ReplyLikeRepository replyLikeRepository;
 
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts(String tag) {
+    public List<PostDTO> getAllPosts(String tag, User currentUser) {
         List<Post> rawPosts;
 
         if (tag != null && !tag.isEmpty()) {
@@ -54,17 +52,16 @@ public class SupportService {
 
         // Map rawPosts to PostDTOs
         return rawPosts.stream()
-                .map(this::convertToPostDTO)
-                .collect(Collectors.toList());
+            .map(post -> convertToPostDTO(post, currentUser)) 
+            .collect(Collectors.toList());
     }
 
-    private PostDTO convertToPostDTO(Post post) {
+    private PostDTO convertToPostDTO(Post post, User currentUser) {
         // Implement the conversion logic
         Long id = post.getId();
-        UserTemp currentUser = getSimulatedUser();
+        
 
-        String authorName = (post.getAuthor() != null)? post.getAuthor().getFullName() : "Unknown";
-
+        String authorName = (post.getAuthor() != null) ? post.getAuthor().getFullName() : "Unknown";
         String timeAgo = calculateTimeAgo(post.getCreatedAt());
         String initials = generateInitials(authorName);
 

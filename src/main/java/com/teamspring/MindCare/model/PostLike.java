@@ -22,17 +22,17 @@ public class PostLike {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserTemp user;
+    private User user;
 
     public PostLike() {}
 
-    public PostLike(Post post, UserTemp user) {
+    public PostLike(Post post, User user) {
         this.post = post;
         this.user = user;
     }
     
     // Getters and Setters
     public Post getPost() { return post; }
-    public UserTemp getUser() { return user; }
+    public User getUser() { return user; }
 }
 

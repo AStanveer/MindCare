@@ -21,15 +21,15 @@ public class ReplyLike {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserTemp user;
+    private User user;
 
     public ReplyLike() {}
 
-    public ReplyLike(Reply reply, UserTemp user) {
+    public ReplyLike(Reply reply, User user) {
         this.reply = reply;
         this.user = user;
     }
 
     public Reply getReply() { return reply; }
-    public UserTemp getUser() { return user; }
+    public User getUser() { return user; }
 }
