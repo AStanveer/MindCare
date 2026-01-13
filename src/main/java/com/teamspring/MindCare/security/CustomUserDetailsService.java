@@ -40,7 +40,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     
     private Collection<? extends GrantedAuthority> getAuthorities(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        
+        String roleName = "ROLE_" + user.getRole().name(); 
+        authorities.add(new SimpleGrantedAuthority(roleName));
+        
+        // --- VERIFICATION LINE ---
+        System.out.println("SECURITY DEBUG: User " + user.getEmail() + " has authority: " + roleName);
+        // -------------------------
+        
         return authorities;
     }
 }
