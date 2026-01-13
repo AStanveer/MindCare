@@ -107,6 +107,13 @@ body {
 .role-selector-section {
     margin-bottom: 32px;
 }
+.role-selector-section2 {
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 
 .role-label {
     display: block;
@@ -118,8 +125,8 @@ body {
 }
 
 .role-selector {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    justify-content: center;
     gap: 12px;
     margin-bottom: 14px;
 }

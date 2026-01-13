@@ -12,6 +12,10 @@ import java.util.Objects;
 @Table(name = "platform_users")
 public class User {
     
+    public enum Status {
+        ACTIVE, INACTIVE
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -198,6 +202,10 @@ public class User {
     
     public void setActive(boolean active) {
         isActive = active;
+    }
+    
+    public Status getStatus() {
+        return isActive ? Status.ACTIVE : Status.INACTIVE;
     }
     
     public String getResetToken() {

@@ -149,7 +149,7 @@
 
                     <a class="nav-btn"
                         th:classappend="${activePage == 'counselling'} ? ' active' : ''"
-                        th:href="@{/mindcare/booking}"> 
+                        th:href="@{/mindcare/counselling/booking}"> 
                         <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-book-session}"></th:block></span>
                         <span>Book Session</span>
                     </a>
@@ -167,20 +167,20 @@
 
                     <a class="nav-btn"
                         th:classappend="${activePage == 'schedule'} ? ' active' : ''"
-                        th:href="@{/mindcare/professional/schedule}"> <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-calendar}"></th:block></span>
+                        th:href="@{/mindcare/counselling/my-schedule}"> <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-calendar}"></th:block></span>
                         <span>Schedule</span>
                     </a>
                     
                     <a class="nav-btn"
                         th:classappend="${activePage == 'resources'} ? ' active' : ''"
-                        th:href="@{/mindcare/professional/resources}">
+                        th:href="@{/mindcare/resources}">
                         <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-book}"></th:block></span>
                         <span>Manage Resources</span>
                     </a>
 
                     <a class="nav-btn"
                         th:classappend="${activePage == 'clients'} ? ' active' : ''"
-                        th:href="@{/mindcare/professional/selfcare}">
+                        th:href="@{/mindcare/selfcare}">
                         <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-self-care}"></th:block></span>
                         <span>Manage Selfcare</span>
                     </a>
