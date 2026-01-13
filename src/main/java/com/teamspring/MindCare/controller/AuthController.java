@@ -73,6 +73,7 @@ public class AuthController {
                           Model model) {
         
         if (bindingResult.hasErrors()) {
+            System.out.println("VALIDATION ERRORS: " + bindingResult.getAllErrors());
             return "auth/register";
         }
         
@@ -80,9 +81,13 @@ public class AuthController {
         String rawPassword = user.getPassword();
         
         try {
+
+            System.out.println("Attempting to register user with Role: " + user.getRole());
+
             // Register user (password will be hashed and saved to database)
             User registeredUser = userService.registerUser(user);
             
+            System.out.println("User saved to DB with Role: " + registeredUser.getRole());
             // Auto-login: Authenticate the user programmatically
             UsernamePasswordAuthenticationToken authToken = 
                 new UsernamePasswordAuthenticationToken(

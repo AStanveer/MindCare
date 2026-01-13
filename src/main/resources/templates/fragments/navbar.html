@@ -1,194 +1,239 @@
-<div th:fragment="navbar(activePage)">
+<div th:fragment="navbar(activePage)" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
     <style>
-        .navbar {
-            background: white;
-            padding: 12px 0;
-            border-bottom: 1px solid #e0e0e0;
+        .navbar { 
+            background: white; 
+            padding: 12px 0; 
+            border-bottom: 1px solid #e0e0e0; 
         }
-
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 16px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            color:#8C7AE6;
-            gap: 8px;
-        }
-
-        .logo-icon {
-            width: 26px;
-            height: auto;
-        }
-
-        .nav-buttons {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            border-radius: 6px;
-            background: transparent;
-            cursor: pointer;
-            color: #333;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all .2s;
-        }
-
-        .nav-btn.active {
-            background: #8c7ae6;
-            color: white;
-        }
-
-        .nav-btn:hover { 
-            background: #D8CFF7;
-        }
-
-        .link-icon {
-            width: 18px; 
-            height: 18px;
-            
+        
+        .nav-content { 
+            max-width: 1200px; 
+            margin: 0 auto; 
             display: flex; 
-            justify-content: center;
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 16px; 
+        }
+
+        /* --- LEFT: Logo Wrapper --- */
+        .nav-left {
+            display: flex;
             align-items: center;
+            flex: 1; /* Takes up 1 part of space */
         }
 
-        .link-icon svg {
-            width: 100%;
-            height: 100%;
+        .logo { 
+            display: flex; 
+            align-items: center; 
+            color:#8C7AE6; 
+            gap: 8px; 
+        }
+        .logo-icon { width: 26px; height: auto; }
+
+        /* --- MIDDLE: Navigation Links Wrapper --- */
+        .nav-center {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centers items horizontally */
+            gap: 12px;
+            flex: 2; /* Takes up 2 parts of space (wider) */
         }
 
-        @media (max-width: 600px) {
-            .nav-content {
-                flex-direction: column;
-                gap: 10px;
+        /* --- RIGHT: Profile & Logout Wrapper --- */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* Pushes items to the far right */
+            gap: 12px;
+            flex: 1; /* Takes up 1 part of space */
+        }
+
+        /* --- Button Styles --- */
+        .nav-btn { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            padding: 8px 14px; 
+            border-radius: 6px; 
+            background: transparent; 
+            cursor: pointer; 
+            color: #333; 
+            text-decoration: none; 
+            font-size: 14px; 
+            transition: all .2s; 
+            white-space: nowrap;
+        }
+        .nav-btn.active { background: #8c7ae6; color: white; }
+        .nav-btn:hover { background: #D8CFF7; }
+        
+        .link-icon { 
+            width: 18px; 
+            height: 18px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-shrink: 0;
+        }
+        .link-icon svg { width: 100%; height: 100%; }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 900px) {
+            .nav-content { 
+                flex-direction: column; 
+                gap: 15px; 
+                padding-bottom: 10px;
             }
-
-            .nav-buttons {
+            .nav-left, .nav-center, .nav-right {
+                width: 100%;
                 justify-content: center;
-                row-gap: 10px;
+                flex: auto;
             }
-
-            .nav-btn {
-                font-size: 13px;
-                padding: 8px 10px;
+            .nav-center {
+                flex-wrap: wrap; /* Allows links to stack on small screens */
             }
+            .nav-btn { font-size: 13px; padding: 8px 10px; }
         }
     </style>
 
     <div class="navbar">
         <div class="nav-content">
 
-            <div class="logo">
-                <span class="logo-icon">
-                    <th:block
-                        th:replace="~{fragments/icons ::icon-self-care}">
-                    </th:block>
-                </span>
-                <span ; font-size: 16px;>MindCare</span>
+            <div class="nav-left">
+                <div class="logo">
+                    <span class="logo-icon">
+                        <th:block th:replace="~{fragments/icons ::icon-self-care}"></th:block>
+                    </span>
+                    <span style="font-size: 16px; font-weight: bold;">MindCare</span>
+                </div>
             </div>
 
-            <div class="nav-buttons">
+            <div class="nav-center">
 
-                <a class="nav-btn"
+                <th:block sec:authorize="hasRole('STUDENT')">
+                    
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
+                        th:href="@{/mindcare/dashboard}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-home}"></th:block></span>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a class="nav-btn"
+                       th:classappend="${activePage == 'assessment'} ? ' active' : ''"
+                       th:href="@{/mindcare/assessment/dass21}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-assessment}"></th:block></span>
+                        <span>Assessment</span>
+                    </a>
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'selfcare'} ? ' active' : ''"
+                        th:href="@{/mindcare/selfcare}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-self-care}"></th:block></span>
+                        <span>Self Care</span>
+                    </a>
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'resources'} ? ' active' : ''"
+                        th:href="@{/mindcare/resources}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-book}"></th:block></span>
+                        <span>Resources</span>
+                    </a>
+
+                    <a class="nav-btn"
+                       th:classappend="${activePage == 'peersupport'} ? ' active' : ''"
+                       th:href="@{/mindcare/peer-support}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-people}"></th:block></span>
+                        <span>Peer Support</span>
+                    </a>
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'counselling'} ? ' active' : ''"
+                        th:href="@{/mindcare/booking}"> 
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-book-session}"></th:block></span>
+                        <span>Book Session</span>
+                    </a>
+                </th:block>
+
+
+                <th:block sec:authorize="hasRole('PROFESSIONAL')">
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
+                        th:href="@{/mindcare/dashboard}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-home}"></th:block></span>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'schedule'} ? ' active' : ''"
+                        th:href="@{/mindcare/professional/schedule}"> <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-calendar}"></th:block></span>
+                        <span>Schedule</span>
+                    </a>
+                    
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'resources'} ? ' active' : ''"
+                        th:href="@{/mindcare/professional/resources}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-book}"></th:block></span>
+                        <span>Manage Resources</span>
+                    </a>
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'clients'} ? ' active' : ''"
+                        th:href="@{/mindcare/professional/selfcare}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-self-care}"></th:block></span>
+                        <span>Manage Selfcare</span>
+                    </a>
+                    
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'profile'} ? ' active' : ''"
+                        th:href="@{/mindcare/profile/view}">
+                        <span class="link-icon">
+                            <th:block th:replace="~{fragments/icons ::icon-person}"></th:block>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                </th:block>
+                
+                
+                <th:block sec:authorize="hasRole('ADMIN')">
+                    
+                    <a class="nav-btn"
                     th:classappend="${activePage == 'dashboard'} ? ' active' : ''"
                     th:href="@{/mindcare/dashboard}">
-                    <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-home}">
-                        </th:block>
-                    </span>
-                    <span>Dashboard</span>
-                </a>
-
-                <a class="nav-btn"
-                   th:classappend="${activePage == 'assessment'} ? ' active' : ''"
-                   th:href="@{/mindcare/assessment/dass21}">
-                    <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-assessment}">
-                        </th:block>
-                    </span>
-                    <span>Assessment</span>
-                </a>
-
-                <a class="nav-btn"
-                    th:classappend="${activePage == 'selfcare'} ? ' active' : ''"
-                    th:href="@{/mindcare/selfcare}">
-                    <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-self-care}">
-                        </th:block>
-                    </span>
-                    <span>Self Care</span>
-                </a>
-
-                <a class="nav-btn"
-                    th:classappend="${activePage == 'resources'} ? ' active' : ''"
-                    th:href="@{/mindcare/resources}">
-                    <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-book}">
-                        </th:block>
-                    </span>
-
-                    <span>Resources</span>
-                </a>
-
-                <a class="nav-btn"
-                   th:classappend="${activePage == 'peersupport'} ? ' active' : ''"
-                   th:href="@{/mindcare/peer-support}">
-                    <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-people}">
-                        </th:block>
-                    </span>
-                    <span>Peer Support</span>
-                </a>
-
-                <a class="nav-btn"
-                    th:classappend="${activePage == 'counselling'} ? ' active' : ''"
-                    th:href="@{/mindcare/counselling/booking}">
-                    <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-book-session}">
-                        </th:block>
-                    </span>
-                    <span>Counselling</span>
-                </a>
+                    <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-trend}"></th:block></span>
+                        <span>Analytics & Report</span>
+                    </a>
+                    
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'users'} ? ' active' : ''"
+                        th:href="@{/mindcare/admin/usermanagement}">
+                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-people}"></th:block></span>
+                        <span>User Management</span>
+                    </a>
+                    
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'profile'} ? ' active' : ''"
+                        th:href="@{/mindcare/profile/view}">
+                        <span class="link-icon">
+                            <th:block th:replace="~{fragments/icons ::icon-person}"></th:block>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                </th:block>
                 
-                <a class="nav-btn"
-                    th:classappend="${activePage == 'profile'} ? ' active' : ''"
-                    th:href="@{/mindcare/profile/view}">
-                    <span class="link-icon">
-                        <th:block
-                            th:replace="~{fragments/icons ::icon-person}">
-                        </th:block>
-                    </span>
-                    <span>Profile</span>
-                </a>
+            </div>
+            
+            <div class="nav-right">
                 
-                <form id="logoutForm" method="post" th:action="@{/auth/logout}">
-                    </form>
+                
+                <form id="logoutForm" method="post" th:action="@{/auth/logout}"></form>
 
                 <a class="nav-btn"
-                th:classappend="${activePage == 'logout'} ? ' active' : ''"
-                href="#" 
-                onclick="document.getElementById('logoutForm').submit(); return false;">
+                   th:classappend="${activePage == 'logout'} ? ' active' : ''"
+                   href="#" 
+                   onclick="document.getElementById('logoutForm').submit(); return false;">
                     <span class="link-icon">
                         <th:block th:replace="~{fragments/icons ::icon-logout}"></th:block>
                     </span>
@@ -196,6 +241,7 @@
                 </a>
 
             </div>
+
         </div>
     </div>
 </div>
