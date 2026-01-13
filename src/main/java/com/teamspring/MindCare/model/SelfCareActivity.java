@@ -1,56 +1,62 @@
 package com.teamspring.MindCare.model;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "selfcare_activities")
 public class SelfCareActivity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String title;
-    
+
     @Column(columnDefinition = "TEXT")
     private String description;
-    
+
     @Column(name = "content_type")
     private String contentType; // "VIDEO", "EXERCISE", "GUIDED_MEDITATION", "AUDIO"
-    
+
     @Column(nullable = false)
     private String category; // breathing, meditation, yoga, journaling, exercise
-    
+
     @Column(name = "duration_minutes")
     private Integer durationMinutes;
-    
+
     private String difficulty; // "Beginner", "Intermediate", "Advanced"
-    
+
     @Column(name = "video_url", length = 500)
     private String videoUrl;
-    
+
     @Column(name = "thumbnail_url", length = 500)
     private String thumbnailUrl;
-    
+
     @Column(columnDefinition = "TEXT")
     private String instructions;
-    
+
     @Column(columnDefinition = "TEXT")
     private String benefits;
-    
+
     @Column(name = "created_by")
     private String createdBy = "Healthcare Professional";
-    
+
     @Column(name = "created_at")
-    private java.time.LocalDateTime createdAt;
-    
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     // Constructors
     public SelfCareActivity() {
-        this.createdAt = java.time.LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
-    
-    public SelfCareActivity(String title, String description, String contentType, 
-                           String category, Integer durationMinutes, String difficulty) {
+
+    public SelfCareActivity(String title, String description, String contentType,
+                            String category, Integer durationMinutes, String difficulty) {
         this();
         this.title = title;
         this.description = description;
@@ -59,46 +65,50 @@ public class SelfCareActivity {
         this.durationMinutes = durationMinutes;
         this.difficulty = difficulty;
     }
-    
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
-    
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    
+
     public String getContentType() { return contentType; }
     public void setContentType(String contentType) { this.contentType = contentType; }
-    
+
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-    
+
     public Integer getDurationMinutes() { return durationMinutes; }
     public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
-    
+
     public String getDifficulty() { return difficulty; }
     public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
-    
+
     public String getVideoUrl() { return videoUrl; }
     public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
-    
+
     public String getThumbnailUrl() { return thumbnailUrl; }
     public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
-    
+
     public String getInstructions() { return instructions; }
     public void setInstructions(String instructions) { this.instructions = instructions; }
-    
+
     public String getBenefits() { return benefits; }
     public void setBenefits(String benefits) { this.benefits = benefits; }
-    
+
     public String getCreatedBy() { return createdBy; }
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
-    
-    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
-        
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
     // Helper methods for Thymeleaf
     public String getFormattedDuration() {
         if (durationMinutes == null) return "Flexible";
@@ -107,17 +117,19 @@ public class SelfCareActivity {
         int minutes = durationMinutes % 60;
         return hours + " hr" + (minutes > 0 ? " " + minutes + " min" : "");
     }
-    
+
     public String getDifficultyColor() {
+        if (difficulty == null) return "#64748b";
         return switch (difficulty.toLowerCase()) {
-            case "beginner" -> "#10b981"; // Green
-            case "intermediate" -> "#f59e0b"; // Amber
-            case "advanced" -> "#ef4444"; // Red
+            case "beginner" -> "#10b981";      // Green
+            case "intermediate" -> "#f59e0b";  // Amber
+            case "advanced" -> "#ef4444";      // Red
             default -> "#64748b";
         };
     }
-    
+
     public String getContentTypeIcon() {
+        if (contentType == null) return "📋";
         return switch (contentType.toUpperCase()) {
             case "VIDEO" -> "🎬";
             case "AUDIO" -> "🎧";
@@ -125,5 +137,37 @@ public class SelfCareActivity {
             case "GUIDED_MEDITATION" -> "🧘";
             default -> "📋";
         };
+    }
+
+    // New: YouTube embed URL for iframe
+    @Transient
+    public String getEmbedUrl() {
+        if (videoUrl == null || videoUrl.isBlank()) {
+            return null;
+        }
+
+        String url = videoUrl.trim();
+
+        try {
+            if (url.contains("youtu.be/")) {
+                String id = url.substring(url.lastIndexOf("/") + 1);
+                int q = id.indexOf('?');
+                if (q != -1) id = id.substring(0, q);
+                return "https://www.youtube.com/embed/" + id;
+            }
+
+            if (url.contains("watch?v=")) {
+                int idx = url.indexOf("watch?v=") + "watch?v=".length();
+                String id = url.substring(idx);
+                int q = id.indexOf('&');
+                if (q != -1) id = id.substring(0, q);
+                return "https://www.youtube.com/embed/" + id;
+            }
+
+            // already an embed or other format
+            return url;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

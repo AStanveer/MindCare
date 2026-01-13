@@ -181,19 +181,23 @@
                     </a>
                     
                     <a class="nav-btn"
-                        th:classappend="${activePage == 'resources'} ? ' active' : ''"
-                        th:href="@{/mindcare/resources}">
-                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-book}"></th:block></span>
-                        <span>Manage Resources</span>
+                        th:classappend="${activePage == 'professionalResources'} ? ' active' : ''"
+                        th:href="@{/mindcare/professional/resources}">
+                        <span class="link-icon">
+                            <th:block th:replace="~{fragments/icons ::icon-book}"></th:block>
+                        </span>
+                        <span>Manage Resources</span>   
                     </a>
 
+                    <!-- Manage Self‑Care -->
                     <a class="nav-btn"
-                        th:classappend="${activePage == 'clients'} ? ' active' : ''"
-                        th:href="@{/mindcare/selfcare}">
-                        <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-self-care}"></th:block></span>
-                        <span>Manage Selfcare</span>
+                        th:classappend="${activePage == 'selfcare'} ? ' active' : ''"
+                        th:href="@{/mindcare/professional/selfcare}">
+                        <span class="link-icon">
+                            <th:block th:replace="~{fragments/icons ::icon-self-care}"></th:block>
+                        </span>
+                        <span>Manage Self‑Care</span>
                     </a>
-                    
 
                     <a class="nav-btn"
                         th:classappend="${activePage == 'profile'} ? ' active' : ''"
