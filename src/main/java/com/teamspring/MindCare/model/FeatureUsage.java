@@ -21,19 +21,19 @@ public class FeatureUsage {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "`self-care`", insertable = true, updatable = true)
+    @Column(name = "`self-care`", insertable = true, updatable = true, nullable = false)
     private Integer selfCare = 0;
     
-    @Column(name = "assessments", insertable = true, updatable = true)
+    @Column(name = "assessments", insertable = true, updatable = true, nullable = false)
     private Integer assessments = 0;
     
-    @Column(name = "`peer-support`", insertable = true, updatable = true)
+    @Column(name = "`peer-support`", insertable = true, updatable = true, nullable = false)
     private Integer peerSupport = 0;
 
-    @Column(name = "resources", insertable = true, updatable = true)
+    @Column(name = "resources", insertable = true, updatable = true, nullable = false)
     private Integer resources = 0;
     
-    @Column(name = "counselling", insertable = true, updatable = true)
+    @Column(name = "counselling", insertable = true, updatable = true, nullable = false)
     private Integer counselling = 0;
     
 
