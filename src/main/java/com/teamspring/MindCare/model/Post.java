@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -23,7 +24,8 @@ public class Post {
     private Long id;
 
     @ManyToOne(optional = false)
-    private UserTemp author;
+    @JoinColumn(name = "author_id")
+    private User author;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -54,8 +56,8 @@ public class Post {
 
     public Long getId() { return id; }
 
-    public UserTemp getAuthor() { return author; }
-    public void setAuthor(UserTemp author) { this.author = author; }
+    public User getAuthor() { return author; }
+    public void setAuthor(User author) { this.author = author; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

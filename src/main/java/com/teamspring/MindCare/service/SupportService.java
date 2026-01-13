@@ -17,21 +17,16 @@ import com.teamspring.MindCare.model.Post;
 import com.teamspring.MindCare.model.PostLike;
 import com.teamspring.MindCare.model.Reply;
 import com.teamspring.MindCare.model.ReplyLike;
-import com.teamspring.MindCare.model.Role;
-import com.teamspring.MindCare.model.UserTemp;
+import com.teamspring.MindCare.model.User;
 import com.teamspring.MindCare.repository.PostLikeRepository;
 import com.teamspring.MindCare.repository.PostRepository;
 import com.teamspring.MindCare.repository.ReplyLikeRepository;
 import com.teamspring.MindCare.repository.ReplyRepository;
-import com.teamspring.MindCare.repository.UserTempRepository;
 
 @Service
 public class SupportService {
     @Autowired
     private PostRepository postRepository;
-
-    @Autowired
-    private UserTempRepository userTempRepository;
 
     @Autowired
     private ReplyRepository replyRepository;
@@ -43,7 +38,7 @@ public class SupportService {
     private ReplyLikeRepository replyLikeRepository;
 
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts(String tag) {
+    public List<PostDTO> getAllPosts(String tag, User currentUser) {
         List<Post> rawPosts;
 
         if (tag != null && !tag.isEmpty()) {
@@ -54,57 +49,40 @@ public class SupportService {
 
         // Map rawPosts to PostDTOs
         return rawPosts.stream()
-                .map(this::convertToPostDTO)
-                .collect(Collectors.toList());
+            .map(post -> convertToPostDTO(post, currentUser)) 
+            .collect(Collectors.toList());
     }
 
-    private PostDTO convertToPostDTO(Post post) {
-        // Implement the conversion logic
+    private PostDTO convertToPostDTO(Post post, User currentUser) {
         Long id = post.getId();
-        UserTemp currentUser = getSimulatedUser();
-
-        String authorName = (post.getAuthor() != null)? post.getAuthor().getFullName() : "Unknown";
-
+        
+        String authorName = (post.getAuthor() != null) ? post.getAuthor().getFullName() : "Unknown";
         String timeAgo = calculateTimeAgo(post.getCreatedAt());
         String initials = generateInitials(authorName);
 
+        // Check if CURRENT user liked this post
         boolean isLikedByCurrentUser = post.getLikes().stream()
-        .anyMatch(like -> like.getUser().getId().equals(currentUser.getId()));
+            .anyMatch(like -> like.getUser().getId().equals(currentUser.getId()));
 
         List<ReplyDTO> replyDTOs = new ArrayList<>();
-
         if(post.getReplies() != null) {
             replyDTOs = post.getReplies().stream()
-                    .map(this::convertToReplyDTO)
+                    .map(reply -> convertToReplyDTO(reply, currentUser))
                     .collect(Collectors.toList());
         }
 
         String tagClass = "tag-purple";
-        String tagName = post.getTag();
-        
-        if ("Anxiety".equalsIgnoreCase(tagName)) tagClass = "tag-blue";
-        else if ("Sleep".equalsIgnoreCase(tagName)) tagClass = "tag-cyan";
+        if ("Anxiety".equalsIgnoreCase(post.getTag())) tagClass = "tag-blue";
+        else if ("Sleep".equalsIgnoreCase(post.getTag())) tagClass = "tag-cyan";
 
         return new PostDTO(
-            id,
-            initials,
-            authorName,
-            timeAgo,
-            post.getTitle(),
-            post.getContent(),
-            post.getLikesCount(),
-            replyDTOs.size(),
-            tagClass,
-            tagName,
-            "avatar-purple",// Randomize this later
-            false,
-            replyDTOs,
-            isLikedByCurrentUser
+            id, initials, authorName, timeAgo, post.getTitle(), post.getContent(),
+            post.getLikesCount(), replyDTOs.size(), tagClass, post.getTag(),
+            "avatar-purple", false, replyDTOs, isLikedByCurrentUser
         );
     }
 
-    private ReplyDTO convertToReplyDTO(Reply reply) {
-        UserTemp currentUser = getSimulatedUser();
+    private ReplyDTO convertToReplyDTO(Reply reply, User currentUser) {
         String authorName = (reply.getAuthor() != null) ? reply.getAuthor().getFullName() : "Unknown";
         String timeAgo = calculateTimeAgo(reply.getCreatedAt());
         String initials = generateInitials(authorName);
@@ -113,60 +91,45 @@ public class SupportService {
             .anyMatch(like -> like.getUser().getId().equals(currentUser.getId()));
         
         return new ReplyDTO(
-            reply.getId(),
-            isLiked,
-            initials,
-            authorName,
-            timeAgo,
-            reply.getContent(),
-            reply.getLikesCount(),
-            "avatar-purple"
+            reply.getId(), isLiked, initials, authorName, timeAgo,
+            reply.getContent(), reply.getLikesCount(), "avatar-purple"
         );
     }
 
-    public void createPost(String title, String content, String tagName) {
-        UserTemp currentUser = getSimulatedUser();
-
+    public void createPost(String title, String content, String tagName, User author) {
         Post newPost = new Post();
-        newPost.setAuthor(currentUser);
+        newPost.setAuthor(author);
         newPost.setTitle(title);
         newPost.setContent(content);
         newPost.setTag(tagName);
-
         postRepository.save(newPost);
     }
 
-    public void createReply(Long postId, String content) {
-        UserTemp currentUser = getSimulatedUser();
-
+    public void createReply(Long postId, String content, User author) {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) throw new IllegalArgumentException("Post not found");
 
         Reply newReply = new Reply();
         newReply.setPost(post);
-        newReply.setAuthor(currentUser);
+        newReply.setAuthor(author);
         newReply.setContent(content);
-
         replyRepository.save(newReply);
     }
     
     @Transactional
-    public LikeResponse toggleLike(Long postId) {
-        UserTemp user = getSimulatedUser();
+    public LikeResponse toggleLike(Long postId, User user) {
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null) throw new IllegalArgumentException("Post not found");
 
         Optional<PostLike> existingLike = postLikeRepository.findByPostAndUser(post, user);
 
         boolean isLiked;
-
         if(existingLike.isPresent()) {
             postLikeRepository.delete(existingLike.get());
             post.setLikesCount(post.getLikesCount() - 1);
             isLiked = false;
         } else {
-            PostLike newLike = new PostLike(post, user);
-            postLikeRepository.save(newLike);
+            postLikeRepository.save(new PostLike(post, user));
             post.setLikesCount(post.getLikesCount() + 1);
             isLiked = true;
         }
@@ -187,15 +150,13 @@ public class SupportService {
     }
 
     @Transactional
-    public LikeResponse toggleReplyLike(Long replyId) {
-        UserTemp user = getSimulatedUser();
+    public LikeResponse toggleReplyLike(Long replyId, User user) {
         Reply reply = replyRepository.findById(replyId).orElse(null);
         if (reply == null) throw new IllegalArgumentException("Reply not found");
 
         Optional<ReplyLike> existingLike = replyLikeRepository.findByReplyAndUser(reply, user);
 
         boolean isLiked;
-
         if (existingLike.isPresent()) {
             replyLikeRepository.delete(existingLike.get());
             reply.setLikesCount(reply.getLikesCount() - 1);
@@ -234,15 +195,5 @@ public class SupportService {
         
         long days = duration.toDays();
         return days + " days ago";
-    }
-
-    private UserTemp getSimulatedUser() {
-        return userTempRepository.findAll().stream()
-            .filter(u -> u.getFullName().equals("Moaz"))
-            .findFirst()
-            .orElseGet(() -> {
-                UserTemp moaz = new UserTemp("Moaz", "moaz@mindcare.com", "pass", Role.ADMIN);
-                return userTempRepository.save(moaz);
-            });
     }
 }

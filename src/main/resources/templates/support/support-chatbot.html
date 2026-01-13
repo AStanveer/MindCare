@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Support Chat - MindCare</title>
     <link rel="stylesheet" th:href="@{/css/variables.css}">
     <link rel="stylesheet" th:href="@{/css/support/support-chatbot.css}">
@@ -104,6 +106,9 @@
         // 3. Main function to handle sending
         async function sendMessage() {
             const message = inputField.value.trim();
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            
             if (!message) return;
 
             // A. Show User Message
@@ -116,7 +121,8 @@
                 const response = await fetch('/mindcare/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        [header]: token
                     },
                     body: JSON.stringify({ message: message })
                 });

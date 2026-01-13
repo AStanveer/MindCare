@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Peer Support - MindCare</title>
     <link rel="stylesheet" th:href="@{/css/variables.css}">
     <link rel="stylesheet" th:href="@{/css/support/peer-support-forum.css}">
+    
+</head>
 </head>
 <body>
-    <div th:replace="~{fragments/navbar :: navbar('peer')}"></div>
+    <div th:replace="~{fragments/navbar :: navbar('peersupport')}"></div>
 
     <div class="container">
         
@@ -197,49 +201,61 @@
 
     <script>
         function toggleReplies(element) {
-                const card = element.closest('.post--card');
-                const replySection = card.querySelector('.replies--section');
-                if (replySection) {
-                    if (replySection.style.display === 'none') {
-                        replySection.style.display = 'block';
-                    } else {
-                        replySection.style.display = 'none';
-                    }
-                }
+            const card = element.closest('.post--card');
+            const replySection = card.querySelector('.replies--section');
+            if (replySection) {
+                replySection.style.display = (replySection.style.display === 'none') ? 'block' : 'none';
             }
+        }
 
         function togglePostLike(postId) {
-                const button = document.getElementById('like-btn-' + postId);
-                const countSpan = document.getElementById('like-count-' + postId);
+            const button = document.getElementById('like-btn-' + postId);
+            const countSpan = document.getElementById('like-count-' + postId);
 
-                fetch('/mindcare/post/' + postId + '/like', {
-                    method: 'POST'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // data contains { newCount: 15, isLiked: true }
-                    
-                    countSpan.innerText = data.newCount;
-                    
-                    if (data.isLiked) {
-                        button.classList.add('liked');
-                    } else {
-                        button.classList.remove('liked');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            fetch('/mindcare/post/' + postId + '/like', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                countSpan.innerText = data.newCount;
+                
+                if (data.isLiked) {
+                    button.classList.add('liked');
+                } else {
+                    button.classList.remove('liked');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
 
         function toggleReplyLike(replyId) {
             const button = document.getElementById('reply-like-btn-' + replyId);
             const countSpan = document.getElementById('reply-like-count-' + replyId);
 
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
             fetch('/mindcare/reply/' + replyId + '/like', {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(data => {
                 countSpan.innerText = data.newCount;
                 
