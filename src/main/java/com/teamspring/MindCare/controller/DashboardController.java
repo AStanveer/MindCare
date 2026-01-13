@@ -165,7 +165,7 @@ public class DashboardController {
         
         // Quick actions for admins
         List<QuickAction> actions = List.of(
-            new QuickAction("User Management", "icon-users", "/mindcare/admin/users"),
+            new QuickAction("User Management", "icon-users", "/mindcare/admin/usermanagement"),
             new QuickAction("Analytics", "icon-chart", "/mindcare/admin/analytics"),
             new QuickAction("System Settings", "icon-settings", "/mindcare/admin/settings")
         );
@@ -179,7 +179,7 @@ public class DashboardController {
         model.addAttribute("activeUsers", activeUsers);
         model.addAttribute("quickActions", actions);
         
-        return "dashboard/admin/dashboard";
+        return "redirect:/mindcare/admin/analytics";
     }
     
     /**
