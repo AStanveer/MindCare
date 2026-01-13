@@ -149,9 +149,18 @@
 
                     <a class="nav-btn"
                         th:classappend="${activePage == 'counselling'} ? ' active' : ''"
-                        th:href="@{/mindcare/booking}"> 
+                        th:href="@{/mindcare/counselling/booking}"> 
                         <span class="link-icon"><th:block th:replace="~{fragments/icons ::icon-book-session}"></th:block></span>
                         <span>Book Session</span>
+                    </a>
+
+                    <a class="nav-btn"
+                        th:classappend="${activePage == 'profile'} ? ' active' : ''"
+                        th:href="@{/mindcare/profile/view}">
+                        <span class="link-icon">
+                            <th:block th:replace="~{fragments/icons ::icon-person}"></th:block>
+                        </span>
+                        <span>Profile</span>
                     </a>
                 </th:block>
 
