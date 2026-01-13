@@ -21,7 +21,7 @@ import com.teamspring.MindCare.repository.CounselorRepository;
 import com.teamspring.MindCare.repository.MoodEntryRepository;
 import com.teamspring.MindCare.repository.UserRepository;
 
-@Configuration
+// @Configuration
 @Order(3) // Run this AFTER StudentModule (1) and SupportForum (2) initializers
 public class DashboardDataInitializer {
 

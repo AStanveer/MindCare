@@ -28,47 +28,6 @@ public class CounsellingService {
         this.counselorRepository = counselorRepository;
         this.bookingRequestRepository = bookingRequestRepository;
         this.availabilityRepository = availabilityRepository;
-        
-        // Initialize default data if empty
-        initializeDefaultData();
-    }
-
-    private void initializeDefaultData() {
-        // Initialize counselors if none exist
-        if (counselorRepository.count() == 0) {
-            counselorRepository.saveAll(List.of(
-                new Counselor(null, "Dr. Sarah Johnson", "Anxiety & Stress", 4.9, true),
-                new Counselor(null, "Dr. Michael Chen", "Depression & Mood", 4.8, true),
-                new Counselor(null, "Dr. Emily Roberts", "Academic Pressure", 4.9, true)
-            ));
-            System.out.println("✓ Initialized default counselors");
-        }
-        
-        // Initialize some test sessions if none exist
-        if (sessionRepository.count() == 0) {
-            CounsellingSession session1 = new CounsellingSession();
-            session1.setCounselorId(1L);
-            session1.setCounselorName("Dr. Sarah Johnson");
-            session1.setStudentId(1L);
-            session1.setSessionDate(LocalDate.now().plusDays(1));
-            session1.setSessionTime(LocalTime.of(10, 0));
-            session1.setSessionType("Individual");
-            session1.setStatus("Scheduled");
-            session1.setNotes("Initial consultation");
-            
-            CounsellingSession session2 = new CounsellingSession();
-            session2.setCounselorId(1L);
-            session2.setCounselorName("Dr. Sarah Johnson");
-            session2.setStudentId(2L);
-            session2.setSessionDate(LocalDate.now().plusDays(2));
-            session2.setSessionTime(LocalTime.of(14, 0));
-            session2.setSessionType("Follow-up");
-            session2.setStatus("Scheduled");
-            session2.setNotes("Progress check");
-            
-            sessionRepository.saveAll(List.of(session1, session2));
-            System.out.println("✓ Initialized test counselling sessions");
-        }
     }
 
     // ===== COUNSELOR METHODS =====
@@ -183,6 +142,12 @@ public class CounsellingService {
         }
         
         try {
+            System.out.println("\n=== BOOKING SESSION ===");
+            System.out.println("Counselor ID: " + request.getCounselorId());
+            System.out.println("Date: " + request.getDate());
+            System.out.println("Time: " + request.getTime());
+            System.out.println("Student ID: " + request.getStudentId());
+            
             LocalDate date = LocalDate.parse(request.getDate());
             LocalTime time = LocalTime.parse(request.getTime());
             
@@ -200,6 +165,7 @@ public class CounsellingService {
             availabilityRepository.save(avail);
             
             // Get counselor details
+            System.out.println("Looking up counselor with ID: " + request.getCounselorId());
             Counselor counselor = counselorRepository.findById(request.getCounselorId())
                     .orElseThrow(() -> new RuntimeException("Counselor not found"));
             
@@ -215,7 +181,7 @@ public class CounsellingService {
             session.setSessionTime(time);
             session.setSessionType(request.getSessionType());
             session.setNotes(request.getNotes());
-            session.setStatus("Scheduled");
+            session.setStatus("Awaiting Confirmation");
             
             CounsellingSession savedSession = sessionRepository.save(session);
             
@@ -267,6 +233,13 @@ public class CounsellingService {
     }
 
     /**
+     * Get session by ID
+     */
+    public CounsellingSession getSessionById(Long sessionId) {
+        return sessionRepository.findById(sessionId).orElse(null);
+    }
+
+    /**
      * Reschedule a session
      */
     @Transactional
@@ -308,7 +281,7 @@ public class CounsellingService {
     }
 
     /**
-     * Cancel a session
+     * Cancel a session - marks as Cancelled instead of deleting
      */
     @Transactional
     public void cancelSession(Long sessionId) {
@@ -324,9 +297,37 @@ public class CounsellingService {
             availabilityRepository.save(avail);
         });
         
-        // Delete session
+        // Mark as cancelled instead of deleting
+        session.setStatus("Cancelled");
+        sessionRepository.save(session);
+        
+        System.out.println("✓ Session " + sessionId + " cancelled (marked as Cancelled)");
+    }
+
+    /**
+     * Delete a session permanently
+     */
+    @Transactional
+    public void deleteSession(Long sessionId) {
+        CounsellingSession session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+        
         sessionRepository.delete(session);
         
-        System.out.println("✓ Session " + sessionId + " cancelled");
+        System.out.println("✓ Session " + sessionId + " deleted permanently");
+    }
+
+    /**
+     * Confirm a session - update status to Confirmed
+     */
+    @Transactional
+    public void confirmSession(Long sessionId) {
+        CounsellingSession session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+        
+        session.setStatus("Confirmed");
+        sessionRepository.save(session);
+        
+        System.out.println("✓ Session " + sessionId + " confirmed");
     }
 }

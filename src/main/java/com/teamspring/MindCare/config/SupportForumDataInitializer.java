@@ -16,7 +16,7 @@ import com.teamspring.MindCare.repository.PostRepository;
 import com.teamspring.MindCare.repository.ReplyRepository;
 import com.teamspring.MindCare.repository.UserRepository; // ✅ Using Real Repo
 
-@Configuration
+// @Configuration
 @Order(2) // Runs AFTER the main DataSeeder to ensure DB is ready
 public class SupportForumDataInitializer implements CommandLineRunner {
 
