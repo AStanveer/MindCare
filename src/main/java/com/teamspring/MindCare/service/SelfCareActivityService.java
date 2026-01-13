@@ -2,6 +2,7 @@ package com.teamspring.MindCare.service;
 
 import com.teamspring.MindCare.model.SelfCareActivity;
 import com.teamspring.MindCare.repository.SelfCareActivityRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,12 @@ public class SelfCareActivityService {
     @Autowired
     private SelfCareActivityRepository selfCareActivityRepository;
     
-    // Safe method - returns empty list if anything goes wrong
     public List<SelfCareActivity> getAllActivities() {
         try {
             return selfCareActivityRepository.findAll();
         } catch (Exception e) {
             System.err.println("Error fetching self-care activities: " + e.getMessage());
-            return createFallbackActivities(); // Return fallback data
+            return createFallbackActivities();
         }
     }
     
@@ -52,7 +52,7 @@ public class SelfCareActivityService {
             return categories;
         } catch (Exception e) {
             System.err.println("Error fetching self-care categories: " + e.getMessage());
-            return List.of("all", "breathing", "meditation", "yoga", "journaling"); // Default
+            return List.of("all", "breathing", "meditation", "yoga", "journaling");
         }
     }
     
@@ -68,7 +68,31 @@ public class SelfCareActivityService {
         }
     }
     
-    // Fallback data in case database fails
+    // Save or update activity
+    public SelfCareActivity saveActivity(SelfCareActivity activity) {
+        try {
+            if (activity.getId() == null) {
+                activity.setCreatedAt(LocalDateTime.now());
+            }
+            activity.setUpdatedAt(LocalDateTime.now());
+            return selfCareActivityRepository.save(activity);
+        } catch (Exception e) {
+            System.err.println("Error saving activity: " + e.getMessage());
+            throw new RuntimeException("Failed to save activity: " + e.getMessage());
+        }
+    }
+    
+    // Delete activity
+    public void deleteActivity(Long id) {
+        try {
+            selfCareActivityRepository.deleteById(id);
+        } catch (Exception e) {
+            System.err.println("Error deleting activity: " + e.getMessage());
+            throw new RuntimeException("Failed to delete activity: " + e.getMessage());
+        }
+    }
+    
+    // Fallback data
     private List<SelfCareActivity> createFallbackActivities() {
         List<SelfCareActivity> fallback = new ArrayList<>();
         
@@ -79,6 +103,7 @@ public class SelfCareActivityService {
         activity1.setCategory("breathing");
         activity1.setDurationMinutes(5);
         activity1.setDifficulty("Beginner");
+        activity1.setContentType("EXERCISE");
         activity1.setInstructions("Inhale for 4 seconds, hold for 4, exhale for 6");
         activity1.setBenefits("Reduces anxiety, promotes relaxation");
         
@@ -89,6 +114,7 @@ public class SelfCareActivityService {
         activity2.setCategory("meditation");
         activity2.setDurationMinutes(10);
         activity2.setDifficulty("Beginner");
+        activity2.setContentType("GUIDED_MEDITATION");
         activity2.setInstructions("Find a quiet space and follow the audio");
         activity2.setBenefits("Improves concentration, reduces stress");
         
@@ -106,6 +132,7 @@ public class SelfCareActivityService {
         activity.setCategory("general");
         activity.setDurationMinutes(5);
         activity.setDifficulty("Beginner");
+        activity.setContentType("EXERCISE");
         activity.setInstructions("Please select another activity from the list.");
         activity.setBenefits("Wellbeing maintenance");
         return activity;

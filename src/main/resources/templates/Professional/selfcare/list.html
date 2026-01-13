@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Self‑Care Activities - Professional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #8c7ae6;
+            --primary-light: rgba(140, 122, 230, 0.1);
+            --primary-dark: #7b6bd6;
+            --text-primary: #2e2e2e;
+            --text-secondary: #64748b;
+            --bg-white: #ffffff;
+            --bg-light: #f6f7fb;
+            --border-color: #e2e8f0;
+            --success-bg: #d1fae5;
+            --success-text: #065f46;
+            --error-bg: #fee2e2;
+            --error-text: #991b1b;
+            --danger-color: #ef4444;
+            --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 20px rgba(140, 122, 230, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .alert-success,
+        .alert-error {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border-left: 4px solid #ef4444;
+        }
+
+        .header {
+            background: linear-gradient(90deg, var(--primary-light), rgba(165, 180, 252, 0.1));
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .btn-create {
+            background: var(--primary-color);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-create:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(140, 122, 230, 0.3);
+        }
+
+        .search-container {
+            margin-bottom: 24px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .category-row {
+            display: block;
+            margin-top: 12px;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 26px;
+            background: #ffffff;
+            border-radius: 999px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+            line-height: 1.2;
+        }
+
+        .category-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .category-btn.active {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border-color: var(--primary-color);
+        }
+
+        .activity-count {
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid rgba(140, 122, 230, 0.2);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 18px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            background: #8c7ae6;
+            color: #ffffff;
+        }
+
+        .meta-chip {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .card-body {
+            padding: 20px 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.6em;
+        }
+
+        .card-desc {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.5;
+            flex: 1;
+            font-size: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-row {
+            display: flex;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #f1f5f9;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px 20px;
+        }
+
+        .btn-outline,
+        .btn-danger {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            border: none;
+            background: white;
+            border: 2px solid #e8e9eb;
+        }
+
+        .btn-outline {
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-danger {
+            color: var(--text-secondary);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 24px 28px;
+        }
+
+        .modal-footer {
+            padding: 20px 28px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input,
+        .select,
+        .textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-secondary,
+        .btn-main {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-main {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .delete-modal {
+            max-width: 420px;
+        }
+
+        .delete-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 8px 0 14px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar('selfcare')}"></div>
+
+<div class="container">
+
+    <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert-error" th:text="${errorMessage}"></div>
+
+    <div class="header">
+        <div>
+            <h1>Self‑Care Activities</h1>
+            <p>Manage breathing, meditation, and other self‑care activities for students.</p>
+        </div>
+        <button type="button" class="btn-create" onclick="openCreateModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5"  y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Create Activity</span>
+        </button>
+    </div>
+
+    <form th:action="@{/mindcare/professional/selfcare}" method="get" id="searchForm">
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text"
+                       name="search"
+                       id="searchInput"
+                       placeholder="Search activities by title..."
+                       th:value="${searchQuery}">
+            </div>
+
+            <div class="category-row">
+                <div class="category-tabs">
+                    <button type="button"
+                            class="category-btn"
+                            th:classappend="${selectedCategory == null || selectedCategory == '' || selectedCategory == 'all'} ? ' active' : ''"
+                            onclick="filterCategory('all')">
+                        All
+                    </button>
+                    <button type="button"
+                            class="category-btn"
+                            th:classappend="${selectedCategory == 'breathing'} ? ' active' : ''"
+                            onclick="filterCategory('breathing')">
+                        Breathing
+                    </button>
+                    <button type="button"
+                            class="category-btn"
+                            th:classappend="${selectedCategory == 'meditation'} ? ' active' : ''"
+                            onclick="filterCategory('meditation')">
+                        Meditation
+                    </button>
+                    <button type="button"
+                            class="category-btn"
+                            th:classappend="${selectedCategory == 'yoga'} ? ' active' : ''"
+                            onclick="filterCategory('yoga')">
+                        Yoga
+                    </button>
+                    <button type="button"
+                            class="category-btn"
+                            th:classappend="${selectedCategory == 'journaling'} ? ' active' : ''"
+                            onclick="filterCategory('journaling')">
+                        Journaling
+                    </button>
+                    <button type="button"
+                            class="category-btn"
+                            th:classappend="${selectedCategory == 'exercise'} ? ' active' : ''"
+                            onclick="filterCategory('exercise')">
+                        Exercise
+                    </button>
+                </div>
+
+                <div class="activity-count">
+                    Showing
+                    <strong th:text="${activities != null ? activities.size() : 0}">0</strong>
+                    <span th:text="${activities != null && activities.size() == 1} ? 'activity' : 'activities'">
+                        activities
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="category" id="hiddenCategory"
+               th:value="${selectedCategory}"/>
+    </form>
+
+    <div th:if="${activities != null && !activities.isEmpty()}" class="grid">
+        <div class="card" th:each="activity : ${activities}">
+            <div class="card-header">
+                <span class="badge"
+                      th:text="${#strings.capitalize(activity.category)}">Category</span>
+                <span class="meta-chip"
+                      th:text="${activity.formattedDuration}">5 min</span>
+            </div>
+            <div class="card-body">
+                <div class="card-title" th:text="${activity.title}">Title</div>
+                <div class="card-desc" th:text="${activity.description}">Description</div>
+
+                <div class="card-row">
+                    <span class="pill">
+                        Difficulty:
+                        <span th:text="${activity.difficulty != null ? activity.difficulty : 'Beginner'}">
+                            Beginner
+                        </span>
+                    </span>
+                    <span class="pill"
+                          th:if="${activity.videoUrl != null && !activity.videoUrl.isEmpty()}">
+                        📹 Video Available
+                    </span>
+                    <span class="pill" th:if="${activity.contentType}">
+                        Type:
+                        <span th:text="${activity.contentType}">VIDEO</span>
+                    </span>
+                </div>
+
+                <div class="card-row" th:if="${activity.benefits}">
+                    <span style="font-size:12px;">Benefits:</span>
+                    <span style="font-size:12px;" th:text="${activity.benefits}"></span>
+                </div>
+
+                <div class="card-row" th:if="${activity.instructions}">
+                    <span style="font-size:12px;">Instructions:</span>
+                    <span style="font-size:12px;" th:text="${activity.instructions}"></span>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button type="button" class="btn-outline"
+                        th:data-id="${activity.id}"
+                        th:data-title="${activity.title}"
+                        th:data-description="${activity.description}"
+                        th:data-category="${activity.category}"
+                        th:data-duration="${activity.durationMinutes}"
+                        th:data-difficulty="${activity.difficulty}"
+                        th:data-contenttype="${activity.contentType}"
+                        th:data-videourl="${activity.videoUrl}"
+                        th:data-thumbnailurl="${activity.thumbnailUrl}"
+                        th:data-instructions="${activity.instructions}"
+                        th:data-benefits="${activity.benefits}"
+                        onclick="openEditModal(this)">
+                    Edit
+                </button>
+                <button type="button" class="btn-danger"
+                        th:data-id="${activity.id}"
+                        th:data-title="${activity.title}"
+                        onclick="openDeleteModal(this)">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${activities == null || activities.isEmpty()}" class="no-items">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2"
+             style="margin: 0 auto 20px; opacity: 0.3;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8"  x2="12"    y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3>No self‑care activities found</h3>
+        <p style="margin-top:6px;font-size:14px;">
+            <span th:if="${searchQuery != null || (selectedCategory != null && selectedCategory != 'all')}">
+                Try a different search or category filter.
+            </span>
+            <span th:if="${searchQuery == null && (selectedCategory == null || selectedCategory == 'all')}">
+                Click "Create Activity" above to add your first self-care activity.
+            </span>
+        </p>
+    </div>
+
+</div>
+<!-- CREATE MODAL -->
+<div id="createModal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Create Self‑Care Activity</h2>
+            <button type="button" class="btn-secondary" onclick="closeCreateModal()" style="font-size: 24px; width: 32px; height: 32px; padding: 0;">×</button>
+        </div>
+        <form th:action="@{/mindcare/professional/selfcare/create}" method="post" id="createForm">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="label">Title <span style="color: #ef4444;">*</span></label>
+                    <input class="input" type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label class="label">Description <span style="color: #ef4444;">*</span></label>
+                    <textarea class="textarea" name="description" required></textarea>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label class="label">Category <span style="color: #ef4444;">*</span></label>
+                        <select class="select" name="category" required>
+                            <option value="">Select category</option>
+                            <option value="breathing">Breathing</option>
+                            <option value="meditation">Meditation</option>
+                            <option value="yoga">Yoga</option>
+                            <option value="journaling">Journaling</option>
+                            <option value="exercise">Exercise</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Duration (minutes)</label>
+                        <input class="input" type="number" name="durationMinutes" min="1" placeholder="5">
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label class="label">Difficulty</label>
+                        <select class="select" name="difficulty">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Content Type</label>
+                        <select class="select" name="contentType">
+                            <option value="VIDEO">Video</option>
+                            <option value="AUDIO">Audio</option>
+                            <option value="EXERCISE">Exercise</option>
+                            <option value="GUIDED_MEDITATION">Guided Meditation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Video URL (optional)</label>
+                    <input class="input" type="url" name="videoUrl" placeholder="https://youtube.com/watch?v=...">
+                </div>
+                <div class="form-group">
+                    <label class="label">Thumbnail URL (optional)</label>
+                    <input class="input" type="url" name="thumbnailUrl" placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Instructions</label>
+                    <textarea class="textarea" name="instructions" placeholder="Step-by-step instructions..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="label">Benefits</label>
+                    <textarea class="textarea" name="benefits" placeholder="List the benefits of this activity..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                <button type="submit" class="btn-main">Create Activity</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Edit Activity</h2>
+            <button type="button" class="btn-secondary" onclick="closeEditModal()" style="font-size: 24px; width: 32px; height: 32px; padding: 0;">×</button>
+        </div>
+        <form id="editForm" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="label">Title <span style="color: #ef4444;">*</span></label>
+                    <input class="input" type="text" name="title" id="editTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="label">Description <span style="color: #ef4444;">*</span></label>
+                    <textarea class="textarea" name="description" id="editDescription" required></textarea>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label class="label">Category <span style="color: #ef4444;">*</span></label>
+                        <select class="select" name="category" id="editCategory" required>
+                            <option value="breathing">Breathing</option>
+                            <option value="meditation">Meditation</option>
+                            <option value="yoga">Yoga</option>
+                            <option value="journaling">Journaling</option>
+                            <option value="exercise">Exercise</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Duration (minutes)</label>
+                        <input class="input" type="number" name="durationMinutes"
+                               id="editDuration" min="1">
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label class="label">Difficulty</label>
+                        <select class="select" name="difficulty" id="editDifficulty">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Content Type</label>
+                        <select class="select" name="contentType" id="editContentType">
+                            <option value="VIDEO">Video</option>
+                            <option value="AUDIO">Audio</option>
+                            <option value="EXERCISE">Exercise</option>
+                            <option value="GUIDED_MEDITATION">Guided Meditation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Video URL</label>
+                    <input class="input" type="url" name="videoUrl" id="editVideoUrl">
+                </div>
+                <div class="form-group">
+                    <label class="label">Thumbnail URL</label>
+                    <input class="input" type="url" name="thumbnailUrl" id="editThumbnailUrl">
+                </div>
+                <div class="form-group">
+                    <label class="label">Instructions</label>
+                    <textarea class="textarea" name="instructions" id="editInstructions"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="label">Benefits</label>
+                    <textarea class="textarea" name="benefits" id="editBenefits"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn-main">Update Activity</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal delete-modal">
+        <div class="modal-header">
+            <h2>Delete Activity?</h2>
+            <button type="button" class="btn-secondary" onclick="closeDeleteModal()" style="font-size: 24px; width: 32px; height: 32px; padding: 0;">×</button>
+        </div>
+        <div class="modal-body">
+            <p class="delete-text">
+                Are you sure you want to delete
+                "<strong><span id="deleteActivityTitle"></span></strong>"? This action cannot be undone.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <form id="deleteForm" method="post" style="display: inline;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn-main" style="background:var(--danger-color);">
+                    Delete Activity
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    console.log('Self-care activities page loaded');
+    
+    const searchInput    = document.getElementById('searchInput');
+    const hiddenCategory = document.getElementById('hiddenCategory');
+    const searchForm     = document.getElementById('searchForm');
+    let searchTimeout;
+
+    // Category filter function
+    function filterCategory(cat) {
+        console.log('Filtering by category:', cat);
+        hiddenCategory.value = cat;
+        console.log('Hidden field value:', hiddenCategory.value);
+        searchForm.submit();
+    }
+
+    // Search with debounce
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            console.log('Search input:', this.value);
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(function () {
+                searchForm.submit();
+            }, 700);
+        });
+    }
+
+    // Modal functions
+    function openCreateModal() {
+        console.log('Opening create modal');
+        document.getElementById('createModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCreateModal() {
+        console.log('Closing create modal');
+        document.getElementById('createModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+        const form = document.getElementById('createForm');
+        if (form) form.reset();
+    }
+
+    function openEditModal(btn) {
+        console.log('Opening edit modal');
+        const id = btn.getAttribute('data-id');
+        document.getElementById('editTitle').value        = btn.getAttribute('data-title') || '';
+        document.getElementById('editDescription').value  = btn.getAttribute('data-description') || '';
+        document.getElementById('editCategory').value     = btn.getAttribute('data-category') || '';
+        document.getElementById('editDuration').value     = btn.getAttribute('data-duration') || '';
+        document.getElementById('editDifficulty').value   = btn.getAttribute('data-difficulty') || '';
+        document.getElementById('editContentType').value  = btn.getAttribute('data-contenttype') || '';
+        document.getElementById('editVideoUrl').value     = btn.getAttribute('data-videourl') || '';
+        document.getElementById('editThumbnailUrl').value = btn.getAttribute('data-thumbnailurl') || '';
+        document.getElementById('editInstructions').value = btn.getAttribute('data-instructions') || '';
+        document.getElementById('editBenefits').value     = btn.getAttribute('data-benefits') || '';
+
+        document.getElementById('editForm').action =
+            `/mindcare/professional/selfcare/${id}/update`;
+
+        document.getElementById('editModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditModal() {
+        console.log('Closing edit modal');
+        document.getElementById('editModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function openDeleteModal(btn) {
+        console.log('Opening delete modal');
+        const id    = btn.getAttribute('data-id');
+        const title = btn.getAttribute('data-title') || 'Activity';
+        document.getElementById('deleteActivityTitle').textContent = title;
+        document.getElementById('deleteForm').action =
+            `/mindcare/professional/selfcare/${id}/delete`;
+        document.getElementById('deleteModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteModal() {
+        console.log('Closing delete modal');
+        document.getElementById('deleteModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modals on overlay click
+    ['createModal','editModal','deleteModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('click', function(e) {
+            if (e.target === this) {
+                if (id === 'createModal') closeCreateModal();
+                if (id === 'editModal') closeEditModal();
+                if (id === 'deleteModal') closeDeleteModal();
+            }
+        });
+    });
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeCreateModal();
+            closeEditModal();
+            closeDeleteModal();
+        }
+    });
+
+    // Log initial state
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page ready');
+        console.log('Selected category:', hiddenCategory.value);
+        console.log('Search query:', searchInput.value);
+    });
+</script>
+
+</body>
+</html>

@@ -18,4 +18,6 @@ public interface SelfCareActivityRepository extends JpaRepository<SelfCareActivi
     
     // Search
     List<SelfCareActivity> findByTitleContainingIgnoreCase(String title);
+    
+    // REMOVED: findByUser(User user) - not needed for SelfCareActivity
 }

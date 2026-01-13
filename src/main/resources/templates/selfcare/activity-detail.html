@@ -121,6 +121,7 @@
             width: 100%;
             height: 100%;
             border-radius: 12px;
+            border: 0;
         }
 
         .video-placeholder {
@@ -249,20 +250,20 @@
             .container {
                 padding: 15px;
             }
-            
+
             .header h1 {
                 font-size: 24px;
             }
-            
+
             .meta-info {
                 flex-direction: column;
                 align-items: flex-start;
             }
-            
+
             .related-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
@@ -275,9 +276,9 @@
     <div class="container">
         <!-- Breadcrumb -->
         <div class="breadcrumb">
-            <a th:href="@{/mindcare/selfcare}">Self Care</a> 
+            <a th:href="@{/mindcare/selfcare}">Self Care</a>
             <span> / </span>
-            <a th:href="@{/mindcare/selfcare(category=${activity.category})}" 
+            <a th:href="@{/mindcare/selfcare(category=${activity.category})}"
                th:text="${#strings.capitalize(activity.category)}"></a>
             <span> / </span>
             <span th:text="${activity.title}"></span>
@@ -286,53 +287,52 @@
         <!-- Activity Header -->
         <div class="header">
             <h1 th:text="${activity.title}"></h1>
-            
+
             <div class="meta-info">
                 <div class="meta-badge duration-badge">
                     <span th:text="${activity.formattedDuration}"></span>
                 </div>
-                
-                <!-- Difficulty Badge (only show if difficulty exists) -->
+
                 <div th:if="${activity.difficulty != null and activity.difficulty != ''}"
-                     th:class="${'meta-badge difficulty-badge ' + 
-                               (activity.difficulty.toLowerCase() == 'intermediate' ? 'difficulty-intermediate' : 
+                     th:class="${'meta-badge difficulty-badge ' +
+                               (activity.difficulty.toLowerCase() == 'intermediate' ? 'difficulty-intermediate' :
                                 activity.difficulty.toLowerCase() == 'advanced' ? 'difficulty-advanced' : '')}">
                     <span th:text="${activity.difficulty}"></span>
                 </div>
-                
-                <!-- Category Badge -->
+
                 <div class="meta-badge category-badge">
                     <span th:text="${#strings.capitalize(activity.category)}"></span>
                 </div>
-                
-                <!-- Created By Badge -->
+
                 <div class="meta-badge" style="background: rgba(165, 180, 252, 0.2); color: #8c7ae6;">
                     <span th:text="${activity.createdBy}"></span>
                 </div>
             </div>
-            
-            <p style="color: #64748b; font-size: 16px; line-height: 1.6;" 
+
+            <p style="color: #64748b; font-size: 16px; line-height: 1.6;"
                th:text="${activity.description}"></p>
         </div>
 
-        <!-- Video/Content Section -->
+        <!-- Activity Guide -->
         <div class="content-section">
             <h3 class="section-title">
                 <img src="/icons/activity.png" style="width: 24px; height: 24px;">
                 <span>Activity Guide</span>
             </h3>
-            
-            <div th:if="${activity.videoUrl != null and activity.videoUrl != ''}" class="video-section">
+
+            <!-- Show embedded YouTube video if embedUrl is available -->
+            <div th:if="${activity.embedUrl != null}" class="video-section">
                 <div class="video-container">
-                    <iframe th:src="${activity.videoUrl}" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    <iframe th:src="${activity.embedUrl}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen>
                     </iframe>
                 </div>
             </div>
-            
-            <div th:unless="${activity.videoUrl != null and activity.videoUrl != ''}" class="video-placeholder">
+
+            <!-- Placeholder if no video -->
+            <div th:if="${activity.embedUrl == null}" class="video-placeholder">
                 <img src="/icons/activity.png" style="width: 64px; height: 64px; margin-bottom: 20px;">
                 <p>No video available for this activity</p>
             </div>
@@ -345,7 +345,6 @@
                 <span>Instructions</span>
             </h3>
             <div class="instructions" th:utext="${activity.instructions}">
-                <!-- Instructions will be inserted here -->
             </div>
         </div>
 
@@ -356,7 +355,6 @@
                 <span>Benefits</span>
             </h3>
             <div class="benefits" th:utext="${activity.benefits}">
-                <!-- Benefits will be inserted here -->
             </div>
         </div>
 
@@ -369,16 +367,11 @@
     </div>
 
     <script>
-        // Activity page scripts
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Activity page loaded');
-            
-            // Format instructions if they're plain text
             const instructionsDiv = document.querySelector('.instructions');
             if (instructionsDiv) {
                 const text = instructionsDiv.textContent;
                 if (text && !text.includes('<') && text.trim() !== '') {
-                    // Convert plain text to HTML with line breaks
                     instructionsDiv.innerHTML = text.split('\n').map(line => {
                         if (line.trim()) {
                             return `<p>${line}</p>`;
@@ -387,13 +380,11 @@
                     }).join('');
                 }
             }
-            
-            // Format benefits if they're plain text
+
             const benefitsDiv = document.querySelector('.benefits');
             if (benefitsDiv) {
                 const text = benefitsDiv.textContent;
                 if (text && !text.includes('<') && text.trim() !== '') {
-                    // Convert plain text to HTML with line breaks
                     benefitsDiv.innerHTML = text.split('\n').map(line => {
                         if (line.trim()) {
                             return `<p>${line}</p>`;
