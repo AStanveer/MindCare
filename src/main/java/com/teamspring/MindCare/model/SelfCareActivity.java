@@ -1,7 +1,7 @@
 package com.teamspring.MindCare.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "selfcare_activities")
@@ -125,6 +125,17 @@ public class SelfCareActivity {
             case "intermediate" -> "#f59e0b";  // Amber
             case "advanced" -> "#ef4444";      // Red
             default -> "#64748b";
+        };
+    }
+
+    public String getContentTypeIcon() {
+        if (contentType == null) return "📋";
+        return switch (contentType.toUpperCase()) {
+            case "VIDEO" -> "🎬";
+            case "AUDIO" -> "🎧";
+            case "EXERCISE" -> "🏃‍♀️";
+            case "GUIDED_MEDITATION" -> "🧘";
+            default -> "📋";
         };
     }
 
