@@ -11,10 +11,10 @@ public class AssessmentResult {
     private Long id;
     
     @Column(name = "user_id")
-    private Long userId = 1L; // Default dummy user
+    private Long userId;
     
     @Column(name = "assessment_name")
-    private String assessmentName = "DASS-21"; // Hardcoded
+    private String assessmentName = "DASS-21";
     
     @Column(name = "depression_score")
     private int depressionScore;
