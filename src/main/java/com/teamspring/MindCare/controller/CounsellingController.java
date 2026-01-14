@@ -12,6 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/mindcare/counselling")
@@ -74,7 +77,7 @@ public class CounsellingController {
     // ===== Show HP Set Availability Page =====
     @GetMapping("/set-availability")
     public String setAvailability(Model model) {
-        Long counselorId = 1L; // TODO: Get from session/auth
+        Long counselorId = getCurrentUserId();
         model.addAttribute("counselorId", counselorId);
         model.addAttribute("timeSlots", counsellingService.getTimeSlots());
         return "counselling/hp-setavailability";
@@ -83,7 +86,7 @@ public class CounsellingController {
     // ===== Show HP My Schedule Page =====
     @GetMapping("/my-schedule")
     public String mySchedule(Model model) {
-        Long counselorId = 1L; // TODO: Get from session/auth
+        Long counselorId = getCurrentUserId();
         List<com.teamspring.MindCare.model.CounsellingSession> sessions = counsellingService.getCounselorSessions(counselorId);
         
         System.out.println("=== MY SCHEDULE PAGE ===");
@@ -92,8 +95,35 @@ public class CounsellingController {
         sessions.forEach(s -> System.out.println("  - Session " + s.getId() + ": " + s.getSessionDate() + " at " + s.getSessionTime()));
         System.out.println("======================");
         
+        // Enrich sessions with student details
+        List<Map<String, Object>> enrichedSessions = new ArrayList<>();
+        for (com.teamspring.MindCare.model.CounsellingSession session : sessions) {
+            Map<String, Object> sessionData = new HashMap<>();
+            sessionData.put("id", session.getId());
+            sessionData.put("studentId", session.getStudentId());
+            sessionData.put("sessionDate", session.getSessionDate());
+            sessionData.put("sessionTime", session.getSessionTime());
+            sessionData.put("sessionType", session.getSessionType());
+            sessionData.put("status", session.getStatus());
+            sessionData.put("notes", session.getNotes());
+            
+            // Fetch student user details
+            com.teamspring.MindCare.model.User student = userRepository.findById(session.getStudentId()).orElse(null);
+            if (student != null) {
+                sessionData.put("studentName", student.getFullName());
+                sessionData.put("studentEmail", student.getEmail());
+                sessionData.put("studentPhone", student.getPhone());
+            } else {
+                sessionData.put("studentName", "Unknown");
+                sessionData.put("studentEmail", "N/A");
+                sessionData.put("studentPhone", "N/A");
+            }
+            
+            enrichedSessions.add(sessionData);
+        }
+        
         model.addAttribute("counselorId", counselorId);
-        model.addAttribute("sessions", sessions);
+        model.addAttribute("sessions", enrichedSessions);
         return "counselling/hp-myschedule";
     }
 
@@ -105,7 +135,35 @@ public class CounsellingController {
         featureUsageService.incrementCounsellingUsage(userId);
         
         // Get only sessions for the current student (filtered by student ID)
-        model.addAttribute("upcomingSessions", counsellingService.getUpcomingSessionsForStudent(userId));
+        List<com.teamspring.MindCare.model.CounsellingSession> sessions = counsellingService.getUpcomingSessionsForStudent(userId);
+        
+        // Enrich sessions with counselor details
+        List<Map<String, Object>> enrichedSessions = new ArrayList<>();
+        for (com.teamspring.MindCare.model.CounsellingSession session : sessions) {
+            Map<String, Object> sessionData = new HashMap<>();
+            sessionData.put("id", session.getId());
+            sessionData.put("counselorId", session.getCounselorId());
+            sessionData.put("counselorName", session.getCounselorName());
+            sessionData.put("sessionDate", session.getSessionDate());
+            sessionData.put("sessionTime", session.getSessionTime());
+            sessionData.put("sessionType", session.getSessionType());
+            sessionData.put("status", session.getStatus());
+            sessionData.put("notes", session.getNotes());
+            
+            // Fetch counselor user details by counselor ID
+            com.teamspring.MindCare.model.User counselor = userRepository.findById(session.getCounselorId()).orElse(null);
+            if (counselor != null) {
+                sessionData.put("counselorEmail", counselor.getEmail());
+                sessionData.put("counselorPhone", counselor.getPhone());
+            } else {
+                sessionData.put("counselorEmail", "N/A");
+                sessionData.put("counselorPhone", "N/A");
+            }
+            
+            enrichedSessions.add(sessionData);
+        }
+        
+        model.addAttribute("upcomingSessions", enrichedSessions);
         return "counselling/mysession";
     }
 
@@ -136,7 +194,7 @@ public class CounsellingController {
             @RequestParam String selectedDate,
             @RequestParam(required = false) String[] timeSlots) {
         
-        Long counselorId = 1L; // TODO: Get from session/auth
+        Long counselorId = getCurrentUserId();
         
         try {
             counsellingService.saveAvailability(counselorId, selectedDate, timeSlots);
