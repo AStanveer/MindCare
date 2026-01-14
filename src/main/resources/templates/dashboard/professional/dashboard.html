@@ -40,13 +40,13 @@
                     <div class="card--header">
                         <div class="card-title">
                             <span class="card-icon">
-                                <th:block
-                                    th:replace="~{fragments/icons ::icon-calendar}">
-                                </th:block>
+                                <th:block th:replace="~{fragments/icons ::icon-calendar}"></th:block>
                             </span>
                             <span class="title-text">Today's Schedule</span>
                         </div>
-                        <p>Sunday, November 2, 2025</p>
+                        <p th:text="${#temporals.format(today, 'EEEE, MMMM d, yyyy')}">
+                            Sunday, November 2, 2025
+                        </p>
                     </div>
                     <div class="schedule-items--container">
                         <div class="schedule-item" th:each="scheduledSession : ${todaysSchedule}">

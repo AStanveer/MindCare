@@ -1,6 +1,7 @@
 package com.teamspring.MindCare.controller;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,6 +143,7 @@ public class DashboardController {
         model.addAttribute("username", user.getFullName());
         model.addAttribute("quickActions", actions);
         model.addAttribute("todaysSchedule", todaysSchedule);
+        model.addAttribute("today", LocalDate.now());
         
         // Add the new attributes
         model.addAttribute("recentStudents", recentStudents);
