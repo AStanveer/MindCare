@@ -105,27 +105,22 @@ public class AdminController {
     }
     
     @GetMapping("/api/user/{id}")
-@ResponseBody
-public Map<String, Object> getUserDetails(@PathVariable Long id) {
-    Map<String, Object> response = new HashMap<>();
-    
-    try {
-        User user = userService.getUserById(id); // ✅ NO orElse
-        response.put("user", user);
-
-        List<AssessmentResult> assessments =
-                assessmentResultRepository.findByUserIdOrderByCompletedAtDesc(user.getId());
-        response.put("assessments", assessments);
-
-        response.put("success", true);
-    } catch (RuntimeException e) {
-        response.put("success", false);
-        response.put("message", e.getMessage());
+    @ResponseBody
+    public Map<String, Object> getUserDetails(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        
+        User user = userService.getUserById(id).orElse(null);
+        if (user != null) {
+            response.put("user", user);
+            
+            // Get assessment history
+            List<AssessmentResult> assessments = assessmentResultRepository
+                .findByUserIdOrderByCompletedAtDesc(user.getId());
+            response.put("assessments", assessments);
+        }
+        
+        return response;
     }
-    
-    return response;
-}
-
     
     @GetMapping("/api/user/{id}/deactivate")
     @ResponseBody
@@ -220,10 +215,11 @@ public Map<String, Object> getUserDetails(@PathVariable Long id) {
             .toList();
         
         Map<String, Long> distribution = new HashMap<>();
-        distribution.put("Excellent", 0L);
-        distribution.put("Good", 0L);
+        distribution.put("Very Low", 0L);
+        distribution.put("Low", 0L);
         distribution.put("Okay", 0L);
-        distribution.put("Fair", 0L);
+        distribution.put("Good", 0L);
+        distribution.put("Excellent", 0L);
         
         for (com.teamspring.MindCare.model.MoodEntry mood : recentMoods) {
             if (mood.getMoodLevel() != null) {
@@ -231,17 +227,19 @@ public Map<String, Object> getUserDetails(@PathVariable Long id) {
                     case 5 -> distribution.put("Excellent", distribution.get("Excellent") + 1);
                     case 4 -> distribution.put("Good", distribution.get("Good") + 1);
                     case 3 -> distribution.put("Okay", distribution.get("Okay") + 1);
-                    case 1, 2 -> distribution.put("Fair", distribution.get("Fair") + 1);
+                    case 2 -> distribution.put("Low", distribution.get("Low") + 1);
+                    case 1 -> distribution.put("Very Low", distribution.get("Very Low") + 1);
                 }
             }
         }
         
-        response.put("labels", new String[]{"Excellent", "Good", "Okay", "Fair"});
+        response.put("labels", new String[]{"Very Low", "Low", "Okay", "Good", "Excellent"});
         response.put("data", new Long[]{
-            distribution.get("Excellent"),
-            distribution.get("Good"),
+            distribution.get("Very Low"),
+            distribution.get("Low"),
             distribution.get("Okay"),
-            distribution.get("Fair")
+            distribution.get("Good"),
+            distribution.get("Excellent")
         });
         
         return response;
