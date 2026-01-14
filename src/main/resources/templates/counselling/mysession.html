@@ -300,39 +300,50 @@
         <div th:if="${upcomingSessions != null and !upcomingSessions.isEmpty()}">
             <div class="session-item" th:each="sessionItem : ${upcomingSessions}">
                 <div class="session-info">
-                    <h3 th:text="${sessionItem.counselorName}">Dr. Sarah Johnson</h3>
+                    <h3 th:text="${sessionItem.get('counselorName')}">Dr. Sarah Johnson</h3>
                     <div class="session-details">
-                        <span th:text="${sessionItem.sessionDate}">Nov 3, 2025</span>
+                        <span th:text="${sessionItem.get('sessionDate')}">Nov 3, 2025</span>
                         <span>•</span>
-                        <span th:text="${sessionItem.sessionTime}">10:00</span>
+                        <span th:text="${sessionItem.get('sessionTime')}">10:00</span>
                     </div>
                     <div class="session-badges">
                         <span class="badge" 
-                              th:classappend="${sessionItem.sessionType == 'Video' ? 'badge-video' : 'badge-person'}"
-                              th:text="${sessionItem.sessionType}">Video Call</span>
+                              th:classappend="${sessionItem.get('sessionType') == 'Video' ? 'badge-video' : 'badge-person'}"
+                              th:text="${sessionItem.get('sessionType')}">Video Call</span>
                         <span class="badge" 
                               th:classappend="${
-                                sessionItem.status == 'Confirmed' ? 'badge-confirmed' : 
-                                sessionItem.status == 'Cancelled' ? 'badge-cancelled' : 
-                                sessionItem.status == 'Awaiting Confirmation' ? 'badge-pending' : 'badge-confirmed'
+                                sessionItem.get('status') == 'Confirmed' ? 'badge-confirmed' : 
+                                sessionItem.get('status') == 'Cancelled' ? 'badge-cancelled' : 
+                                sessionItem.get('status') == 'Awaiting Confirmation' ? 'badge-pending' : 'badge-confirmed'
                               }"
-                              th:text="${sessionItem.status}">Confirmed</span>
+                              th:text="${sessionItem.get('status')}">Confirmed</span>
                     </div>
                 </div>
                 <div class="session-actions">
-                    <button th:if="${sessionItem.status != 'Cancelled'}" 
+                    <button class="btn btn-secondary" 
+                            th:data-counselor-name="${sessionItem.get('counselorName')}"
+                            th:data-counselor-email="${sessionItem.get('counselorEmail')}"
+                            th:data-counselor-phone="${sessionItem.get('counselorPhone')}"
+                            th:data-session-date="${sessionItem.get('sessionDate')}"
+                            th:data-session-time="${sessionItem.get('sessionTime')}"
+                            th:data-session-type="${sessionItem.get('sessionType')}"
+                            onclick="openCounselorDetailsModal(event.target)"
+                            style="border: 1px solid #e5e7eb; background: white; color: #64748b; margin-right: 8px;">
+                        View Details
+                    </button>
+                    <button th:if="${sessionItem.get('status') != 'Cancelled'}" 
                             class="btn btn-primary" 
-                            th:onclick="'rescheduleSession(' + ${sessionItem.id} + ')'">
+                            th:onclick="'rescheduleSession(' + ${sessionItem.get('id')} + ')'">
                         Reschedule
                     </button>
-                    <button th:if="${sessionItem.status != 'Cancelled'}" 
+                    <button th:if="${sessionItem.get('status') != 'Cancelled'}" 
                             class="btn btn-secondary" 
-                            th:onclick="'cancelSession(' + ${sessionItem.id} + ')'">
+                            th:onclick="'cancelSession(' + ${sessionItem.get('id')} + ')'">
                         Cancel
                     </button>
-                    <button th:if="${sessionItem.status == 'Cancelled'}" 
+                    <button th:if="${sessionItem.get('status') == 'Cancelled'}" 
                             class="btn" 
-                            th:onclick="'deleteSession(' + ${sessionItem.id} + ')'"
+                            th:onclick="'deleteSession(' + ${sessionItem.get('id')} + ')'"
                             style="background: #dc2626; color: white; border-color: #dc2626;">
                         Delete
                     </button>
@@ -357,7 +368,102 @@
 
 </div>
 
+<!-- Counselor Details Modal -->
+<div id="counselorDetailsModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+    <div style="background-color: #ffffff; padding: 24px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; color: #1f2937; margin: 0;">Counselor Details</h2>
+            <button onclick="closeCounselorDetailsModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;">×</button>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <h3 style="color: #1f2937; font-size: 16px; margin-bottom: 12px;">Counselor Information</h3>
+            <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #8c7ae6;">
+                <div style="margin-bottom: 12px;">
+                    <label style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Name</label>
+                    <p id="modalCounselorName" style="color: #1f2937; font-size: 15px; margin-top: 4px;">Dr. Sarah Johnson</p>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
+                    <p id="modalCounselorEmail" style="color: #1f2937; font-size: 15px; margin-top: 4px;">
+                        <a href="#" id="emailLink" style="color: #8c7ae6; text-decoration: none;">sarah.johnson@mindcare.com</a>
+                    </p>
+                </div>
+                <div>
+                    <label style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Phone</label>
+                    <p id="modalCounselorPhone" style="color: #1f2937; font-size: 15px; margin-top: 4px;">
+                        <a href="#" id="phoneLink" style="color: #8c7ae6; text-decoration: none;">+1 (555) 234-5678</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h3 style="color: #1f2937; font-size: 16px; margin-bottom: 12px;">Session Details</h3>
+            <div style="background: #f8fafc; padding: 16px; border-radius: 8px;">
+                <div style="margin-bottom: 12px;">
+                    <label style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Date</label>
+                    <p id="modalSessionDate" style="color: #1f2937; font-size: 15px; margin-top: 4px;">Nov 3, 2025</p>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Time</label>
+                    <p id="modalSessionTime" style="color: #1f2937; font-size: 15px; margin-top: 4px;">10:00 AM</p>
+                </div>
+                <div>
+                    <label style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Type</label>
+                    <p id="modalSessionType" style="color: #1f2937; font-size: 15px; margin-top: 4px;">Video Call</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 24px; display: flex; gap: 12px;">
+            <button onclick="closeCounselorDetailsModal()" style="flex: 1; padding: 12px 20px; border: 1px solid #e5e7eb; background: white; color: #64748b; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">Close</button>
+        </div>
+    </div>
+</div>
+
 <script>
+function openCounselorDetailsModal(button) {
+    const counselorName = button.getAttribute('data-counselor-name');
+    const counselorEmail = button.getAttribute('data-counselor-email');
+    const counselorPhone = button.getAttribute('data-counselor-phone');
+    const sessionDate = button.getAttribute('data-session-date');
+    const sessionTime = button.getAttribute('data-session-time');
+    const sessionType = button.getAttribute('data-session-type');
+
+    document.getElementById('modalCounselorName').textContent = counselorName;
+    
+    const emailLink = document.getElementById('emailLink');
+    if (emailLink) {
+        emailLink.href = 'mailto:' + counselorEmail;
+        emailLink.textContent = counselorEmail;
+    }
+    
+    const phoneLink = document.getElementById('phoneLink');
+    if (phoneLink) {
+        phoneLink.href = 'tel:' + counselorPhone;
+        phoneLink.textContent = counselorPhone;
+    }
+
+    document.getElementById('modalSessionDate').textContent = sessionDate;
+    document.getElementById('modalSessionTime').textContent = sessionTime;
+    document.getElementById('modalSessionType').textContent = sessionType;
+
+    const modal = document.getElementById('counselorDetailsModal');
+    modal.style.display = 'flex';
+}
+
+function closeCounselorDetailsModal() {
+    document.getElementById('counselorDetailsModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('counselorDetailsModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+
 function rescheduleSession(sessionId) {
     if (confirm('Are you sure you want to reschedule this session?')) {
         window.location.href = '/mindcare/counselling/reschedule/' + sessionId;

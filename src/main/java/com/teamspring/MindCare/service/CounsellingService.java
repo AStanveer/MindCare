@@ -275,6 +275,7 @@ public class CounsellingService {
         // Update session
         session.setSessionDate(date);
         session.setSessionTime(time);
+        session.setStatus("Awaiting Confirmation");
         sessionRepository.save(session);
         
         System.out.println("✓ Session " + sessionId + " rescheduled to " + newDate + " at " + newTime);
