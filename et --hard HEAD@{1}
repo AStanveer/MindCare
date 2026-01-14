@@ -1,0 +1,94 @@
+[33m757d17f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: pull: Fast-forward
+[33me636036[m HEAD@{1}: pull: Fast-forward
+[33m3cd6658[m HEAD@{2}: pull: Fast-forward
+[33mf48a395[m HEAD@{3}: checkout: moving from fix/navbar to main
+[33m8060d7f[m[33m ([m[1;31morigin/fix/navbar[m[33m, [m[1;32mfix/navbar[m[33m)[m HEAD@{4}: commit: fixed a lot of bugs in different modules
+[33m4275cc1[m HEAD@{5}: checkout: moving from main to fix/navbar
+[33mf48a395[m HEAD@{6}: pull: Fast-forward
+[33m8465c1b[m HEAD@{7}: checkout: moving from fix/navbar to main
+[33m4275cc1[m HEAD@{8}: commit: fix wrong links issue
+[33m8465c1b[m HEAD@{9}: checkout: moving from main to fix/navbar
+[33m8465c1b[m HEAD@{10}: checkout: moving from fix/navbar to main
+[33m8465c1b[m HEAD@{11}: merge main: Fast-forward
+[33mc4e7973[m HEAD@{12}: checkout: moving from main to fix/navbar
+[33m8465c1b[m HEAD@{13}: pull: Fast-forward
+[33m2fc9103[m HEAD@{14}: checkout: moving from fix/support-module to main
+[33m3125a74[m[33m ([m[1;31morigin/fix/support-module[m[33m, [m[1;32mfix/support-module[m[33m)[m HEAD@{15}: commit: Refactor the support forum and support chatbot to use the new User and Spring security features
+[33mc3c1700[m HEAD@{16}: merge main: Merge made by the 'ort' strategy.
+[33mb463ec1[m HEAD@{17}: checkout: moving from main to fix/support-module
+[33m2fc9103[m HEAD@{18}: pull: Fast-forward
+[33m0382f74[m HEAD@{19}: checkout: moving from fix/support-module to main
+[33mb463ec1[m HEAD@{20}: commit: refactoring the support module to use the new user
+[33m0382f74[m HEAD@{21}: checkout: moving from main to fix/support-module
+[33m0382f74[m HEAD@{22}: checkout: moving from fix/support-module to main
+[33m0382f74[m HEAD@{23}: checkout: moving from main to fix/support-module
+[33m0382f74[m HEAD@{24}: checkout: moving from fix/navbar to main
+[33mc4e7973[m HEAD@{25}: commit: Fix the navabr to be role based
+[33mae9d5bc[m HEAD@{26}: checkout: moving from main to fix/navbar
+[33m0382f74[m HEAD@{27}: pull: Fast-forward
+[33m2250708[m HEAD@{28}: checkout: moving from fix/navbar to main
+[33mae9d5bc[m HEAD@{29}: commit: Fix navbar issue and add logout functionality
+[33m46073e1[m HEAD@{30}: commit (merge): Merge remote-tracking branch 'origin/main' into fix/navbar
+[33md4209df[m HEAD@{31}: checkout: moving from main to fix/navbar
+[33m2250708[m HEAD@{32}: pull: Fast-forward
+[33m66b2d87[m HEAD@{33}: checkout: moving from fix/navbar to main
+[33md4209df[m HEAD@{34}: commit: fix navbar issue
+[33m66b2d87[m HEAD@{35}: checkout: moving from main to fix/navbar
+[33m66b2d87[m HEAD@{36}: pull: Fast-forward
+[33md0bac5a[m HEAD@{37}: checkout: moving from feature/dashboard-student-backend to main
+[33md5f39c9[m[33m ([m[1;31morigin/feature/dashboard-student-backend[m[33m, [m[1;32mfeature/dashboard-student-backend[m[33m)[m HEAD@{38}: commit: Updated the student dashboard to access data from db
+[33mdd0e40d[m HEAD@{39}: commit: Updated the studetn dashboard to access data from db
+[33m56841e1[m HEAD@{40}: commit: WIP: internal dashboard logic and UI implementation
+[33m2ae9f85[m HEAD@{41}: commit: Refactor(Shared): Update entities and repos for dashboard compatibility
+[33md0bac5a[m HEAD@{42}: checkout: moving from main to feature/dashboard-student-backend
+[33md0bac5a[m HEAD@{43}: pull: Fast-forward
+[33mb59f8a0[m HEAD@{44}: checkout: moving from feature/chatbot-support-backend to main
+[33m67b6e53[m[33m ([m[1;31morigin/feature/chatbot-support-backend[m[33m, [m[1;32mfeature/chatbot-support-backend[m[33m)[m HEAD@{45}: commit: Integrate Gemini API into ChatBot Support
+[33mb59f8a0[m HEAD@{46}: checkout: moving from main to feature/chatbot-support-backend
+[33mb59f8a0[m HEAD@{47}: pull: Fast-forward
+[33mc5e69c2[m HEAD@{48}: checkout: moving from feature/support-forum-backend to main
+[33m4ac4cb0[m[33m ([m[1;31morigin/feature/support-forum-backend[m[33m, [m[1;32mfeature/support-forum-backend[m[33m)[m HEAD@{49}: commit: Integrate Database into Peer Support Forum
+[33mc5e69c2[m HEAD@{50}: Branch: renamed refs/heads/feature/support-backend to refs/heads/feature/support-forum-backend
+[33mc5e69c2[m HEAD@{52}: checkout: moving from main to feature/support-backend
+[33mc5e69c2[m HEAD@{53}: pull: Fast-forward
+[33m029c203[m HEAD@{54}: checkout: moving from fix/dashboard-support-style-bug to main
+[33m5a91735[m[33m ([m[1;31morigin/fix/dashboard-support-style-bug[m[33m, [m[1;32mfix/dashboard-support-style-bug[m[33m)[m HEAD@{55}: commit: Fix the container width issue in dashboard pages and support pages
+[33m029c203[m HEAD@{56}: checkout: moving from main to fix/dashboard-support-style-bug
+[33m029c203[m HEAD@{57}: pull: Fast-forward
+[33m93000d8[m HEAD@{58}: pull: Fast-forward
+[33m7b4f9cb[m HEAD@{59}: checkout: moving from fix/dashboard-links to main
+[33md149429[m[33m ([m[1;31morigin/fix/dashboard-links[m[33m, [m[1;32mfix/dashboard-links[m[33m)[m HEAD@{60}: commit: fix quick actions link
+[33mdd2cd72[m HEAD@{61}: commit: fix quick actions container
+[33m7b4f9cb[m HEAD@{62}: checkout: moving from main to fix/dashboard-links
+[33m7b4f9cb[m HEAD@{63}: pull: Fast-forward
+[33m67f47d1[m HEAD@{64}: pull: Fast-forward
+[33m3f5f42a[m HEAD@{65}: pull: Fast-forward
+[33m84ec624[m HEAD@{66}: checkout: moving from feature/support-module to main
+[33m44d1a1e[m[33m ([m[1;31morigin/feature/support-module[m[33m, [m[1;32mfeature/support-module[m[33m)[m HEAD@{67}: commit (merge): Merge remote-tracking branch 'origin/main' into feature/support-module
+[33m7764ec7[m HEAD@{68}: checkout: moving from main to feature/support-module
+[33m84ec624[m HEAD@{69}: pull: Fast-forward
+[33mc1c4c0e[m HEAD@{70}: checkout: moving from feature/dashboard-home to main
+[33m46174a7[m[33m ([m[1;31morigin/feature/dashboard-home[m[33m, [m[1;32mfeature/dashboard-home[m[33m)[m HEAD@{71}: merge origin/main: Merge made by the 'ort' strategy.
+[33m8ee9d8a[m HEAD@{72}: checkout: moving from feature/support-module to feature/dashboard-home
+[33m7764ec7[m HEAD@{73}: checkout: moving from feature/dashboard-home to feature/support-module
+[33m8ee9d8a[m HEAD@{74}: commit: Fix responsivity issue in dashboard module
+[33m3962e48[m HEAD@{75}: checkout: moving from feature/support-module to feature/dashboard-home
+[33m7764ec7[m HEAD@{76}: commit: Fix responsivity issue on support views
+[33m65608c3[m HEAD@{77}: commit: Add chatbot view
+[33mcf71a14[m HEAD@{78}: checkout: moving from feature/support-module to feature/support-module
+[33mcf71a14[m HEAD@{79}: checkout: moving from feature/dashboard-home to feature/support-module
+[33m3962e48[m HEAD@{80}: checkout: moving from feature/support-module to feature/dashboard-home
+[33mcf71a14[m HEAD@{81}: commit: Add support chatbot and forum enhancements
+[33m99dcce2[m HEAD@{82}: checkout: moving from feature/dashboard-home to feature/support-module
+[33m3962e48[m HEAD@{83}: commit: Refined dashboard views
+[33me8132ef[m HEAD@{84}: checkout: moving from feature/support-module to feature/dashboard-home
+[33m99dcce2[m HEAD@{85}: reset: moving to HEAD
+[33m99dcce2[m HEAD@{86}: checkout: moving from feature/dashboard-home to feature/support-module
+[33me8132ef[m HEAD@{87}: checkout: moving from feature/support-module to feature/dashboard-home
+[33m99dcce2[m HEAD@{88}: commit: Add peer support forum view
+[33me8132ef[m HEAD@{89}: checkout: moving from feature/dashboard-home to feature/support-module
+[33me8132ef[m HEAD@{90}: commit: Remove HomeController (replaced by dashboard controller)
+[33m0c4b648[m HEAD@{91}: commit: Create the views for dashboard module
+[33mc1c4c0e[m HEAD@{92}: checkout: moving from main to feature/dashboard-home
+[33mc1c4c0e[m HEAD@{93}: pull: Fast-forward
+[33m686bec5[m HEAD@{94}: clone: from https://github.com/AStanveer/MindCare.git
