@@ -3,14 +3,14 @@ package com.teamspring.MindCare.controller;
 import com.teamspring.MindCare.model.MoodEntry;
 import com.teamspring.MindCare.service.MoodService;
 import com.teamspring.MindCare.service.MoodService.MoodStatistics;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequestMapping("/mindcare/mood")
@@ -22,7 +22,6 @@ public class MoodController {
     // Main mood tracker page
     @GetMapping("/tracker")
     public String showMoodTracker(Model model) {
-        // Check if user already logged mood today
         List<MoodEntry> todayEntries = moodService.getRecentMoodEntries().stream()
             .filter(entry -> entry.getEntryDate().equals(LocalDate.now()))
             .toList();
@@ -36,11 +35,7 @@ public class MoodController {
             .limit(3)
             .toList();
         model.addAttribute("recentEntries", recentEntries);
-        
-        // Get all recent entries for chart (7 days)
-        List<MoodEntry> weekEntries = moodService.getRecentMoodEntries();
-        model.addAttribute("weekEntries", weekEntries);
-        
+            
         // Get insights
         List<String> insights = moodService.getMoodInsights();
         model.addAttribute("insights", insights);

@@ -195,32 +195,6 @@
             background: #7b6bd6;
         }
 
-        /* Mood Chart */
-        .chart-container {
-            height: 200px;
-            position: relative;
-        }
-
-        .chart-placeholder {
-            background: rgba(216, 207, 247, 0.2);
-            border-radius: 12px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            font-size: 14px;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .chart-placeholder i {
-            font-size: 36px;
-            margin-bottom: 10px;
-            color: #8c7ae6;
-        }
-
         /* Mood History */
         .mood-entry {
             padding: 15px;
@@ -392,26 +366,6 @@
                     </form>
                 </div>
 
-                <!-- Mood Chart Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Your Mood Trend</div>
-                        <div class="card-description">Last 7 days</div>
-                    </div>
-                    <div class="chart-container">
-                        <div class="chart-placeholder" th:if="${weekEntries.empty}">
-                            <i class="fas fa-chart-line"></i>
-                            <p>Log your mood for a few days to see your trend</p>
-                        </div>
-                        <div class="chart-placeholder" th:unless="${weekEntries.empty}">
-                            <i class="fas fa-chart-line"></i>
-                            <p>Mood Chart: Showing last [[${weekEntries.size()}]] entries</p>
-                            <div style="margin-top: 10px; font-size: 12px;">
-                                Average: [[${stats.weeklyAverage}]] / 5
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Right Column -->
