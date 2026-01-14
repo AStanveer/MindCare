@@ -109,14 +109,16 @@ public class AdminController {
     public Map<String, Object> getUserDetails(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         
-        User user = userService.getUserById(id).orElse(null);
-        if (user != null) {
+        try {
+            User user = userService.getUserById(id);
             response.put("user", user);
             
             // Get assessment history
             List<AssessmentResult> assessments = assessmentResultRepository
                 .findByUserIdOrderByCompletedAtDesc(user.getId());
             response.put("assessments", assessments);
+        } catch (RuntimeException e) {
+            response.put("error", "User not found");
         }
         
         return response;
