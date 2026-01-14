@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.teamspring.MindCare.model.CounsellingSession;
@@ -32,5 +34,13 @@ public interface CounsellingSessionRepository extends JpaRepository<CounsellingS
     // Finds sessions for specific counselor that match a specific date
     List<CounsellingSession> findByCounselorIdAndSessionDateOrderBySessionTimeAsc(Long counselorId, LocalDate date);
 
+    Long countByCounselorIdAndSessionDateBetween(Long counselorId, LocalDate startDate, LocalDate endDate);
+
+    Long countByCounselorIdAndStatus(Long counselorId, String status);
+
+    @Query("SELECT COUNT(DISTINCT c.studentId) FROM CounsellingSession c WHERE c.counselorId = :counselorId")
+    Long countDistinctStudentsByCounselorId(@Param("counselorId") Long counselorId);
+
+    List<CounsellingSession> findByCounselorIdAndSessionDateBeforeOrderBySessionDateDesc(Long counselorId, LocalDate date);
 }
 

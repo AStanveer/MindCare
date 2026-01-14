@@ -258,6 +258,11 @@ body {
     background-color: var(--color-primary);
 }
 
+.send-btn.active {
+    background-color: var(--color-primary);
+}
+
+
 .disclaimer-text {
     text-align: center;
     font-size: 0.75rem;
