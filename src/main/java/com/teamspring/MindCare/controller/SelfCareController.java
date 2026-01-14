@@ -2,6 +2,7 @@ package com.teamspring.MindCare.controller;
 
 import com.teamspring.MindCare.model.SelfCareActivity;
 import com.teamspring.MindCare.service.SelfCareActivityService;
+import com.teamspring.MindCare.service.FeatureUsageService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,22 +17,29 @@ public class SelfCareController {
     @Autowired
     private SelfCareActivityService selfCareService;
     
+    @Autowired
+    private FeatureUsageService featureUsageService;
+    
+    private static final Long DUMMY_USER_ID = 1L;
+    
     @GetMapping
     public String showSelfCare(
             @RequestParam(value = "category", defaultValue = "all") String category, // Change DEFAULT to "all"
             @RequestParam(value = "search", required = false) String search,
             Model model) {
         
+        // Track feature usage when user accesses self-care
+        featureUsageService.incrementSelfCareUsage(DUMMY_USER_ID);
         
         model.addAttribute("activePage", "selfcare");
         model.addAttribute("categories", selfCareService.getAllCategories());
-        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedCategory", category); // This should be "all" when clicked
         
         List<SelfCareActivity> activities;
         if (search != null && !search.trim().isEmpty()) {
             activities = selfCareService.searchActivities(search);
             model.addAttribute("searchQuery", search);
-        } else if ("all".equalsIgnoreCase(category)) { 
+        } else if ("all".equalsIgnoreCase(category)) { // Make sure this check is correct
             activities = selfCareService.getAllActivities();
         } else {
             activities = selfCareService.getActivitiesByCategory(category);
@@ -44,11 +52,14 @@ public class SelfCareController {
     // View single activity
     @GetMapping("/{id}")
     public String viewActivity(@PathVariable Long id, Model model) {
+        // Track feature usage when user accesses an activity
+        featureUsageService.incrementSelfCareUsage(DUMMY_USER_ID);
         
         SelfCareActivity activity = selfCareService.getActivityById(id);
         model.addAttribute("activity", activity);
         model.addAttribute("activePage", "selfcare");
         
+        // Related activities
         List<SelfCareActivity> relatedActivities = selfCareService.getActivitiesByCategory(activity.getCategory())
             .stream()
             .filter(a -> !a.getId().equals(id))
