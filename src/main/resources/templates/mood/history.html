@@ -254,7 +254,7 @@
                             <td th:text="${entry.formattedDate}">2023-11-01</td>
                             <td th:text="${entry.formattedTime}">14:30</td>
                             <td>
-                                <span class="mood-indicator" th:style="'background:' + ${entry.moodColor} + '20; color:' + ${entry.moodColor}">
+                                <span class="mood-indicator" th:style="${'background: ' + entry.moodColor + '20; color: ' + entry.moodColor}">
                                     <img th:src="${entry.moodIcon}" class="mood-icon-small" alt="Mood">
                                     <span th:text="${entry.moodLabel}">Good</span>
                                 </span>

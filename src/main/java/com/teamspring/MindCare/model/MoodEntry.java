@@ -122,4 +122,15 @@ public class MoodEntry {
         };
     }
     
+    public String getMoodColor() {
+        return switch (moodLevel) {
+            case 1 -> "#ef4444"; // Red
+            case 2 -> "#f97316"; // Orange
+            case 3 -> "#fbbf24"; // Yellow
+            case 4 -> "#10b981"; // Green
+            case 5 -> "#8b5cf6"; // Purple
+            default -> "#64748b"; // Gray
+        };
+    }
+    
 }
