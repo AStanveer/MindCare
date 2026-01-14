@@ -2,9 +2,13 @@ package com.teamspring.MindCare.controller;
 
 import com.teamspring.MindCare.model.BookingRequest;
 import com.teamspring.MindCare.model.User;
+import com.teamspring.MindCare.repository.CounselorRepository;
 import com.teamspring.MindCare.repository.UserRepository;
 import com.teamspring.MindCare.service.CounsellingService;
 import com.teamspring.MindCare.service.FeatureUsageService;
+import com.teamspring.MindCare.service.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.security.Principal;
 import java.util.ArrayList;
 
 @Controller
@@ -23,33 +28,39 @@ public class CounsellingController {
     private final CounsellingService counsellingService;
     private final FeatureUsageService featureUsageService;
     private final UserRepository userRepository;
-    private static final Long DUMMY_USER_ID = 1L;
+    private final CounselorRepository counselorRepository;
+    // private static final Long DUMMY_USER_ID = 1L;
+    @Autowired
+    private UserService userService;
 
-    public CounsellingController(CounsellingService counsellingService, FeatureUsageService featureUsageService, UserRepository userRepository) {
+    public CounsellingController(CounsellingService counsellingService, FeatureUsageService featureUsageService, UserRepository userRepository, CounselorRepository counselorRepository) {
         this.counsellingService = counsellingService;
         this.featureUsageService = featureUsageService;
         this.userRepository = userRepository;
+        this.counselorRepository = counselorRepository;
     }
-
+    private User getLoggedInUser(Principal principal) {
+        return userService.getUserByEmail(principal.getName());
+    }
     /**
      * Get the current authenticated user's ID
      * Falls back to DUMMY_USER_ID if not authenticated
      */
-    private Long getCurrentUserId() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && authentication.isAuthenticated()) {
-                String email = authentication.getName();
-                User user = userRepository.findByEmail(email).orElse(null);
-                if (user != null) {
-                    return user.getId();
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ Error getting current user ID: " + e.getMessage());
-        }
-        return DUMMY_USER_ID;
-    }
+    // private Long getCurrentUserId() {
+    //     try {
+    //         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //         if (authentication != null && authentication.isAuthenticated()) {
+    //             String email = authentication.getName();
+    //             User user = userRepository.findByEmail(email).orElse(null);
+    //             if (user != null) {
+    //                 return user.getId();
+    //             }
+    //         }
+    //     } catch (Exception e) {
+    //         System.out.println("⚠️ Error getting current user ID: " + e.getMessage());
+    //     }
+    //     return DUMMY_USER_ID;
+    // }
 
     // ===== Show Counselling Home Page =====
     @GetMapping
@@ -59,8 +70,9 @@ public class CounsellingController {
 
     // ===== Show Booking Page =====
     @GetMapping("/booking")
-    public String counsellingPage(Model model) {
-        Long userId = getCurrentUserId();
+    public String counsellingPage(Model model , Principal principal) {
+        User currentUser = getLoggedInUser(principal);
+        Long userId = currentUser.getId();
         // Track feature usage when user accesses counselling booking
         featureUsageService.incrementCounsellingUsage(userId);
         
@@ -76,8 +88,19 @@ public class CounsellingController {
 
     // ===== Show HP Set Availability Page =====
     @GetMapping("/set-availability")
-    public String setAvailability(Model model) {
-        Long counselorId = getCurrentUserId();
+    public String setAvailability(Model model , Principal principal) {
+        User currentUser = getLoggedInUser(principal);
+        Long userId = currentUser.getId();
+        
+        // Get counselor ID from the counselors table using user ID
+        com.teamspring.MindCare.model.Counselor counselor = counselorRepository.findByUserId(userId);
+        
+        if (counselor == null) {
+            model.addAttribute("error", "Counselor profile not found");
+            return "counselling/hp-setavailability";
+        }
+        
+        Long counselorId = counselor.getId();
         model.addAttribute("counselorId", counselorId);
         model.addAttribute("timeSlots", counsellingService.getTimeSlots());
         return "counselling/hp-setavailability";
@@ -85,15 +108,40 @@ public class CounsellingController {
 
     // ===== Show HP My Schedule Page =====
     @GetMapping("/my-schedule")
-    public String mySchedule(Model model) {
-        Long counselorId = getCurrentUserId();
+    public String mySchedule(Model model , Principal principal) {
+        
+        System.out.println("\n=== MY SCHEDULE PAGE DEBUG ===");
+        System.out.println("Principal: " + (principal != null ? principal.getName() : "NULL"));
+        
+        User currentUser = getLoggedInUser(principal);
+        System.out.println("Current User: " + (currentUser != null ? currentUser.getEmail() : "NULL"));
+        System.out.println("User ID: " + (currentUser != null ? currentUser.getId() : "NULL"));
+        System.out.println("User Role: " + (currentUser != null ? currentUser.getRole() : "NULL"));
+        
+        // Get counselor ID from the counselors table using user ID
+        Long userId = currentUser.getId();
+        com.teamspring.MindCare.model.Counselor counselor = counselorRepository.findByUserId(userId);
+        
+        if (counselor == null) {
+            System.out.println("❌ ERROR: No counselor found for user ID: " + userId);
+            model.addAttribute("error", "Counselor profile not found");
+            model.addAttribute("sessions", new ArrayList<>());
+            return "counselling/hp-myschedule";
+        }
+        
+        Long counselorId = counselor.getId();
+        System.out.println("Counselor record found - Counselor ID: " + counselorId + ", Name: " + counselor.getName());
+        
         List<com.teamspring.MindCare.model.CounsellingSession> sessions = counsellingService.getCounselorSessions(counselorId);
         
-        System.out.println("=== MY SCHEDULE PAGE ===");
-        System.out.println("Counselor ID: " + counselorId);
+        System.out.println("Counselor ID being queried: " + counselorId);
         System.out.println("Sessions found: " + sessions.size());
-        sessions.forEach(s -> System.out.println("  - Session " + s.getId() + ": " + s.getSessionDate() + " at " + s.getSessionTime()));
-        System.out.println("======================");
+        sessions.forEach(s -> System.out.println("  - Session " + s.getId() + 
+            " | Student: " + s.getStudentId() + 
+            " | Counselor: " + s.getCounselorId() + 
+            " | Date: " + s.getSessionDate() + 
+            " | Time: " + s.getSessionTime()));
+        System.out.println("==============================\n");
         
         // Enrich sessions with student details
         List<Map<String, Object>> enrichedSessions = new ArrayList<>();
@@ -129,8 +177,10 @@ public class CounsellingController {
 
     // ===== Show My Sessions Page =====
     @GetMapping("/my-sessions")
-    public String mySessions(Model model) {
-        Long userId = getCurrentUserId();
+    public String mySessions(Model model, Principal principal) {
+        User currentUser = getLoggedInUser(principal);
+        Long userId = currentUser.getId();
+        System.out.println("the id is "+userId);
         // Track feature usage when user accesses their sessions
         featureUsageService.incrementCounsellingUsage(userId);
         
@@ -169,9 +219,10 @@ public class CounsellingController {
 
     // ===== Handle Booking Submission =====
     @PostMapping("/confirm")
-    public String confirmBooking(@ModelAttribute BookingRequest bookingRequest) {
+    public String confirmBooking(@ModelAttribute BookingRequest bookingRequest, Principal principal) {
         try {
-            Long studentId = getCurrentUserId();
+            User currentUser = getLoggedInUser(principal);
+            Long studentId = currentUser.getId();
             bookingRequest.setStudentId(studentId);
             System.out.println("📝 Booking session for student ID: " + studentId);
             System.out.println("📝 Counselor ID: " + bookingRequest.getCounselorId());
@@ -192,9 +243,20 @@ public class CounsellingController {
     @PostMapping("/set-availability")
     public String saveAvailability(
             @RequestParam String selectedDate,
-            @RequestParam(required = false) String[] timeSlots) {
+            @RequestParam(required = false) String[] timeSlots,
+            Principal principal) {
         
-        Long counselorId = getCurrentUserId();
+        User currentUser = getLoggedInUser(principal);
+        Long userId = currentUser.getId();
+        
+        // Get counselor ID from the counselors table using user ID
+        com.teamspring.MindCare.model.Counselor counselor = counselorRepository.findByUserId(userId);
+        
+        if (counselor == null) {
+            return "redirect:/mindcare/counselling/set-availability?error=counselor_not_found";
+        }
+        
+        Long counselorId = counselor.getId();
         
         try {
             counsellingService.saveAvailability(counselorId, selectedDate, timeSlots);
