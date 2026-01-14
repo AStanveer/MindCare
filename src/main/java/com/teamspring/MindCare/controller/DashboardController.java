@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.teamspring.MindCare.dto.DashboardStatsDTO;
+import com.teamspring.MindCare.dto.RecentStudentDTO;
 import com.teamspring.MindCare.dto.SessionDTO;
 import com.teamspring.MindCare.model.CounsellingSession;
 import com.teamspring.MindCare.model.MoodEntry;
@@ -121,32 +123,36 @@ public class DashboardController {
             return "redirect:/auth/login";
         }
         
-        // Get current authenticated user
         User user = getCurrentUser(principal, session);
         Long currentUserId = user.getId();
         
-        // Quick actions for professionals
         List<QuickAction> actions = List.of(
             new QuickAction("Add Availability", "icon-calendar", "/mindcare/counselling/set-availability"),
-            new QuickAction("Create Resource", "icon-book", "/mindcare/professional/resources/create"),
+            new QuickAction("Create Resource", "icon-book", "/mindcare/professional/resources"),
             new QuickAction("Manage Schedule", "icon-clock", "/mindcare/counselling/my-schedule")
         );
         
-        // Fetch professional-specific data
         List<SessionDTO> todaysSchedule = dashboardService.getProfessionalSessions(currentUserId);
         
-        // Add attributes to model
+        List<RecentStudentDTO> recentStudents = dashboardService.getRecentStudents(currentUserId);
+
+        DashboardStatsDTO stats = dashboardService.getProfessionalStats(currentUserId);
+        
         model.addAttribute("user", user);
         model.addAttribute("username", user.getFullName());
         model.addAttribute("quickActions", actions);
         model.addAttribute("todaysSchedule", todaysSchedule);
         
+        // Add the new attributes
+        model.addAttribute("recentStudents", recentStudents);
+        model.addAttribute("stats", stats);
+        
         return "dashboard/professional/dashboard";
     }
 
-    /**
-     * Admin Dashboard
-     */
+    /*
+    * Admin Dashboard
+    */
     @GetMapping("/admin/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
     public String adminDashboard(Principal principal, HttpSession session, Model model) {

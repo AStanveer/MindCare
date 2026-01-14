@@ -72,6 +72,15 @@
         const inputField = document.querySelector('.input-wrapper input');
         const sendButton = document.querySelector('.send-btn');
 
+        inputField.addEventListener('input', () => {
+            if (inputField.value.trim().length > 0) {
+                sendButton.classList.add('active');
+            } else {
+                sendButton.classList.remove('active');
+            }
+        });
+
+
         // 1. Function to add a message to the screen
         function addMessage(text, sender) {
             const messageDiv = document.createElement('div');
@@ -114,6 +123,7 @@
             // A. Show User Message
             addMessage(message, 'user');
             inputField.value = ''; // Clear input
+            sendButton.classList.remove('active');
             toggleLoading(true);   // Show bot is thinking
 
             try {

@@ -14,8 +14,10 @@
     <!-- Main Content -->
     <div class="container">
         <div class="welcome-message--container">
-            <h2>Welcome, Dr.<span th:text="${username}">Moaz</span></h2>
-            <p>You have 3 sessions scheduled for today</p>
+            <h2>Welcome, Dr. <span th:text="${username}">Moaz</span></h2>
+            <p th:text="'You have ' + ${todaysSchedule.size()} + ' sessions scheduled for today'">
+                You have 3 sessions scheduled for today
+            </p>
         </div>
 
         <div class="quick-actions--container">
@@ -97,43 +99,21 @@
                         <p>Overview of recent consultations</p>
                     </div>
                     <div class="recent-items--container">
-                        <div class="recent--item">
+                        <div class="recent--item" th:each="student : ${recentStudents}">
                             <div class="item-info">
-                                <span>Alex M.</span>
-                                <span class="gray-text">Last session: Nov 1, 2025</span>
+                                <span th:text="${student.name}">Alex M.</span>
+                                <span class="gray-text">Last session: <span th:text="${#temporals.format(student.lastSessionDate, 'MMM d, yyyy')}">Nov 1, 2025</span></span>
                             </div>
                             <div class="item-status">
-                                <span class="gray-text">Improving</span>
-                                <span class="item-icon">
+                                <span class="gray-text" th:text="${student.status}">Improving</span>
+                                <span class="item-icon" th:classappend="${student.trend == 'down' ? 'red' : (student.trend == 'neutral' ? 'light-purple' : '')}">
                                     <svg th:replace="~{fragments/icons ::icon-trend}"></svg>
                                 </span>
                             </div>
                         </div>
 
-                        <div class="recent--item">
-                            <div class="item-info">
-                                <span>Jordan P.</span>
-                                <span class="gray-text">Last session: Oct 28, 2025</span>
-                            </div>
-                            <div class="item-status">
-                                <span class="gray-text">Stable</span>
-                                <span class="item-icon light-purple">
-                                    <svg th:replace="~{fragments/icons ::icon-trend}"></svg>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="recent--item">
-                            <div class="item-info">
-                                <span>Sam K.</span>
-                                <span class="gray-text">Last session: Oct 26, 2025</span>
-                            </div>
-                            <div class="item-status light-purple">
-                                <span class="gray-text">Needs Attention</span>
-                                <span class="item-icon red">
-                                    <svg th:replace="~{fragments/icons ::icon-trend}"></svg>
-                                </span>
-                            </div>
+                        <div th:if="${#lists.isEmpty(recentStudents)}" style="padding: 1rem; text-align: center; color: #666;">
+                            No recent consultations found.
                         </div>
                     </div>
                 </div>
@@ -159,7 +139,7 @@
                             </span>
                             <div class="summary-text">
                                 <span class="gray-text">Total Sessions This Week</span>
-                                <span>12</span>
+                                <span th:text="${stats.totalSessionsWeek}">12</span>
                             </div>
                         </div>
 
@@ -169,7 +149,7 @@
                             </span>
                             <div class="summary-text">
                                 <span class="gray-text">Active Students</span>
-                                <span>12</span>
+                                <span th:text="${stats.activeStudents}">12</span>
                             </div>
                         </div>
 
@@ -179,7 +159,7 @@
                             </span>
                             <div class="summary-text">
                                 <span class="gray-text">Pending Requests</span>
-                                <span>1</span>
+                                <span th:text="${stats.pendingRequests}">1</span>
                             </div>
                         </div>
 
@@ -189,11 +169,10 @@
                             </span>
                             <div class="summary-text">
                                 <span class="gray-text">Resources Published</span>
-                                <span>15</span>
+                                <span th:text="${stats.resourcesPublished}">15</span>
                             </div>
                         </div>
-
-                    </div>                            
+                    </div>                      
                 </div>
                 
                 </div>
