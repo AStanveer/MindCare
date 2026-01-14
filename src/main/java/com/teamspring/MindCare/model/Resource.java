@@ -184,24 +184,4 @@ public class Resource {
     public String getFormattedDate() {
         return publishDate != null ? publishDate.toString() : "Recently";
     }
-
-    /**
-     * Color mapping aligned with new category chips:
-     * Mental Health, Self-Care, Wellness, Personal Growth, Mindfulness, Academic.
-     */
-    public String getCategoryColor() {
-        if (category == null) {
-            return "#64748b"; // slate fallback
-        }
-
-        return switch (category.toLowerCase()) {
-            case "mental health"   -> "#8c7ae6"; // purple (matches Content / chips)
-            case "self-care"       -> "#f97316"; // orange
-            case "wellness"        -> "#10b981"; // green
-            case "personal growth" -> "#6366f1"; // indigo
-            case "mindfulness"     -> "#8c7ae6"; // purple
-            case "academic"        -> "#0ea5e9"; // blue
-            default                -> "#64748b"; // slate fallback
-        };
-    }
 }

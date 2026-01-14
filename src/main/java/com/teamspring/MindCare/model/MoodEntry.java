@@ -14,7 +14,7 @@ public class MoodEntry {
     private Long id;
     
     @Column(name = "user_id")
-    private Long userId = 1L; // Default dummy user
+    private Long userId;
     
     @Column(name = "mood_level", nullable = false)
     private Integer moodLevel; // 1-5 scale
@@ -110,18 +110,7 @@ public class MoodEntry {
     public String getDisplayDate() {
         return entryDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"));
     }
-    
-    public String getMoodColor() {
-        return switch (moodLevel) {
-            case 1 -> "#ef4444"; // Red - Very Low
-            case 2 -> "#f59e0b"; // Amber - Low
-            case 3 -> "#eab308"; // Yellow - Fair
-            case 4 -> "#22c55e"; // Green - Good
-            case 5 -> "#10b981"; // Emerald - Excellent
-            default -> "#64748b"; // Slate
-        };
-    }
-    
+
     public String getMoodIcon() {
         return switch (moodLevel) {
             case 1 -> "/icons/verylow.png";
